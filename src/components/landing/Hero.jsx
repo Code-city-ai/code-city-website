@@ -1,10 +1,17 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight, Sparkles, ChevronDown } from 'lucide-react';
+import { ArrowRight, ChevronDown, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-function FloatingParticles() {
-  const particles = Array.from({ length: 30 }, (_, i) => ({
+const statItems = [
+  { number: '100+', label: 'Projects Delivered' },
+  { number: '50+', label: 'Happy Clients' },
+  { number: '99%', label: 'Satisfaction Rate' },
+  { number: '24/7', label: 'Support Available' },
+];
+
+function FloatingParticles({ dark }) {
+  const particles = Array.from({ length: 24 }, (_, i) => ({
     id: i,
     x: Math.random() * 100,
     y: Math.random() * 100,
@@ -18,9 +25,9 @@ function FloatingParticles() {
       {particles.map((p) => (
         <motion.div
           key={p.id}
-          className="absolute rounded-full bg-purple-400/30"
+          className={`absolute rounded-full ${dark ? 'bg-blue-300/30' : 'bg-blue-500/20'}`}
           style={{ left: `${p.x}%`, top: `${p.y}%`, width: p.size, height: p.size }}
-          animate={{ y: [-20, 20, -20], opacity: [0.2, 0.8, 0.2] }}
+          animate={{ y: [-20, 20, -20], opacity: [0.15, 0.7, 0.15] }}
           transition={{ duration: p.duration, delay: p.delay, repeat: Infinity, ease: 'easeInOut' }}
         />
       ))}
@@ -28,149 +35,112 @@ function FloatingParticles() {
   );
 }
 
-const statItems = [
-  { number: '100+', label: 'Projects Delivered' },
-  { number: '50+', label: 'Happy Clients' },
-  { number: '99%', label: 'Satisfaction Rate' },
-  { number: '24/7', label: 'Support Available' },
-];
-
 export default function Hero() {
+  const dark = document.documentElement.classList.contains('dark');
+
   return (
-    <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#020617]">
-      {/* Deep layered glow blobs */}
+    <section className={`relative min-h-screen flex items-center justify-center overflow-hidden ${dark ? 'bg-[#07111f]' : 'bg-[#f7fafc]'}`}>
       <div className="absolute inset-0 overflow-hidden">
         <motion.div
-          animate={{ scale: [1, 1.2, 1], rotate: [0, 60, 0] }}
-          transition={{ duration: 22, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute top-[-10%] left-[-15%] w-[600px] h-[600px] bg-purple-700/25 rounded-full blur-[120px]"
+          animate={{ scale: [1, 1.18, 1], rotate: [0, 40, 0] }}
+          transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }}
+          className={`absolute -top-20 -left-24 w-[34rem] h-[34rem] rounded-full blur-[120px] ${dark ? 'bg-orange-500/20' : 'bg-orange-300/40'}`}
         />
         <motion.div
-          animate={{ scale: [1, 1.3, 1], rotate: [0, -60, 0] }}
-          transition={{ duration: 28, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute bottom-[-10%] right-[-15%] w-[600px] h-[600px] bg-orange-600/20 rounded-full blur-[120px]"
-        />
-        <motion.div
-          animate={{ scale: [1, 1.15, 1], y: [-30, 30, -30] }}
-          transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute top-1/3 left-1/3 w-[500px] h-[500px] bg-blue-600/15 rounded-full blur-[100px]"
+          animate={{ scale: [1, 1.22, 1], rotate: [0, -50, 0] }}
+          transition={{ duration: 24, repeat: Infinity, ease: 'easeInOut' }}
+          className={`absolute -bottom-24 -right-24 w-[36rem] h-[36rem] rounded-full blur-[130px] ${dark ? 'bg-blue-600/20' : 'bg-blue-300/40'}`}
         />
       </div>
 
-      {/* Fine grid overlay */}
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(139,92,246,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(139,92,246,0.04)_1px,transparent_1px)] bg-[size:60px_60px]" />
+      <div className={`absolute inset-0 ${dark ? 'bg-[linear-gradient(rgba(37,99,235,0.07)_1px,transparent_1px),linear-gradient(90deg,rgba(249,115,22,0.06)_1px,transparent_1px)]' : 'bg-[linear-gradient(rgba(37,99,235,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(249,115,22,0.05)_1px,transparent_1px)]'} bg-[size:64px_64px]`} />
+      <FloatingParticles dark={dark} />
 
-      {/* Floating particles */}
-      <FloatingParticles />
+      <div className={`absolute inset-0 ${dark ? 'bg-[radial-gradient(ellipse_80%_65%_at_50%_50%,transparent_35%,#07111f_100%)]' : 'bg-[radial-gradient(ellipse_80%_65%_at_50%_50%,transparent_35%,#f7fafc_100%)]'}`} />
 
-      {/* Radial vignette */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_50%,transparent_40%,#020617_100%)]" />
-
-      {/* Content */}
-      <div className="relative z-10 max-w-7xl mx-auto px-6 pt-40 pb-32 text-center">
-
-        {/* Badge */}
+      <div className="relative z-10 max-w-7xl mx-auto px-6 pt-40 pb-28 text-center">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-purple-500/10 border border-purple-500/30 backdrop-blur-md mb-10 shadow-[0_0_30px_rgba(139,92,246,0.15)]"
+          transition={{ duration: 0.7 }}
+          className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full border backdrop-blur-md mb-10 ${dark ? 'bg-white/5 border-white/10 text-blue-100' : 'bg-white/80 border-slate-200 text-slate-700'} shadow-sm`}
         >
-          <Sparkles className="w-4 h-4 text-purple-400" />
-          <span className="text-sm text-purple-300 font-semibold tracking-wide">Pushing the Envelope of Technology</span>
+          <Sparkles className="w-4 h-4 text-orange-500" />
+          <span className="text-sm font-semibold tracking-[0.2em] uppercase">World-Class Digital Execution</span>
         </motion.div>
 
-        {/* Headline */}
         <motion.h1
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, delay: 0.15 }}
-          className="text-6xl md:text-8xl lg:text-9xl font-extrabold mb-8 leading-[1.05] tracking-tight"
+          transition={{ duration: 0.8, delay: 0.1 }}
+          className={`text-6xl md:text-8xl lg:text-[8.5rem] font-extrabold mb-8 leading-[0.98] tracking-tight ${dark ? 'text-white' : 'text-slate-950'}`}
         >
-          <span className="bg-gradient-to-r from-purple-400 via-orange-400 to-blue-400 bg-clip-text text-transparent drop-shadow-[0_0_60px_rgba(139,92,246,0.4)]">
-            Build the Future
-          </span>
+          Chic, Modern,
           <br />
-          <span className="text-white">With CodeCity</span>
+          <span className="bg-gradient-to-r from-orange-500 via-orange-400 to-blue-600 bg-clip-text text-transparent">
+            Built to Lead
+          </span>
         </motion.h1>
 
-        {/* Subtitle */}
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.35 }}
-          className="text-xl md:text-2xl text-gray-400 mb-14 max-w-3xl mx-auto leading-relaxed"
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className={`text-xl md:text-2xl mb-14 max-w-3xl mx-auto leading-relaxed ${dark ? 'text-slate-300' : 'text-slate-600'}`}
         >
-          World-class software development and marketing solutions.{' '}
-          <br className="hidden md:block" />
-          <span className="bg-gradient-to-r from-purple-400 to-orange-400 bg-clip-text text-transparent font-semibold">
-            Efficient. Affordable. Exceptional.
-          </span>
+          Premium software, marketing, and digital experiences crafted with precision,
+          elegance, and performance at the core.
         </motion.p>
 
-        {/* CTAs */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.5 }}
+          transition={{ duration: 0.8, delay: 0.3 }}
           className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-24"
         >
           <Button
             size="lg"
-            className="relative overflow-hidden bg-gradient-to-r from-purple-600 to-orange-500 hover:from-purple-700 hover:to-orange-600 text-white px-10 py-6 text-lg rounded-full group shadow-[0_0_40px_rgba(139,92,246,0.4)] hover:shadow-[0_0_60px_rgba(139,92,246,0.6)] transition-all duration-300"
+            className="bg-gradient-to-r from-orange-500 to-blue-600 hover:from-orange-600 hover:to-blue-700 text-white px-10 py-6 text-lg rounded-full shadow-[0_20px_60px_rgba(37,99,235,0.25)]"
           >
-            <span className="relative z-10 flex items-center">
-              Start Your Project
-              <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </span>
+            Start Your Project
+            <ArrowRight className="ml-2 w-5 h-5" />
           </Button>
           <Button
             size="lg"
             variant="outline"
-            className="border-2 border-white/10 text-gray-300 hover:text-white hover:bg-white/5 hover:border-purple-500/50 px-10 py-6 text-lg rounded-full backdrop-blur-sm transition-all duration-300"
+            className={`px-10 py-6 text-lg rounded-full ${dark ? 'border-white/10 bg-white/5 text-white hover:bg-white/10' : 'border-slate-200 bg-white text-slate-900 hover:bg-slate-50'}`}
           >
             Explore Services
           </Button>
         </motion.div>
 
-        {/* Stats */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.7 }}
+          transition={{ duration: 0.8, delay: 0.45 }}
           className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6"
         >
           {statItems.map((stat, idx) => (
             <motion.div
               key={idx}
-              whileHover={{ scale: 1.05, y: -4 }}
-              transition={{ type: 'spring', stiffness: 300 }}
-              className="relative group cursor-default"
+              whileHover={{ y: -4, scale: 1.03 }}
+              className={`rounded-3xl p-6 border backdrop-blur-md ${dark ? 'bg-white/[0.04] border-white/10' : 'bg-white/80 border-slate-200'} shadow-sm`}
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-600/30 to-blue-600/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <div className="relative bg-white/[0.03] backdrop-blur-md border border-white/10 group-hover:border-purple-500/40 rounded-2xl p-6 transition-all duration-500">
-                <div className="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-purple-400 to-orange-400 bg-clip-text text-transparent mb-2 tracking-tight">
-                  {stat.number}
-                </div>
-                <div className="text-sm text-gray-500 font-medium tracking-wide">{stat.label}</div>
+              <div className="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-orange-500 to-blue-600 bg-clip-text text-transparent mb-2">
+                {stat.number}
               </div>
+              <div className={`text-sm font-medium tracking-wide ${dark ? 'text-slate-400' : 'text-slate-500'}`}>{stat.label}</div>
             </motion.div>
           ))}
         </motion.div>
       </div>
 
-      {/* Scroll indicator */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.5, duration: 1 }}
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-gray-600"
-      >
-        <span className="text-xs tracking-widest uppercase">Scroll</span>
+      <div className={`absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 ${dark ? 'text-slate-500' : 'text-slate-400'}`}>
+        <span className="text-xs tracking-[0.3em] uppercase">Scroll</span>
         <motion.div animate={{ y: [0, 8, 0] }} transition={{ duration: 1.5, repeat: Infinity }}>
           <ChevronDown className="w-5 h-5" />
         </motion.div>
-      </motion.div>
-    </div>
+      </div>
+    </section>
   );
 }

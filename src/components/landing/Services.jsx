@@ -17,7 +17,7 @@ export default function Services() {
 
   return (
     <section id="services" className={`relative py-36 px-6 overflow-hidden ${isDark ? 'bg-[#07111f]' : 'bg-[#f7fafc]'}`}>
-      <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-orange-400/40 to-transparent" />
+      <div className="absolute top-0 inset-x-0 h-px bg-[#f55029]/30" />
       <div className={isDark ? 'absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_20%_50%,rgba(249,115,22,0.08),transparent)]' : 'absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_20%_50%,rgba(249,115,22,0.10),transparent)]'} />
       <div className={isDark ? 'absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_80%_50%,rgba(37,99,235,0.08),transparent)]' : 'absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_80%_50%,rgba(37,99,235,0.10),transparent)]'} />
 
@@ -29,7 +29,7 @@ export default function Services() {
           <h2 className={isDark ? 'text-5xl md:text-6xl font-extrabold text-white mb-6 leading-tight tracking-tight' : 'text-5xl md:text-6xl font-extrabold text-slate-950 mb-6 leading-tight tracking-tight'}>
             Comprehensive Solutions
             <br />
-            <span className="bg-gradient-to-r from-orange-500 to-blue-500 bg-clip-text text-transparent">For Every Need</span>
+            <span className="text-[#f55029]">For Every Need</span>
           </h2>
           <p className={isDark ? 'text-lg text-slate-400 max-w-xl mx-auto' : 'text-lg text-slate-600 max-w-xl mx-auto'}>
             From concept to launch — end-to-end services that drive innovation and sustainable growth.
@@ -39,10 +39,10 @@ export default function Services() {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {services.map((service, idx) => (
             <motion.div key={idx} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: idx * 0.08 }} whileHover={{ y: -8 }} className="group relative">
-              <div className={isDark ? 'absolute inset-0 rounded-3xl blur-2xl opacity-0 group-hover:opacity-70 transition-opacity duration-700 bg-gradient-to-br from-orange-500/20 to-blue-600/20' : 'absolute inset-0 rounded-3xl blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 bg-gradient-to-br from-orange-200 to-blue-200'} />
+              <div className={isDark ? 'absolute inset-0 rounded-3xl blur-2xl opacity-0 group-hover:opacity-70 transition-opacity duration-700 bg-[#147dc0]/10' : 'absolute inset-0 rounded-3xl blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 bg-[#147dc0]/10'} />
               <div className={isDark ? 'relative h-full bg-white/[0.04] backdrop-blur-sm border border-white/[0.08] hover:border-white/20 rounded-3xl p-8 transition-all duration-500 overflow-hidden' : 'relative h-full bg-white/80 backdrop-blur-sm border border-slate-200 hover:border-slate-300 rounded-3xl p-8 transition-all duration-500 overflow-hidden shadow-sm'}>
-                <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-orange-500 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-500 to-blue-600 flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500">
+                <div className="absolute top-0 left-0 right-0 h-[2px] bg-[#147dc0] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="w-14 h-14 rounded-2xl bg-[#147dc0] flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500">
                   <service.icon className="w-7 h-7 text-white" />
                 </div>
                 <h3 className={isDark ? 'text-xl font-bold text-white mb-3' : 'text-xl font-bold text-slate-950 mb-3'}>{service.title}</h3>

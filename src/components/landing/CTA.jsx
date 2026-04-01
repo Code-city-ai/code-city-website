@@ -10,12 +10,12 @@ export default function CTA() {
 
   return (
     <section className={`relative py-36 px-6 overflow-hidden ${isDark ? 'bg-[#07111f]' : 'bg-[#f7fafc]'}`}>
-      <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-blue-400/40 to-transparent" />
+      <div className="absolute top-0 inset-x-0 h-px bg-[#147dc0]/30" />
       <div className="absolute inset-0 overflow-hidden">
         <motion.div
           animate={{ scale: [1, 1.12, 1], opacity: [0.3, 0.5, 0.3] }}
           transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
-          className={isDark ? 'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[500px] bg-gradient-to-r from-orange-500/20 via-blue-600/20 to-orange-500/20 rounded-full blur-[100px]' : 'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[500px] bg-gradient-to-r from-orange-200 via-blue-200 to-orange-200 rounded-full blur-[100px]'}
+          className={isDark ? 'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[500px] bg-[#f55029]/12 rounded-full blur-[100px]' : 'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[500px] bg-[#f9761b]/12 rounded-full blur-[100px]'}
         />
       </div>
 
@@ -29,7 +29,7 @@ export default function CTA() {
           <h2 className={isDark ? 'text-5xl md:text-7xl font-extrabold text-white mb-6 leading-[1.05] tracking-tight' : 'text-5xl md:text-7xl font-extrabold text-slate-950 mb-6 leading-[1.05] tracking-tight'}>
             Ready to Build
             <br />
-            <span className="bg-gradient-to-r from-orange-500 to-blue-500 bg-clip-text text-transparent">Something Amazing?</span>
+            <span className="text-[#f55029]">Something Amazing?</span>
           </h2>
 
           <p className={isDark ? 'text-xl text-slate-400 max-w-2xl mx-auto mb-16 leading-relaxed' : 'text-xl text-slate-600 max-w-2xl mx-auto mb-16 leading-relaxed'}>
@@ -39,12 +39,12 @@ export default function CTA() {
 
         <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.2 }} className="max-w-lg mx-auto">
           <div className="relative">
-            <div className={isDark ? 'absolute inset-0 bg-gradient-to-br from-orange-500/20 to-blue-600/15 rounded-3xl blur-2xl' : 'absolute inset-0 bg-gradient-to-br from-orange-200 to-blue-200 rounded-3xl blur-2xl'} />
+            <div className={isDark ? 'absolute inset-0 bg-[#147dc0]/10 rounded-3xl blur-2xl' : 'absolute inset-0 bg-[#147dc0]/10 rounded-3xl blur-2xl'} />
             <div className={isDark ? 'relative bg-white/[0.05] backdrop-blur-md border border-white/[0.08] rounded-3xl p-8 overflow-hidden' : 'relative bg-white/90 backdrop-blur-md border border-slate-200 rounded-3xl p-8 overflow-hidden shadow-sm'}>
-              <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-orange-500 to-blue-500" />
+              <div className="absolute top-0 left-0 right-0 h-[2px] bg-[#147dc0]" />
               <div className="flex flex-col gap-4">
                 <Input type="email" placeholder="Enter your email address" className={isDark ? 'bg-white/[0.04] border-white/10 text-white placeholder:text-slate-500 h-14 text-base rounded-xl focus-visible:ring-blue-500 focus-visible:border-blue-500' : 'bg-white border-slate-200 text-slate-950 placeholder:text-slate-400 h-14 text-base rounded-xl focus-visible:ring-blue-500 focus-visible:border-blue-500'} />
-                <Button size="lg" className="bg-gradient-to-r from-orange-500 to-blue-600 hover:from-orange-600 hover:to-blue-700 text-white h-14 text-base rounded-xl shadow-xl">
+                <Button size="lg" className="bg-[#f55029] hover:bg-[#f9761b] text-white h-14 text-base rounded-xl shadow-xl">
                   Get Started
                   <ArrowRight className="ml-2 w-5 h-5" />
                 </Button>

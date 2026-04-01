@@ -67,7 +67,7 @@ export default function Layout({ children }) {
               </button>
               <Button 
                 size="sm"
-                className="bg-gradient-to-r from-orange-500 to-blue-600 hover:from-orange-600 hover:to-blue-700 text-white rounded-full shadow-lg"
+                className="bg-[#f55029] hover:bg-[#f9761b] text-white rounded-full shadow-lg"
               >
                 Get Started
               </Button>
@@ -101,7 +101,7 @@ export default function Layout({ children }) {
               </button>
               <Button 
                 size="sm"
-                className="bg-gradient-to-r from-orange-500 to-blue-600 hover:from-orange-600 hover:to-blue-700 text-white rounded-full w-full"
+                className="bg-[#f55029] hover:bg-[#f9761b] text-white rounded-full w-full"
               >
                 Get Started
               </Button>

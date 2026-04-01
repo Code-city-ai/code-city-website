@@ -1,15 +1,16 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { Menu, Moon, Sun, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { ThemeProvider } from '@/components/landing/ThemeContext';
 
 export default function Layout({ children }) {
-  const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
-  const [theme, setTheme] = React.useState(() => localStorage.getItem('codecity-theme') || 'dark');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [theme, setTheme] = useState(() => localStorage.getItem('codecity-theme') || 'dark');
   const { scrollY } = useScroll();
   const headerOpacity = useTransform(scrollY, [0, 100], [0, 1]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     localStorage.setItem('codecity-theme', theme);
     document.documentElement.classList.toggle('dark', theme === 'dark');
   }, [theme]);
@@ -36,6 +37,7 @@ export default function Layout({ children }) {
         }
       `}</style>
 
+      <ThemeProvider theme={theme}>
       {/* Header */}
       <motion.header 
         style={{ backgroundColor: isDark ? `rgba(7, 17, 31, ${headerOpacity})` : `rgba(247, 250, 252, ${headerOpacity})` }}
@@ -162,6 +164,7 @@ export default function Layout({ children }) {
           </div>
         </div>
       </footer>
+      </ThemeProvider>
     </div>
   );
 }

@@ -27,12 +27,12 @@ export default function WhyUs() {
             Why CodeCity
           </span>
           <h2 className={isDark ? 'text-5xl md:text-6xl font-extrabold text-white mb-6 leading-tight tracking-tight' : 'text-5xl md:text-6xl font-extrabold text-slate-950 mb-6 leading-tight tracking-tight'}>
-            A More Refined
+            Excellence Meets
             <br />
-            <span className="bg-gradient-to-r from-blue-500 to-orange-500 bg-clip-text text-transparent">Creative Technology Partner</span>
+            <span className="bg-gradient-to-r from-blue-500 to-orange-500 bg-clip-text text-transparent">Efficiency & Value</span>
           </h2>
           <p className={isDark ? 'text-lg text-slate-400 max-w-xl mx-auto' : 'text-lg text-slate-600 max-w-xl mx-auto'}>
-            We blend strategic clarity, elegant design, and strong engineering to create standout digital work.
+            Cutting-edge technology paired with unmatched service — delivering results that transform businesses.
           </p>
         </motion.div>
 

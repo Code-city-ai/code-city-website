@@ -27,12 +27,12 @@ export default function Services() {
             Our Services
           </span>
           <h2 className={isDark ? 'text-5xl md:text-6xl font-extrabold text-white mb-6 leading-tight tracking-tight' : 'text-5xl md:text-6xl font-extrabold text-slate-950 mb-6 leading-tight tracking-tight'}>
-            Designed to Feel
+            Comprehensive Solutions
             <br />
-            <span className="bg-gradient-to-r from-orange-500 to-blue-500 bg-clip-text text-transparent">World-Class</span>
+            <span className="bg-gradient-to-r from-orange-500 to-blue-500 bg-clip-text text-transparent">For Every Need</span>
           </h2>
           <p className={isDark ? 'text-lg text-slate-400 max-w-xl mx-auto' : 'text-lg text-slate-600 max-w-xl mx-auto'}>
-            Premium execution across software, branding, and growth — all under one refined creative-technical partner.
+            From concept to launch — end-to-end services that drive innovation and sustainable growth.
           </p>
         </motion.div>
 

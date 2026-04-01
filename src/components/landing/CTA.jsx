@@ -27,13 +27,13 @@ export default function CTA() {
           </div>
 
           <h2 className={isDark ? 'text-5xl md:text-7xl font-extrabold text-white mb-6 leading-[1.05] tracking-tight' : 'text-5xl md:text-7xl font-extrabold text-slate-950 mb-6 leading-[1.05] tracking-tight'}>
-            Ready for a More
+            Ready to Build
             <br />
-            <span className="bg-gradient-to-r from-orange-500 to-blue-500 bg-clip-text text-transparent">World-Class Presence?</span>
+            <span className="bg-gradient-to-r from-orange-500 to-blue-500 bg-clip-text text-transparent">Something Amazing?</span>
           </h2>
 
           <p className={isDark ? 'text-xl text-slate-400 max-w-2xl mx-auto mb-16 leading-relaxed' : 'text-xl text-slate-600 max-w-2xl mx-auto mb-16 leading-relaxed'}>
-            Let’s create something refined, memorable, and commercially powerful.
+            Let's turn your vision into reality. Get in touch with our team and start your transformation today.
           </p>
         </motion.div>
 

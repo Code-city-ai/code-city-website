@@ -66,7 +66,7 @@ export default function Hero() {
           className={isDark ? 'inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-md mb-10 shadow-[0_0_30px_rgba(37,99,235,0.12)]' : 'inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/80 border border-slate-200 backdrop-blur-md mb-10 shadow-[0_10px_30px_rgba(15,23,42,0.06)]'}
         >
           <Sparkles className="w-4 h-4 text-orange-500" />
-          <span className={isDark ? 'text-sm text-slate-200 font-semibold tracking-wide' : 'text-sm text-slate-700 font-semibold tracking-wide'}>Premium software & marketing studio</span>
+          <span className={isDark ? 'text-sm text-slate-200 font-semibold tracking-wide' : 'text-sm text-slate-700 font-semibold tracking-wide'}>Pushing the Envelope of Technology</span>
         </motion.div>
 
         <motion.h1
@@ -76,10 +76,10 @@ export default function Hero() {
           className={isDark ? 'text-6xl md:text-8xl lg:text-9xl font-extrabold mb-8 leading-[1.02] tracking-tight text-white' : 'text-6xl md:text-8xl lg:text-9xl font-extrabold mb-8 leading-[1.02] tracking-tight text-slate-950'}
         >
           <span className="bg-gradient-to-r from-orange-500 via-orange-400 to-blue-500 bg-clip-text text-transparent">
-            Chic Digital
+            Build the Future
           </span>
           <br />
-          <span>Experiences</span>
+          <span>With CodeCity</span>
         </motion.h1>
 
         <motion.p
@@ -88,10 +88,10 @@ export default function Hero() {
           transition={{ duration: 0.8, delay: 0.35 }}
           className={isDark ? 'text-xl md:text-2xl text-slate-400 mb-14 max-w-3xl mx-auto leading-relaxed' : 'text-xl md:text-2xl text-slate-600 mb-14 max-w-3xl mx-auto leading-relaxed'}
         >
-          World-class software development and marketing for ambitious brands.
+          World-class software development and marketing solutions.
           <br className="hidden md:block" />
           <span className="bg-gradient-to-r from-orange-500 to-blue-500 bg-clip-text text-transparent font-semibold">
-            Refined. Strategic. Built to perform.
+            Efficient. Affordable. Exceptional.
           </span>
         </motion.p>
 

@@ -34,10 +34,10 @@ export default function TechShowcase() {
           <h2 className={isDark ? 'text-5xl md:text-6xl font-extrabold text-white mb-6 leading-tight tracking-tight' : 'text-5xl md:text-6xl font-extrabold text-slate-950 mb-6 leading-tight tracking-tight'}>
             Powered by
             <br />
-            <span className="bg-gradient-to-r from-orange-500 to-blue-500 bg-clip-text text-transparent">Modern Technology</span>
+            <span className="bg-gradient-to-r from-orange-500 to-blue-500 bg-clip-text text-transparent">Next-Gen Technology</span>
           </h2>
           <p className={isDark ? 'text-lg text-slate-400 max-w-xl mx-auto' : 'text-lg text-slate-600 max-w-xl mx-auto'}>
-            Tools, systems, and architecture selected for sophistication, speed, and long-term growth.
+            We leverage cutting-edge tools and frameworks to build solutions that define tomorrow.
           </p>
         </motion.div>
 

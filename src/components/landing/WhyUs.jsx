@@ -18,8 +18,14 @@ export default function WhyUs() {
   return (
     <section id="why-us" className={`relative py-36 px-6 overflow-hidden ${isDark ? 'bg-[#07111f]' : 'bg-[#f7fafc]'}`}>
       <div className="absolute top-0 inset-x-0 h-px bg-[#147dc0]/30" />
-      <div className={isDark ? 'absolute top-1/4 left-0 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[120px]' : 'absolute top-1/4 left-0 w-[500px] h-[500px] bg-blue-200/50 rounded-full blur-[120px]'} />
-      <div className={isDark ? 'absolute bottom-1/4 right-0 w-[500px] h-[500px] bg-orange-500/10 rounded-full blur-[120px]' : 'absolute bottom-1/4 right-0 w-[500px] h-[500px] bg-orange-200/50 rounded-full blur-[120px]'} />
+      <div className="absolute inset-0">
+        <img
+          src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1800&q=80"
+          alt="Professional team"
+          className="h-full w-full object-cover"
+        />
+      </div>
+      <div className={isDark ? 'absolute inset-0 bg-[#07111f]/90' : 'absolute inset-0 bg-white/90'} />
 
       <div className="relative max-w-7xl mx-auto">
         <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }} className="text-center mb-20">
@@ -39,9 +45,7 @@ export default function WhyUs() {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {features.map((feature, idx) => (
             <motion.div key={idx} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: idx * 0.08 }} whileHover={{ y: -8 }} className="group relative">
-              <div className={isDark ? 'absolute inset-0 rounded-3xl blur-2xl opacity-0 group-hover:opacity-60 transition-opacity duration-700 bg-[#f55029]/10' : 'absolute inset-0 rounded-3xl blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 bg-[#f55029]/10'} />
-              <div className={isDark ? 'relative h-full bg-white/[0.04] backdrop-blur-sm border border-white/[0.08] hover:border-white/20 rounded-3xl p-8 transition-all duration-500 overflow-hidden' : 'relative h-full bg-white/80 backdrop-blur-sm border border-slate-200 hover:border-slate-300 rounded-3xl p-8 transition-all duration-500 overflow-hidden shadow-sm'}>
-                <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-orange-500/20 to-transparent opacity-0 group-hover:opacity-100 rounded-bl-full transition-opacity duration-500" />
+              <div className={isDark ? 'relative h-full bg-white/[0.06] backdrop-blur-xl border border-white/10 hover:border-white/20 rounded-[32px] p-8 transition-all duration-500 overflow-hidden shadow-[0_24px_70px_rgba(0,0,0,0.20)]' : 'relative h-full bg-white/88 backdrop-blur-xl border border-white/70 hover:border-white rounded-[32px] p-8 transition-all duration-500 overflow-hidden shadow-[0_24px_70px_rgba(15,23,42,0.08)]'}>
                 <div className="w-14 h-14 rounded-2xl bg-[#f55029] flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform duration-500">
                   <feature.icon className="w-7 h-7 text-white" />
                 </div>

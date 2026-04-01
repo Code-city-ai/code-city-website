@@ -11,13 +11,14 @@ export default function CTA() {
   return (
     <section className={`relative py-36 px-6 overflow-hidden ${isDark ? 'bg-[#07111f]' : 'bg-[#f7fafc]'}`}>
       <div className="absolute top-0 inset-x-0 h-px bg-[#147dc0]/30" />
-      <div className="absolute inset-0 overflow-hidden">
-        <motion.div
-          animate={{ scale: [1, 1.12, 1], opacity: [0.3, 0.5, 0.3] }}
-          transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
-          className={isDark ? 'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[500px] bg-[#f55029]/12 rounded-full blur-[100px]' : 'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[500px] bg-[#f9761b]/12 rounded-full blur-[100px]'}
+      <div className="absolute inset-0">
+        <img
+          src="https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1800&q=80"
+          alt="Business meeting"
+          className="h-full w-full object-cover"
         />
       </div>
+      <div className={isDark ? 'absolute inset-0 bg-[#07111f]/86' : 'absolute inset-0 bg-white/86'} />
 
       <div className="relative max-w-4xl mx-auto text-center">
         <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}>
@@ -39,8 +40,7 @@ export default function CTA() {
 
         <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.2 }} className="max-w-lg mx-auto">
           <div className="relative">
-            <div className={isDark ? 'absolute inset-0 bg-[#147dc0]/10 rounded-3xl blur-2xl' : 'absolute inset-0 bg-[#147dc0]/10 rounded-3xl blur-2xl'} />
-            <div className={isDark ? 'relative bg-white/[0.05] backdrop-blur-md border border-white/[0.08] rounded-3xl p-8 overflow-hidden' : 'relative bg-white/90 backdrop-blur-md border border-slate-200 rounded-3xl p-8 overflow-hidden shadow-sm'}>
+            <div className={isDark ? 'relative bg-white/[0.08] backdrop-blur-xl border border-white/10 rounded-[32px] p-8 overflow-hidden shadow-[0_24px_70px_rgba(0,0,0,0.22)]' : 'relative bg-white/92 backdrop-blur-xl border border-white/70 rounded-[32px] p-8 overflow-hidden shadow-[0_24px_70px_rgba(15,23,42,0.10)]'}>
               <div className="absolute top-0 left-0 right-0 h-[2px] bg-[#147dc0]" />
               <div className="flex flex-col gap-4">
                 <Input type="email" placeholder="Enter your email address" className={isDark ? 'bg-white/[0.04] border-white/10 text-white placeholder:text-slate-500 h-14 text-base rounded-xl focus-visible:ring-blue-500 focus-visible:border-blue-500' : 'bg-white border-slate-200 text-slate-950 placeholder:text-slate-400 h-14 text-base rounded-xl focus-visible:ring-blue-500 focus-visible:border-blue-500'} />

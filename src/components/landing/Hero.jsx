@@ -1,33 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight, ChevronDown, Sparkles } from 'lucide-react';
+import { ArrowRight, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useThemeMode } from './ThemeContext';
-
-function FloatingParticles({ isDark }) {
-  const particles = Array.from({ length: 24 }, (_, i) => ({
-    id: i,
-    x: Math.random() * 100,
-    y: Math.random() * 100,
-    size: Math.random() * 3 + 1,
-    duration: Math.random() * 10 + 8,
-    delay: Math.random() * 5,
-  }));
-
-  return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {particles.map((p) => (
-        <motion.div
-          key={p.id}
-          className={isDark ? 'absolute rounded-full bg-blue-300/20' : 'absolute rounded-full bg-blue-500/20'}
-          style={{ left: `${p.x}%`, top: `${p.y}%`, width: p.size, height: p.size }}
-          animate={{ y: [-20, 20, -20], opacity: [0.2, 0.8, 0.2] }}
-          transition={{ duration: p.duration, delay: p.delay, repeat: Infinity, ease: 'easeInOut' }}
-        />
-      ))}
-    </div>
-  );
-}
 
 const statItems = [
   { number: '100+', label: 'Projects Delivered' },
@@ -41,32 +16,25 @@ export default function Hero() {
 
   return (
     <div className={`relative min-h-screen flex items-center justify-center overflow-hidden ${isDark ? 'bg-[#07111f]' : 'bg-[#f7fafc]'}`}>
-      <div className="absolute inset-0 overflow-hidden">
-        <motion.div
-          animate={{ scale: [1, 1.18, 1], rotate: [0, 50, 0] }}
-          transition={{ duration: 22, repeat: Infinity, ease: 'easeInOut' }}
-          className={isDark ? 'absolute top-[-10%] left-[-15%] w-[600px] h-[600px] bg-[#147dc0]/20 rounded-full blur-[120px]' : 'absolute top-[-10%] left-[-15%] w-[600px] h-[600px] bg-[#147dc0]/18 rounded-full blur-[120px]'}
-        />
-        <motion.div
-          animate={{ scale: [1, 1.28, 1], rotate: [0, -60, 0] }}
-          transition={{ duration: 28, repeat: Infinity, ease: 'easeInOut' }}
-          className={isDark ? 'absolute bottom-[-10%] right-[-15%] w-[600px] h-[600px] bg-[#f55029]/20 rounded-full blur-[120px]' : 'absolute bottom-[-10%] right-[-15%] w-[600px] h-[600px] bg-[#f9761b]/22 rounded-full blur-[120px]'}
+      <div className="absolute inset-0">
+        <img
+          src="https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1800&q=80"
+          alt="Modern workspace"
+          className="h-full w-full object-cover"
         />
       </div>
-
-      <div className={isDark ? 'absolute inset-0 bg-[linear-gradient(rgba(20,125,192,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(245,80,41,0.05)_1px,transparent_1px)] bg-[size:60px_60px]' : 'absolute inset-0 bg-[linear-gradient(rgba(20,125,192,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(245,80,41,0.06)_1px,transparent_1px)] bg-[size:60px_60px]'} />
-      <FloatingParticles isDark={isDark} />
-      <div className={isDark ? 'absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_50%,transparent_40%,#07111f_100%)]' : 'absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_50%,transparent_35%,#f7fafc_100%)]'} />
+      <div className={isDark ? 'absolute inset-0 bg-[#07111f]/78' : 'absolute inset-0 bg-white/72'} />
+      <div className={isDark ? 'absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(20,125,192,0.22),transparent_35%)]' : 'absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(20,125,192,0.14),transparent_35%)]'} />
+      <div className={isDark ? 'absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,rgba(245,80,41,0.18),transparent_32%)]' : 'absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,rgba(245,80,41,0.12),transparent_32%)]'} />
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 pt-40 pb-32 text-center">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className={isDark ? 'inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-md mb-10 shadow-[0_0_30px_rgba(37,99,235,0.12)]' : 'inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/80 border border-slate-200 backdrop-blur-md mb-10 shadow-[0_10px_30px_rgba(15,23,42,0.06)]'}
+          className={isDark ? 'inline-flex items-center px-5 py-2.5 rounded-full bg-white/10 border border-white/15 backdrop-blur-xl mb-10' : 'inline-flex items-center px-5 py-2.5 rounded-full bg-white/85 border border-white/70 backdrop-blur-xl mb-10 shadow-sm'}
         >
-          <Sparkles className="w-4 h-4 text-orange-500" />
-          <span className={isDark ? 'text-sm text-slate-200 font-semibold tracking-wide' : 'text-sm text-slate-700 font-semibold tracking-wide'}>Pushing the Envelope of Technology</span>
+          <span className={isDark ? 'text-sm text-slate-100 font-medium tracking-[0.18em] uppercase' : 'text-sm text-slate-700 font-medium tracking-[0.18em] uppercase'}>Pushing the Envelope of Technology</span>
         </motion.div>
 
         <motion.h1
@@ -118,8 +86,7 @@ export default function Hero() {
         >
           {statItems.map((stat, idx) => (
             <motion.div key={idx} whileHover={{ scale: 1.04, y: -4 }} className="relative group cursor-default">
-              <div className={isDark ? 'absolute inset-0 bg-[#147dc0]/10 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500' : 'absolute inset-0 bg-[#147dc0]/10 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500'} />
-              <div className={isDark ? 'relative bg-white/[0.04] backdrop-blur-md border border-white/10 rounded-2xl p-6 transition-all duration-500' : 'relative bg-white/80 backdrop-blur-md border border-slate-200 rounded-2xl p-6 transition-all duration-500 shadow-sm'}>
+              <div className={isDark ? 'relative bg-white/[0.08] backdrop-blur-xl border border-white/10 rounded-[28px] p-6 transition-all duration-500 shadow-[0_20px_60px_rgba(0,0,0,0.18)]' : 'relative bg-white/88 backdrop-blur-xl border border-white/70 rounded-[28px] p-6 transition-all duration-500 shadow-[0_20px_60px_rgba(15,23,42,0.08)]'}>
                 <div className="text-4xl md:text-5xl font-extrabold text-[#147dc0] mb-2 tracking-tight">
                   {stat.number}
                 </div>

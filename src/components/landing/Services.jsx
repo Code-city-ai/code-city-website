@@ -18,8 +18,14 @@ export default function Services() {
   return (
     <section id="services" className={`relative py-36 px-6 overflow-hidden ${isDark ? 'bg-[#07111f]' : 'bg-[#f7fafc]'}`}>
       <div className="absolute top-0 inset-x-0 h-px bg-[#f55029]/30" />
-      <div className={isDark ? 'absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_20%_50%,rgba(249,115,22,0.08),transparent)]' : 'absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_20%_50%,rgba(249,115,22,0.10),transparent)]'} />
-      <div className={isDark ? 'absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_80%_50%,rgba(37,99,235,0.08),transparent)]' : 'absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_80%_50%,rgba(37,99,235,0.10),transparent)]'} />
+      <div className="absolute inset-0">
+        <img
+          src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1800&q=80"
+          alt="Team collaboration"
+          className="h-full w-full object-cover"
+        />
+      </div>
+      <div className={isDark ? 'absolute inset-0 bg-[#07111f]/92' : 'absolute inset-0 bg-[#f7fafc]/92'} />
 
       <div className="relative max-w-7xl mx-auto">
         <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }} className="text-center mb-20">
@@ -39,8 +45,7 @@ export default function Services() {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {services.map((service, idx) => (
             <motion.div key={idx} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: idx * 0.08 }} whileHover={{ y: -8 }} className="group relative">
-              <div className={isDark ? 'absolute inset-0 rounded-3xl blur-2xl opacity-0 group-hover:opacity-70 transition-opacity duration-700 bg-[#147dc0]/10' : 'absolute inset-0 rounded-3xl blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 bg-[#147dc0]/10'} />
-              <div className={isDark ? 'relative h-full bg-white/[0.04] backdrop-blur-sm border border-white/[0.08] hover:border-white/20 rounded-3xl p-8 transition-all duration-500 overflow-hidden' : 'relative h-full bg-white/80 backdrop-blur-sm border border-slate-200 hover:border-slate-300 rounded-3xl p-8 transition-all duration-500 overflow-hidden shadow-sm'}>
+              <div className={isDark ? 'relative h-full bg-white/[0.06] backdrop-blur-xl border border-white/10 hover:border-white/20 rounded-[32px] p-8 transition-all duration-500 overflow-hidden shadow-[0_24px_70px_rgba(0,0,0,0.20)]' : 'relative h-full bg-white/88 backdrop-blur-xl border border-white/70 hover:border-white rounded-[32px] p-8 transition-all duration-500 overflow-hidden shadow-[0_24px_70px_rgba(15,23,42,0.08)]'}>
                 <div className="absolute top-0 left-0 right-0 h-[2px] bg-[#147dc0] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 <div className="w-14 h-14 rounded-2xl bg-[#147dc0] flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500">
                   <service.icon className="w-7 h-7 text-white" />

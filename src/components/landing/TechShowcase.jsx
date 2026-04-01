@@ -24,7 +24,14 @@ export default function TechShowcase() {
   return (
     <section id="technology" className={`relative py-36 px-6 overflow-hidden ${isDark ? 'bg-[#07111f]' : 'bg-[#f7fafc]'}`}>
       <div className="absolute top-0 inset-x-0 h-px bg-[#f9761b]/30" />
-      <div className={isDark ? 'absolute inset-0 bg-[linear-gradient(rgba(37,99,235,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(249,115,22,0.05)_1px,transparent_1px)] bg-[size:48px_48px] [mask-image:radial-gradient(ellipse_70%_60%_at_50%_50%,black,transparent)]' : 'absolute inset-0 bg-[linear-gradient(rgba(37,99,235,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(249,115,22,0.06)_1px,transparent_1px)] bg-[size:48px_48px] [mask-image:radial-gradient(ellipse_70%_60%_at_50%_50%,black,transparent)]'} />
+      <div className="absolute inset-0">
+        <img
+          src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1800&q=80"
+          alt="Technology background"
+          className="h-full w-full object-cover"
+        />
+      </div>
+      <div className={isDark ? 'absolute inset-0 bg-[#07111f]/90' : 'absolute inset-0 bg-[#f7fafc]/92'} />
 
       <div className="relative max-w-7xl mx-auto">
         <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }} className="text-center mb-20">
@@ -44,8 +51,7 @@ export default function TechShowcase() {
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-16">
           {technologies.map((tech, idx) => (
             <motion.div key={idx} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: idx * 0.07 }} whileHover={{ y: -6, scale: 1.04 }} className="group relative">
-              <div className={isDark ? 'absolute inset-0 bg-[#147dc0]/10 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500' : 'absolute inset-0 bg-[#147dc0]/10 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500'} />
-              <div className={isDark ? 'relative bg-white/[0.04] backdrop-blur-sm border border-white/[0.08] hover:border-white/20 rounded-2xl p-5 text-center transition-all duration-400' : 'relative bg-white/80 backdrop-blur-sm border border-slate-200 hover:border-slate-300 rounded-2xl p-5 text-center transition-all duration-400 shadow-sm'}>
+              <div className={isDark ? 'relative bg-white/[0.06] backdrop-blur-xl border border-white/10 hover:border-white/20 rounded-[24px] p-5 text-center transition-all duration-400 shadow-[0_20px_60px_rgba(0,0,0,0.18)]' : 'relative bg-white/88 backdrop-blur-xl border border-white/70 hover:border-white rounded-[24px] p-5 text-center transition-all duration-400 shadow-[0_20px_60px_rgba(15,23,42,0.08)]'}>
                 <div className="w-12 h-12 rounded-xl bg-[#147dc0] flex items-center justify-center mx-auto mb-3 shadow-lg">
                   <tech.icon className="w-6 h-6 text-white" />
                 </div>
@@ -56,8 +62,7 @@ export default function TechShowcase() {
         </div>
 
         <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }} className="relative">
-          <div className={isDark ? 'absolute inset-0 bg-[#147dc0]/10 rounded-3xl blur-3xl' : 'absolute inset-0 bg-[#147dc0]/10 rounded-3xl blur-3xl'} />
-          <div className={isDark ? 'relative bg-white/[0.04] backdrop-blur-md border border-white/[0.08] rounded-3xl p-12 md:p-16 overflow-hidden' : 'relative bg-white/85 backdrop-blur-md border border-slate-200 rounded-3xl p-12 md:p-16 overflow-hidden shadow-sm'}>
+          <div className={isDark ? 'relative bg-white/[0.06] backdrop-blur-xl border border-white/10 rounded-[36px] p-12 md:p-16 overflow-hidden shadow-[0_28px_90px_rgba(0,0,0,0.24)]' : 'relative bg-white/90 backdrop-blur-xl border border-white/70 rounded-[36px] p-12 md:p-16 overflow-hidden shadow-[0_28px_90px_rgba(15,23,42,0.10)]'}>
             <div className="relative text-center">
               <h3 className={isDark ? 'text-3xl md:text-4xl font-extrabold text-white mb-4 tracking-tight' : 'text-3xl md:text-4xl font-extrabold text-slate-950 mb-4 tracking-tight'}>
                 Built for scale. Styled with precision.

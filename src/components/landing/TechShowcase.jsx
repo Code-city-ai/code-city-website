@@ -24,14 +24,7 @@ export default function TechShowcase() {
   return (
     <section id="technology" className={`relative py-36 px-6 overflow-hidden ${isDark ? 'bg-[#07111f]' : 'bg-[#f7fafc]'}`}>
       <div className="absolute top-0 inset-x-0 h-px bg-[#f9761b]/30" />
-      <div className="absolute inset-0">
-        <img
-          src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1800&q=80"
-          alt="Technology background"
-          className="h-full w-full object-cover"
-        />
-      </div>
-      <div className={isDark ? 'absolute inset-0 bg-[#07111f]/90' : 'absolute inset-0 bg-[#f7fafc]/92'} />
+      <div className={isDark ? 'absolute inset-0 bg-[#07111f]' : 'absolute inset-0 bg-[#f7fafc]'} />
 
       <div className="relative max-w-7xl mx-auto">
         <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }} className="text-center mb-20">

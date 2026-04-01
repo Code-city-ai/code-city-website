@@ -11,14 +11,7 @@ export default function CTA() {
   return (
     <section className={`relative py-36 px-6 overflow-hidden ${isDark ? 'bg-[#07111f]' : 'bg-[#f7fafc]'}`}>
       <div className="absolute top-0 inset-x-0 h-px bg-[#147dc0]/30" />
-      <div className="absolute inset-0">
-        <img
-          src="https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1800&q=80"
-          alt="Business meeting"
-          className="h-full w-full object-cover"
-        />
-      </div>
-      <div className={isDark ? 'absolute inset-0 bg-[#07111f]/86' : 'absolute inset-0 bg-white/86'} />
+      <div className={isDark ? 'absolute inset-0 bg-[#07111f]' : 'absolute inset-0 bg-[#f7fafc]'} />
 
       <div className="relative max-w-4xl mx-auto text-center">
         <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}>

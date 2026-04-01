@@ -16,16 +16,9 @@ export default function Hero() {
 
   return (
     <div className={`relative min-h-screen flex items-center justify-center overflow-hidden ${isDark ? 'bg-[#07111f]' : 'bg-[#f7fafc]'}`}>
-      <div className="absolute inset-0">
-        <img
-          src="https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1800&q=80"
-          alt="Modern workspace"
-          className="h-full w-full object-cover"
-        />
-      </div>
-      <div className={isDark ? 'absolute inset-0 bg-[#07111f]/78' : 'absolute inset-0 bg-white/72'} />
-      <div className={isDark ? 'absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(20,125,192,0.22),transparent_35%)]' : 'absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(20,125,192,0.14),transparent_35%)]'} />
-      <div className={isDark ? 'absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,rgba(245,80,41,0.18),transparent_32%)]' : 'absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,rgba(245,80,41,0.12),transparent_32%)]'} />
+      <div className={isDark ? 'absolute inset-0 bg-[#07111f]' : 'absolute inset-0 bg-[#f7fafc]'} />
+      <div className={isDark ? 'absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(20,125,192,0.18),transparent_35%)]' : 'absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(20,125,192,0.10),transparent_35%)]'} />
+      <div className={isDark ? 'absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,rgba(245,80,41,0.14),transparent_32%)]' : 'absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,rgba(245,80,41,0.08),transparent_32%)]'} />
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 pt-40 pb-32 text-center">
         <motion.div

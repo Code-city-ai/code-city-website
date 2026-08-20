@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowUpRight, BriefcaseBusiness } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
 
 function ProjectLink({ href, children }) {
   return (
@@ -54,13 +54,7 @@ export default function SelectedWork() {
             className="work-card work-card-inspire"
           >
             <div className="work-visual" aria-hidden="true">
-              <div className="inspire-lockup">
-                <span><BriefcaseBusiness /></span>
-                <div>
-                  <strong>INSPIRE</strong>
-                  <small>CAPITAL</small>
-                </div>
-              </div>
+              <img className="inspire-logo" src="/brands/inspire-capital.svg" alt="" />
             </div>
             <div className="work-card-body">
               <div className="work-card-copy">

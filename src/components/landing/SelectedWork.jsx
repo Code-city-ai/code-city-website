@@ -85,10 +85,31 @@ export default function SelectedWork() {
               </div>
             </div>
           </article>
+
+          <article
+            className="work-card work-card-rituals"
+          >
+            <div className="work-visual" aria-hidden="true">
+              <div className="rituals-lockup">
+                <img className="rituals-logo" src="/brands/rituals.png" alt="" loading="lazy" />
+                <span>RITUALS</span>
+              </div>
+            </div>
+            <div className="work-card-body">
+              <div className="work-card-copy">
+                <span className="work-type">Native productivity</span>
+                <h3>Rituals</h3>
+                <p>A daily planning and life-management system built as one considered experience across mobile and desktop.</p>
+              </div>
+              <div className="work-status" aria-label="Supported Rituals platforms">
+                <span>iOS</span><span>Android</span><span>macOS</span>
+              </div>
+            </div>
+          </article>
         </div>
 
         <div className="work-footnote">
-          <span>03 products</span>
+          <span>04 products</span>
           <p>Distinct businesses. One standard of craft.</p>
         </div>
       </div>

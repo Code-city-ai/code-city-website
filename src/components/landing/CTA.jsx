@@ -1,61 +1,121 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { ArrowRight, Mail, MessageSquare, Sparkles } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { useThemeMode } from './ThemeContext';
+import React, { useState } from 'react';
+import { ArrowUpRight, CheckCircle2, LoaderCircle } from 'lucide-react';
+import { submitInquiry } from '@/lib/inquiries';
+
+const initialForm = {
+  name: '',
+  email: '',
+  organization: '',
+  projectType: '',
+  budgetRange: '',
+  message: '',
+  website: '',
+};
 
 export default function CTA() {
-  const { isDark } = useThemeMode();
+  const [form, setForm] = useState(initialForm);
+  const [status, setStatus] = useState({ type: 'idle', message: '' });
+
+  const updateField = (event) => {
+    setForm((current) => ({ ...current, [event.target.name]: event.target.value }));
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setStatus({ type: 'loading', message: '' });
+
+    try {
+      await submitInquiry({
+        ...form,
+        sourceUrl: window.location.href,
+      });
+      setForm(initialForm);
+      setStatus({ type: 'success', message: 'Your project is in. We’ll review it and follow up personally.' });
+    } catch (error) {
+      setStatus({ type: 'error', message: error.message });
+    }
+  };
 
   return (
-    <section className={`relative py-36 px-6 overflow-hidden ${isDark ? 'bg-[#07111f]' : 'bg-[#f7fafc]'}`}>
-      <div className="absolute top-0 inset-x-0 h-px bg-[#147dc0]/30" />
-      <div className={isDark ? 'absolute inset-0 bg-[#07111f]' : 'absolute inset-0 bg-[#f7fafc]'} />
+    <section className="section contact-section" id="contact" aria-labelledby="contact-title">
+      <div className="site-container contact-layout">
+        <div className="contact-copy">
+          <div className="section-label section-label-inverse"><span>05</span> Start a project</div>
+          <h2 id="contact-title">Let’s build the thing people remember.</h2>
+          <p>Tell us what you are solving, where you are stuck, and what success looks like. You do not need a perfect brief.</p>
+          <div className="contact-note">
+            <span>What happens next</span>
+            <p>We review every inquiry ourselves, then respond with a clear recommendation—not a generic sales sequence.</p>
+          </div>
+        </div>
 
-      <div className="relative max-w-4xl mx-auto text-center">
-        <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}>
-          <div className={isDark ? 'inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-md mb-10' : 'inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/80 border border-slate-200 backdrop-blur-md mb-10'}>
-            <Sparkles className="w-4 h-4 text-orange-500" />
-            <span className={isDark ? 'text-sm text-slate-200 font-semibold tracking-wide' : 'text-sm text-slate-700 font-semibold tracking-wide'}>Let's Work Together</span>
+        <form className="inquiry-form" onSubmit={handleSubmit} noValidate>
+          <div className="form-row">
+            <label>
+              <span>Your name</span>
+              <input name="name" value={form.name} onChange={updateField} autoComplete="name" maxLength={120} required placeholder="Name" />
+            </label>
+            <label>
+              <span>Work email</span>
+              <input name="email" value={form.email} onChange={updateField} type="email" autoComplete="email" maxLength={254} required placeholder="you@company.com" />
+            </label>
           </div>
 
-          <h2 className={isDark ? 'text-5xl md:text-7xl font-extrabold text-white mb-6 leading-[1.05] tracking-tight' : 'text-5xl md:text-7xl font-extrabold text-slate-950 mb-6 leading-[1.05] tracking-tight'}>
-            Ready to Build
-            <br />
-            <span className="text-[#f55029]">Something Amazing?</span>
-          </h2>
+          <label>
+            <span>Company or organization <em>Optional</em></span>
+            <input name="organization" value={form.organization} onChange={updateField} autoComplete="organization" maxLength={160} placeholder="Company name" />
+          </label>
 
-          <p className={isDark ? 'text-xl text-slate-400 max-w-2xl mx-auto mb-16 leading-relaxed' : 'text-xl text-slate-600 max-w-2xl mx-auto mb-16 leading-relaxed'}>
-            Let's turn your vision into reality. Get in touch with our team and start your transformation today.
-          </p>
-        </motion.div>
+          <div className="form-row">
+            <label>
+              <span>What are we building?</span>
+              <select name="projectType" value={form.projectType} onChange={updateField} required>
+                <option value="" disabled>Select a project type</option>
+                <option value="new-product">A new digital product</option>
+                <option value="existing-product">A major product evolution</option>
+                <option value="mobile-app">A mobile application</option>
+                <option value="growth-system">A growth or marketing system</option>
+                <option value="not-sure">I am not sure yet</option>
+              </select>
+            </label>
+            <label>
+              <span>Investment range <em>Optional</em></span>
+              <select name="budgetRange" value={form.budgetRange} onChange={updateField}>
+                <option value="">Choose a range</option>
+                <option value="under-10k">Under $10k</option>
+                <option value="10k-25k">$10k–$25k</option>
+                <option value="25k-75k">$25k–$75k</option>
+                <option value="75k-plus">$75k+</option>
+                <option value="undecided">Not decided</option>
+              </select>
+            </label>
+          </div>
 
-        <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.2 }} className="max-w-lg mx-auto">
-          <div className="relative">
-            <div className={isDark ? 'relative bg-white/[0.08] backdrop-blur-xl border border-white/10 rounded-[32px] p-8 overflow-hidden shadow-[0_24px_70px_rgba(0,0,0,0.22)]' : 'relative bg-white/92 backdrop-blur-xl border border-white/70 rounded-[32px] p-8 overflow-hidden shadow-[0_24px_70px_rgba(15,23,42,0.10)]'}>
-              <div className="absolute top-0 left-0 right-0 h-[2px] bg-[#147dc0]" />
-              <div className="flex flex-col gap-4">
-                <Input type="email" placeholder="Enter your email address" className={isDark ? 'bg-white/[0.04] border-white/10 text-white placeholder:text-slate-500 h-14 text-base rounded-xl focus-visible:ring-blue-500 focus-visible:border-blue-500' : 'bg-white border-slate-200 text-slate-950 placeholder:text-slate-400 h-14 text-base rounded-xl focus-visible:ring-blue-500 focus-visible:border-blue-500'} />
-                <Button size="lg" className="bg-[#f55029] hover:bg-[#f9761b] text-white h-14 text-base rounded-xl shadow-xl">
-                  Get Started
-                  <ArrowRight className="ml-2 w-5 h-5" />
-                </Button>
-              </div>
+          <label>
+            <span>Tell us about the opportunity</span>
+            <textarea name="message" value={form.message} onChange={updateField} minLength={20} maxLength={3000} required rows={5} placeholder="What are you trying to change, launch, or improve?" />
+          </label>
 
-              <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
-                <Button variant="outline" className={isDark ? 'border-white/10 text-slate-300 hover:text-white hover:bg-white/5 rounded-xl' : 'border-slate-200 text-slate-700 hover:bg-slate-50 rounded-xl'}>
-                  <Mail className="mr-2 w-4 h-4" />
-                  Email Us
-                </Button>
-                <Button variant="outline" className={isDark ? 'border-white/10 text-slate-300 hover:text-white hover:bg-white/5 rounded-xl' : 'border-slate-200 text-slate-700 hover:bg-slate-50 rounded-xl'}>
-                  <MessageSquare className="mr-2 w-4 h-4" />
-                  Live Chat
-                </Button>
-              </div>
+          <label className="honeypot" aria-hidden="true">
+            <span>Website</span>
+            <input name="website" value={form.website} onChange={updateField} tabIndex={-1} autoComplete="off" />
+          </label>
+
+          <div className="form-footer">
+            <p>By submitting, you agree that we may use these details to respond to your inquiry.</p>
+            <button className="submit-button" type="submit" disabled={status.type === 'loading'}>
+              {status.type === 'loading' ? <LoaderCircle className="spin" aria-hidden="true" /> : <ArrowUpRight aria-hidden="true" />}
+              {status.type === 'loading' ? 'Sending' : 'Send project inquiry'}
+            </button>
+          </div>
+
+          {status.type !== 'idle' && status.type !== 'loading' && (
+            <div className={`form-status form-status-${status.type}`} role="status">
+              {status.type === 'success' && <CheckCircle2 aria-hidden="true" />}
+              {status.message}
             </div>
-          </div>
-        </motion.div>
+          )}
+        </form>
       </div>
     </section>
   );

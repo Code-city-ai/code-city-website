@@ -42,7 +42,7 @@ export default function Hero() {
                 Start a project
                 <ArrowUpRight aria-hidden="true" />
               </a>
-              <a className="button button-secondary" href="#services">
+              <a className="button button-secondary" href="#work">
                 Explore our work
                 <ArrowDownRight aria-hidden="true" />
               </a>
@@ -55,7 +55,7 @@ export default function Hero() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.7, delay: 0.18 }}
           >
-            <div className="manifesto-index">01 / 04</div>
+            <div className="manifesto-index">01 / 06</div>
             <p>One senior team. One accountable delivery path. No handoff maze.</p>
             <div className="capability-list" aria-label="Core capabilities">
               {capabilities.map((capability, index) => (

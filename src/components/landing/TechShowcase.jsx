@@ -25,7 +25,7 @@ export default function TechShowcase() {
       <div className="site-container">
         <div className="technology-panel">
           <div className="technology-copy">
-            <div className="section-label"><span>04</span> Technology</div>
+            <div className="section-label"><span>05</span> Technology</div>
             <h2 id="technology-title">Technical when it matters. Human everywhere.</h2>
             <p>We choose tools for the product in front of us—not for trend value. The result is software that is easier to use, operate, and extend.</p>
             <div className="stack-cloud" aria-label="Technologies we work with">

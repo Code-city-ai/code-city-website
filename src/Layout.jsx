@@ -3,6 +3,7 @@ import { Menu, Moon, Sun, X } from 'lucide-react';
 
 const navItems = [
   { label: 'Capabilities', href: '#services' },
+  { label: 'Work', href: '#work' },
   { label: 'Approach', href: '#why-us' },
   { label: 'Technology', href: '#technology' },
 ];

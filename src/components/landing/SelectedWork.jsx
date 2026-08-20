@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowUpRight } from 'lucide-react';
 
 const airdropServices = [
@@ -17,6 +18,8 @@ function ProjectLink({ href, children }) {
 }
 
 export default function SelectedWork() {
+  const reduceMotion = useReducedMotion();
+
   return (
     <section className="section work-section" id="work" aria-labelledby="work-title">
       <div className="site-container">
@@ -37,7 +40,13 @@ export default function SelectedWork() {
           >
             <div className="work-visual work-visual-airdrop" aria-hidden="true">
               <img className="project-site-preview" src="/portfolio/airdrop-ja.jpg" alt="" loading="lazy" />
-              <div className="airdrop-phone-cluster">
+              <motion.div
+                className="airdrop-phone-cluster"
+                initial={reduceMotion ? false : { opacity: 0, x: -24 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, amount: 0.35 }}
+                transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+              >
                 <img
                   className="airdrop-phone airdrop-phone-light"
                   src="/portfolio/airdrop-phone-light.png"
@@ -51,14 +60,44 @@ export default function SelectedWork() {
                   loading="lazy"
                 />
                 <div className="airdrop-service-boxes">
-                  {airdropServices.map((service) => (
-                    <div className="airdrop-service-box" key={service.name}>
+                  {airdropServices.map((service, index) => (
+                    <motion.div
+                      className="airdrop-service-box"
+                      key={service.name}
+                      initial={reduceMotion ? false : { opacity: 0, y: 16, scale: 0.96 }}
+                      whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                      viewport={{ once: true, amount: 0.5 }}
+                      transition={{
+                        duration: 0.5,
+                        delay: reduceMotion ? 0 : 0.16 + (index * 0.09),
+                        ease: [0.22, 1, 0.36, 1],
+                      }}
+                    >
                       <img src={service.icon} alt="" loading="lazy" />
                       <span>{service.name}</span>
-                    </div>
+                    </motion.div>
                   ))}
                 </div>
-              </div>
+              </motion.div>
+              <motion.div
+                className="airdrop-logo-stage"
+                initial={reduceMotion ? false : { opacity: 0, x: 24 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, amount: 0.35 }}
+                transition={{ duration: 0.7, delay: reduceMotion ? 0 : 0.08, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <picture className="airdrop-logo-lockup">
+                  <source
+                    media="(prefers-reduced-motion: reduce)"
+                    srcSet="/portfolio/airdrop-logo-static.png"
+                  />
+                  <img
+                    src="/portfolio/airdrop-logo-animated.webp"
+                    alt=""
+                    loading="lazy"
+                  />
+                </picture>
+              </motion.div>
             </div>
             <div className="work-card-body">
               <div className="work-card-copy">

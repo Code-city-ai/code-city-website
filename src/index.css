@@ -648,9 +648,41 @@ a {
   background: #f4f0e8;
 }
 
+.airdrop-logo-stage {
+  position: absolute;
+  z-index: 2;
+  inset: 18% 0 0 44%;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: #f4f0e8;
+}
+
 :root[data-theme='dark'] .airdrop-phone-cluster {
   border-right-color: rgba(245, 241, 232, 0.14);
+}
+
+:root[data-theme='dark'] .airdrop-phone-cluster,
+:root[data-theme='dark'] .airdrop-logo-stage {
   background: #030405;
+}
+
+.airdrop-logo-lockup {
+  position: relative;
+  width: min(86%, 620px);
+  aspect-ratio: 3.2 / 1;
+  display: block;
+  overflow: hidden;
+}
+
+.airdrop-logo-lockup img {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: auto;
+  display: block;
+  transform: translateY(-50%);
 }
 
 .airdrop-phone {
@@ -663,6 +695,7 @@ a {
   display: block;
   object-fit: contain;
   object-position: top center;
+  animation: airdrop-phone-float 5.4s ease-in-out infinite;
 }
 
 .airdrop-phone-dark { display: none; }
@@ -704,12 +737,26 @@ a {
   width: clamp(34px, 4vw, 54px);
   height: clamp(34px, 4vw, 54px);
   object-fit: contain;
+  animation: airdrop-service-float 4.2s ease-in-out infinite;
 }
+
+.airdrop-service-box:nth-child(2) img { animation-delay: -1.4s; }
+.airdrop-service-box:nth-child(3) img { animation-delay: -2.8s; }
 
 .airdrop-service-box span {
   font-size: 0.62rem;
   font-weight: 720;
   letter-spacing: 0.02em;
+}
+
+@keyframes airdrop-phone-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-7px); }
+}
+
+@keyframes airdrop-service-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
 }
 
 .work-card-autopilot,
@@ -1223,6 +1270,13 @@ a {
   .airdrop-phone-cluster {
     inset: 18% auto 0 0;
     width: 58%;
+  }
+  .airdrop-logo-stage {
+    inset: 18% 0 0 58%;
+  }
+  .airdrop-logo-lockup {
+    width: 90%;
+    aspect-ratio: 2.8 / 1;
   }
   .airdrop-phone {
     top: 6%;

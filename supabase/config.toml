@@ -1,0 +1,7 @@
+project_id = "code-city-website"
+
+[db]
+major_version = 17
+
+[functions.submit-inquiry]
+verify_jwt = true

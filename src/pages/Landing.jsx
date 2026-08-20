@@ -7,7 +7,7 @@ import CTA from '../components/landing/CTA';
 
 export default function Landing() {
   return (
-    <div className="bg-slate-950">
+    <div>
       <Hero />
       <Services />
       <WhyUs />

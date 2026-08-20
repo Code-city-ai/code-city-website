@@ -1,39 +1,22 @@
-**Welcome to your Base44 project** 
+# Code City website
 
-**About**
+The production Code City marketing site. The frontend is a lightweight React and Vite application deployed through GitHub Pages. Supabase owns the secure project-inquiry backend.
 
-View and Edit  your app on [Base44.com](http://Base44.com) 
+## Architecture
 
-This project contains everything you need to run your app locally.
+- **Frontend:** React, Vite, Framer Motion, and purpose-built CSS
+- **Publishing:** GitHub Pages through `.github/workflows/deploy-pages.yml`
+- **Backend:** Supabase Postgres and the `submit-inquiry` Edge Function
+- **Data boundary:** browsers cannot read or write the inquiry table directly; the Edge Function validates, rate-limits, and writes with server-only credentials
 
-**Edit the code in your local development environment**
+## Local development
 
-Any change pushed to the repo will also be reflected in the Base44 Builder.
+Copy `.env.example` to `.env.local` and supply the public Supabase project URL and publishable anon key. Then use the package scripts for development, linting, type checks, and production builds.
 
-**Prerequisites:** 
+## Supabase
 
-1. Clone the repository using the project's Git URL 
-2. Navigate to the project directory
-3. Install dependencies: `npm install`
-4. Create an `.env.local` file and set the right environment variables
+Database changes live in `supabase/migrations`. The public inquiry endpoint lives in `supabase/functions/submit-inquiry`. The function expects `ALLOWED_ORIGINS` as a comma-separated allowlist and may use `RATE_LIMIT_SALT` to create non-reversible client-address hashes.
 
-```
-VITE_BASE44_APP_ID=your_app_id
-VITE_BASE44_APP_BASE_URL=your_backend_url
+## Deployment
 
-e.g.
-VITE_BASE44_APP_ID=cbef744a8545c389ef439ea6
-VITE_BASE44_APP_BASE_URL=https://my-to-do-list-81bfaad7.base44.app
-```
-
-Run the app: `npm run dev`
-
-**Publish your changes**
-
-Open [Base44.com](http://Base44.com) and click on Publish.
-
-**Docs & Support**
-
-Documentation: [https://docs.base44.com/Integrations/Using-GitHub](https://docs.base44.com/Integrations/Using-GitHub)
-
-Support: [https://app.base44.com/support](https://app.base44.com/support)
+The Pages workflow reads `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` from GitHub Actions secrets. A custom domain is configured through GitHub Pages after its DNS records are verified.

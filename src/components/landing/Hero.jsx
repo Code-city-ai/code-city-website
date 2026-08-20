@@ -1,101 +1,85 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight, ChevronDown } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { useThemeMode } from './ThemeContext';
+import { ArrowDownRight, ArrowUpRight } from 'lucide-react';
 
-const statItems = [
-  { number: '100+', label: 'Projects Delivered' },
-  { number: '50+', label: 'Happy Clients' },
-  { number: '99%', label: 'Satisfaction Rate' },
-  { number: '24/7', label: 'Support Available' },
-];
+const capabilities = ['Product strategy', 'Experience design', 'Software engineering', 'Growth systems'];
 
 export default function Hero() {
-  const { isDark } = useThemeMode();
-
   return (
-    <div className={`relative min-h-screen flex items-center justify-center overflow-hidden ${isDark ? 'bg-[#07111f]' : 'bg-[#f7fafc]'}`}>
-      <div className={isDark ? 'absolute inset-0 bg-[#07111f]' : 'absolute inset-0 bg-[#f7fafc]'} />
-      <div className={isDark ? 'absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(20,125,192,0.18),transparent_35%)]' : 'absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(20,125,192,0.10),transparent_35%)]'} />
-      <div className={isDark ? 'absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,rgba(245,80,41,0.14),transparent_32%)]' : 'absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,rgba(245,80,41,0.08),transparent_32%)]'} />
+    <section className="hero" aria-labelledby="hero-title">
+      <div className="hero-grid" aria-hidden="true" />
+      <div className="hero-orbit hero-orbit-one" aria-hidden="true" />
+      <div className="hero-orbit hero-orbit-two" aria-hidden="true" />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6 pt-40 pb-32 text-center">
+      <div className="site-container hero-inner">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          className="hero-kicker"
+          initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className={isDark ? 'inline-flex items-center px-5 py-2.5 rounded-full bg-white/10 border border-white/15 backdrop-blur-xl mb-10' : 'inline-flex items-center px-5 py-2.5 rounded-full bg-white/85 border border-white/70 backdrop-blur-xl mb-10 shadow-sm'}
+          transition={{ duration: 0.6 }}
         >
-          <span className={isDark ? 'text-sm text-slate-100 font-medium tracking-[0.18em] uppercase' : 'text-sm text-slate-700 font-medium tracking-[0.18em] uppercase'}>Pushing the Envelope of Technology</span>
+          <span className="hero-kicker-dot" />
+          Independent digital product studio
         </motion.div>
 
-        <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, delay: 0.15 }}
-          className={isDark ? 'text-6xl md:text-8xl lg:text-9xl font-extrabold mb-8 leading-[1.02] tracking-tight text-white' : 'text-6xl md:text-8xl lg:text-9xl font-extrabold mb-8 leading-[1.02] tracking-tight text-slate-950'}
-        >
-          <span className={isDark ? 'text-[#f55029]' : 'text-[#f55029]'}>
-            Build the Future
-          </span>
-          <br />
-          <span>With CodeCity</span>
-        </motion.h1>
+        <div className="hero-layout">
+          <motion.div
+            className="hero-copy"
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.08 }}
+          >
+            <h1 id="hero-title">
+              Serious ideas.
+              <span>Remarkable software.</span>
+            </h1>
+            <p>
+              Code City unites strategy, design, engineering, and growth to turn ambitious ideas into digital products people choose to use.
+            </p>
 
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.35 }}
-          className={isDark ? 'text-xl md:text-2xl text-slate-400 mb-14 max-w-3xl mx-auto leading-relaxed' : 'text-xl md:text-2xl text-slate-600 mb-14 max-w-3xl mx-auto leading-relaxed'}
-        >
-          World-class software development and marketing solutions.
-          <br className="hidden md:block" />
-          <span className="text-[#147dc0] font-semibold">
-            Efficient. Affordable. Exceptional.
-          </span>
-        </motion.p>
+            <div className="hero-actions">
+              <a className="button button-primary" href="#contact">
+                Start a project
+                <ArrowUpRight aria-hidden="true" />
+              </a>
+              <a className="button button-secondary" href="#services">
+                Explore our work
+                <ArrowDownRight aria-hidden="true" />
+              </a>
+            </div>
+          </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.5 }}
-          className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-24"
-        >
-          <Button size="lg" className="bg-[#f55029] hover:bg-[#f9761b] text-white px-10 py-6 text-lg rounded-full shadow-xl">
-            Start Your Project
-            <ArrowRight className="ml-2 w-5 h-5" />
-          </Button>
-          <Button size="lg" variant="outline" className={isDark ? 'border-white/10 text-slate-200 hover:bg-white/5 px-10 py-6 text-lg rounded-full' : 'border-slate-200 text-slate-700 hover:bg-white px-10 py-6 text-lg rounded-full'}>
-            Explore Services
-          </Button>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.7 }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6"
-        >
-          {statItems.map((stat, idx) => (
-            <motion.div key={idx} whileHover={{ scale: 1.04, y: -4 }} className="relative group cursor-default">
-              <div className={isDark ? 'relative bg-white/[0.08] backdrop-blur-xl border border-white/10 rounded-[28px] p-6 transition-all duration-500 shadow-[0_20px_60px_rgba(0,0,0,0.18)]' : 'relative bg-white/88 backdrop-blur-xl border border-white/70 rounded-[28px] p-6 transition-all duration-500 shadow-[0_20px_60px_rgba(15,23,42,0.08)]'}>
-                <div className="text-4xl md:text-5xl font-extrabold text-[#147dc0] mb-2 tracking-tight">
-                  {stat.number}
+          <motion.aside
+            className="hero-manifesto"
+            initial={{ opacity: 0, x: 24 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.7, delay: 0.18 }}
+          >
+            <div className="manifesto-index">01 / 04</div>
+            <p>One senior team. One accountable delivery path. No handoff maze.</p>
+            <div className="capability-list" aria-label="Core capabilities">
+              {capabilities.map((capability, index) => (
+                <div className="capability-row" key={capability}>
+                  <span>{String(index + 1).padStart(2, '0')}</span>
+                  <strong>{capability}</strong>
                 </div>
-                <div className={isDark ? 'text-sm text-slate-500 font-medium tracking-wide' : 'text-sm text-slate-500 font-medium tracking-wide'}>{stat.label}</div>
-              </div>
-            </motion.div>
-          ))}
+              ))}
+            </div>
+          </motion.aside>
+        </div>
+
+        <motion.div
+          className="hero-proof"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.7, delay: 0.35 }}
+        >
+          <span>Built for teams who value</span>
+          <strong>Clarity</strong>
+          <strong>Craft</strong>
+          <strong>Momentum</strong>
         </motion.div>
       </div>
-
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.5, duration: 1 }} className={isDark ? 'absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-slate-500' : 'absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-slate-400'}>
-        <span className="text-xs tracking-widest uppercase">Scroll</span>
-        <motion.div animate={{ y: [0, 8, 0] }} transition={{ duration: 1.5, repeat: Infinity }}>
-          <ChevronDown className="w-5 h-5" />
-        </motion.div>
-      </motion.div>
-    </div>
+    </section>
   );
 }

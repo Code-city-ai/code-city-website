@@ -674,6 +674,56 @@ a {
   background: #f4f0e8;
 }
 
+.airdrop-rings {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+.airdrop-ring {
+  position: absolute;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: 0 20px 44px rgba(172, 169, 169, 0.11);
+  transform-origin: center;
+}
+
+.airdrop-ring-outer {
+  width: min(72%, 420px);
+  opacity: 0.34;
+  animation: airdrop-ring-outer-pulse 3s ease-in-out 0.2s infinite;
+}
+
+.airdrop-ring-middle {
+  width: min(56.4%, 329px);
+  opacity: 0.56;
+  animation: airdrop-ring-middle-pulse 3s ease-in-out 0.1s infinite;
+}
+
+.airdrop-ring-inner {
+  width: min(43.4%, 253px);
+  opacity: 0.92;
+  animation: airdrop-ring-inner-pulse 3s ease-in-out infinite;
+}
+
+:root[data-theme='dark'] .airdrop-ring-outer {
+  background: rgba(56, 56, 56, 0.14);
+  box-shadow: 0 30px 62px rgba(0, 0, 0, 0.11);
+}
+
+:root[data-theme='dark'] .airdrop-ring-middle {
+  background: rgba(36, 36, 36, 0.1);
+  box-shadow: 0 23px 49px rgba(0, 0, 0, 0.11);
+}
+
+:root[data-theme='dark'] .airdrop-ring-inner {
+  background: rgba(50, 50, 50, 0.1);
+  box-shadow: 0 16px 33px rgba(0, 0, 0, 0.11);
+}
+
 :root[data-theme='dark'] .airdrop-promo-panel {
   border-right-color: rgba(245, 241, 232, 0.14);
 }
@@ -685,7 +735,8 @@ a {
 
 .airdrop-logo-lockup {
   position: relative;
-  width: min(86%, 620px);
+  z-index: 2;
+  width: clamp(112px, 28%, 190px);
   aspect-ratio: 3.2 / 1;
   display: block;
   overflow: hidden;
@@ -699,6 +750,21 @@ a {
   height: auto;
   display: block;
   transform: translateY(-50%);
+}
+
+@keyframes airdrop-ring-outer-pulse {
+  0%, 100% { opacity: 0.3; transform: scale(0.95); }
+  50% { opacity: 0.58; transform: scale(1.08); }
+}
+
+@keyframes airdrop-ring-middle-pulse {
+  0%, 100% { opacity: 0.5; transform: scale(0.95); }
+  50% { opacity: 0.78; transform: scale(1.06); }
+}
+
+@keyframes airdrop-ring-inner-pulse {
+  0%, 100% { opacity: 0.88; transform: scale(1); }
+  50% { opacity: 1; transform: scale(0.94); }
 }
 
 .airdrop-promo-art {
@@ -1263,15 +1329,18 @@ a {
   .work-card-inspire .work-visual { min-height: 150px; }
   .airdrop-promo-panel {
     inset: 18% auto 0 0;
-    width: 58%;
+    width: 54%;
   }
   .airdrop-logo-stage {
-    inset: 18% 0 0 58%;
+    inset: 18% 0 0 54%;
   }
   .airdrop-logo-lockup {
-    width: 90%;
+    width: min(70%, 112px);
     aspect-ratio: 2.8 / 1;
   }
+  .airdrop-ring-outer { width: 94%; }
+  .airdrop-ring-middle { width: 74%; }
+  .airdrop-ring-inner { width: 57%; }
   .work-visual { min-height: 240px; }
   .work-card-featured .work-visual { height: 250px; min-height: 0; }
   .work-card-body { min-height: 0; }

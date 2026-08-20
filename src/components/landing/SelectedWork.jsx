@@ -61,6 +61,11 @@ export default function SelectedWork() {
                 viewport={{ once: true, amount: 0.35 }}
                 transition={{ duration: 0.7, delay: reduceMotion ? 0 : 0.08, ease: [0.22, 1, 0.36, 1] }}
               >
+                <div className="airdrop-rings" aria-hidden="true">
+                  <span className="airdrop-ring airdrop-ring-outer" />
+                  <span className="airdrop-ring airdrop-ring-middle" />
+                  <span className="airdrop-ring airdrop-ring-inner" />
+                </div>
                 <picture className="airdrop-logo-lockup">
                   <source
                     media="(prefers-reduced-motion: reduce)"

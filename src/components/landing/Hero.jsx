@@ -8,8 +8,6 @@ export default function Hero() {
   return (
     <section className="hero" aria-labelledby="hero-title">
       <div className="hero-grid" aria-hidden="true" />
-      <div className="hero-orbit hero-orbit-one" aria-hidden="true" />
-      <div className="hero-orbit hero-orbit-two" aria-hidden="true" />
 
       <div className="site-container hero-inner">
         <motion.div
@@ -42,7 +40,7 @@ export default function Hero() {
                 Start a project
                 <ArrowUpRight aria-hidden="true" />
               </a>
-              <a className="button button-secondary" href="#work">
+              <a className="button button-secondary" href="#work-grid">
                 Explore our work
                 <ArrowDownRight aria-hidden="true" />
               </a>

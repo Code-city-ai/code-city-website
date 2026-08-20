@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Menu, Moon, Sun, X } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { ArrowUpRight, Menu, Moon, Sun, X } from 'lucide-react';
 
 const navItems = [
   { label: 'Capabilities', href: '#services' },
@@ -20,6 +20,11 @@ function Brand() {
 export default function Layout({ children }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [theme, setTheme] = useState(() => localStorage.getItem('codecity-theme') || 'dark');
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState('');
+  const headerRef = useRef(null);
+  const isScrolledRef = useRef(false);
+  const activeSectionRef = useRef('');
   const isDark = theme === 'dark';
 
   useEffect(() => {
@@ -33,16 +38,77 @@ export default function Layout({ children }) {
     return () => { document.body.style.overflow = ''; };
   }, [mobileMenuOpen]);
 
+  useEffect(() => {
+    let frameId;
+
+    const updateHeader = () => {
+      const documentHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = documentHeight > 0 ? Math.min(window.scrollY / documentHeight, 1) : 0;
+      headerRef.current?.style.setProperty('--page-progress', progress);
+
+      const nextScrolled = window.scrollY > 24;
+      if (isScrolledRef.current !== nextScrolled) {
+        isScrolledRef.current = nextScrolled;
+        setIsScrolled(nextScrolled);
+      }
+
+      const sectionOffset = window.scrollY + 180;
+      const nextSection = [...navItems]
+        .reverse()
+        .find((item) => {
+          const section = document.querySelector(item.href);
+          return section ? section.getBoundingClientRect().top + window.scrollY <= sectionOffset : false;
+        })
+        ?.href.slice(1) || '';
+
+      if (activeSectionRef.current !== nextSection) {
+        activeSectionRef.current = nextSection;
+        setActiveSection(nextSection);
+      }
+    };
+
+    const scheduleUpdate = () => {
+      if (frameId) return;
+      frameId = window.requestAnimationFrame(() => {
+        frameId = undefined;
+        updateHeader();
+      });
+    };
+
+    updateHeader();
+    window.addEventListener('scroll', scheduleUpdate, { passive: true });
+    window.addEventListener('resize', scheduleUpdate);
+
+    return () => {
+      window.removeEventListener('scroll', scheduleUpdate);
+      window.removeEventListener('resize', scheduleUpdate);
+      if (frameId) window.cancelAnimationFrame(frameId);
+    };
+  }, []);
+
   const closeMenu = () => setMobileMenuOpen(false);
 
   return (
     <div className="site-shell" id="top">
-        <header className="site-header">
-          <div className="site-container header-inner">
-            <Brand />
+        <header ref={headerRef} className={`site-header${isScrolled ? ' site-header-scrolled' : ''}`}>
+          <div className="site-container header-shell">
+            <div className="header-brand-block">
+              <Brand />
+              <span className="header-discipline"><i /> Product engineering</span>
+            </div>
 
             <nav className="desktop-nav" aria-label="Primary navigation">
-              {navItems.map((item) => <a key={item.href} href={item.href}>{item.label}</a>)}
+              {navItems.map((item, index) => (
+                <a
+                  key={item.href}
+                  className={activeSection === item.href.slice(1) ? 'is-active' : ''}
+                  href={item.href}
+                  aria-current={activeSection === item.href.slice(1) ? 'location' : undefined}
+                >
+                  <span>{String(index + 1).padStart(2, '0')}</span>
+                  {item.label}
+                </a>
+              ))}
             </nav>
 
             <div className="header-actions">
@@ -54,7 +120,10 @@ export default function Layout({ children }) {
               >
                 {isDark ? <Sun aria-hidden="true" /> : <Moon aria-hidden="true" />}
               </button>
-              <a className="header-cta" href="#contact">Let&apos;s build</a>
+              <a className="header-cta" href="#contact">
+                Let&apos;s build
+                <ArrowUpRight aria-hidden="true" />
+              </a>
               <button
                 className="icon-button menu-button"
                 type="button"
@@ -66,8 +135,9 @@ export default function Layout({ children }) {
                 {mobileMenuOpen ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}
               </button>
             </div>
+            <span className="header-scan" aria-hidden="true" />
+            <span className="header-progress" aria-hidden="true" />
           </div>
-
         </header>
 
         {mobileMenuOpen && (

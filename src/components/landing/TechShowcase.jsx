@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Check } from 'lucide-react';
+import { Check, Sparkles } from 'lucide-react';
+import { SiKotlin, SiLaravel, SiPostgresql, SiPython, SiReact, SiSupabase, SiSwift } from 'react-icons/si';
 
 const foundations = [
   {
@@ -17,7 +18,16 @@ const foundations = [
   },
 ];
 
-const stack = ['React', 'Swift', 'Kotlin', 'Laravel', 'Python', 'Postgres', 'Supabase', 'AI systems'];
+const stack = [
+  { name: 'React', icon: SiReact, color: '#61dafb' },
+  { name: 'Swift', icon: SiSwift, color: '#f05138' },
+  { name: 'Kotlin', icon: SiKotlin, color: '#a97bff' },
+  { name: 'Laravel', icon: SiLaravel, color: '#ff5a52' },
+  { name: 'Python', icon: SiPython, color: '#ffd343' },
+  { name: 'Postgres', icon: SiPostgresql, color: '#5b9bd5' },
+  { name: 'Supabase', icon: SiSupabase, color: '#3ecf8e' },
+  { name: 'AI systems', icon: Sparkles, color: '#f9761b' },
+];
 
 export default function TechShowcase() {
   return (
@@ -29,7 +39,12 @@ export default function TechShowcase() {
             <h2 id="technology-title">Technical when it matters. Human everywhere.</h2>
             <p>We choose tools for the product in front of us—not for trend value. The result is software that is easier to use, operate, and extend.</p>
             <div className="stack-cloud" aria-label="Technologies we work with">
-              {stack.map((item) => <span key={item}>{item}</span>)}
+              {stack.map((item) => (
+                <span key={item.name}>
+                  <i className="stack-icon" style={{ color: item.color }}><item.icon aria-hidden="true" /></i>
+                  {item.name}
+                </span>
+              ))}
             </div>
           </div>
 

@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { ArrowUpRight, BriefcaseBusiness } from 'lucide-react';
 
 const reveal = {
-  initial: { opacity: 0, y: 28 },
+  initial: { opacity: 1, y: 24 },
   whileInView: { opacity: 1, y: 0 },
   viewport: { once: true, margin: '-70px' },
 };
@@ -32,7 +32,7 @@ export default function SelectedWork() {
           </div>
         </div>
 
-        <div className="work-grid">
+        <div className="work-grid" id="work-grid">
           <motion.article
             className="work-card work-card-airdrop work-card-wide"
             {...reveal}

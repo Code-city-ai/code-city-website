@@ -1,9 +1,11 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.112.3';
 
-const LOCAL_ORIGINS = new Set([
+const DEFAULT_ORIGINS = new Set([
   'http://127.0.0.1:5173',
   'http://localhost:5173',
-  'https://code-city-ai.github.io',
+  'https://codecity.ai',
+  'https://www.codecity.ai',
+  'https://code-city-website.vercel.app',
 ]);
 
 const PROJECT_TYPES = new Set([
@@ -67,7 +69,7 @@ const allowedOrigins = () => {
     .split(',')
     .map((origin) => origin.trim().replace(/\/$/, ''))
     .filter(Boolean);
-  return new Set([...LOCAL_ORIGINS, ...configured]);
+  return new Set([...DEFAULT_ORIGINS, ...configured]);
 };
 
 const hashClientAddress = async (request: Request) => {
@@ -83,7 +85,7 @@ Deno.serve(async (request) => {
   const requestOrigin = request.headers.get('origin')?.replace(/\/$/, '') || '';
   const origins = allowedOrigins();
   const originAllowed = origins.has(requestOrigin);
-  const responseOrigin = originAllowed ? requestOrigin : 'https://code-city-ai.github.io';
+  const responseOrigin = originAllowed ? requestOrigin : 'https://codecity.ai';
 
   if (request.method === 'OPTIONS') {
     return new Response(null, {

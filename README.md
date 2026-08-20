@@ -1,11 +1,11 @@
 # Code City website
 
-The production Code City marketing site. The frontend is a lightweight React and Vite application deployed through GitHub Pages. Supabase owns the secure project-inquiry backend.
+The production Code City marketing site. The frontend is a lightweight React and Vite application deployed through Vercel. Supabase owns the secure project-inquiry backend.
 
 ## Architecture
 
 - **Frontend:** React, Vite, Framer Motion, and purpose-built CSS
-- **Publishing:** GitHub Pages through `.github/workflows/deploy-pages.yml`
+- **Publishing:** Vercel from the `main` branch of the GitHub repository
 - **Backend:** Supabase Postgres and the `submit-inquiry` Edge Function
 - **Data boundary:** browsers cannot read or write the inquiry table directly; the Edge Function validates, rate-limits, and writes with server-only credentials
 
@@ -19,4 +19,4 @@ Database changes live in `supabase/migrations`. The public inquiry endpoint live
 
 ## Deployment
 
-The Pages workflow reads `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` from GitHub Actions secrets. A custom domain is configured through GitHub Pages after its DNS records are verified.
+Vercel reads `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` from the project's Production and Preview environment variables. The canonical production domain is `https://codecity.ai`; `https://www.codecity.ai` permanently redirects to it.

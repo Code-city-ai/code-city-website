@@ -155,7 +155,20 @@ export default function SelectedWork() {
             className="work-card work-card-trade-city"
           >
             <div className="work-visual" aria-hidden="true">
-              <img className="trade-city-logo" src="/brands/trade-city.png" alt="" loading="lazy" />
+              <div className="trade-city-lockup">
+                <img
+                  className="trade-city-logo trade-city-logo-base"
+                  src="/brands/trade-city.png"
+                  alt=""
+                  loading="lazy"
+                />
+                <img
+                  className="trade-city-logo trade-city-logo-light-mark"
+                  src="/brands/trade-city.png"
+                  alt=""
+                  loading="lazy"
+                />
+              </div>
             </div>
             <div className="work-card-body">
               <div className="work-card-copy">
@@ -173,7 +186,16 @@ export default function SelectedWork() {
             className="work-card work-card-inspire"
           >
             <div className="work-visual" aria-hidden="true">
-              <img className="inspire-logo" src="/brands/inspire-capital.svg" alt="" />
+              <img
+                className="inspire-logo project-theme-asset project-theme-asset-light"
+                src="/brands/inspire-capital-dark-ink.svg?v=1"
+                alt=""
+              />
+              <img
+                className="inspire-logo project-theme-asset project-theme-asset-dark"
+                src="/brands/inspire-capital.svg"
+                alt=""
+              />
             </div>
             <div className="work-card-body">
               <div className="work-card-copy">

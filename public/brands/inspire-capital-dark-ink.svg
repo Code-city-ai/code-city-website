@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 220" role="img" aria-labelledby="title description">
+  <title id="title">Inspire Capital</title>
+  <desc id="description">Inspire Capital wordmark with an interlocking I and C monogram.</desc>
+
+  <g fill="#111317">
+    <g aria-hidden="true">
+      <path d="M28 28h52v43l-52 42V28Z" />
+      <path d="m28 125 52-42v109H28v-67Z" />
+      <path d="M216 46A88 88 0 1 0 216 170l-32-33a44 44 0 1 1 0-58l32-33Z" />
+    </g>
+
+    <text x="276" y="112" font-family="Inter, Arial, sans-serif" font-size="78" font-weight="650" letter-spacing="6">INSPIRE</text>
+    <text x="280" y="166" font-family="Inter, Arial, sans-serif" font-size="25" font-weight="600" letter-spacing="22">CAPITAL</text>
+  </g>
+</svg>

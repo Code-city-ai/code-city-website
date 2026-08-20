@@ -51,25 +51,7 @@ export default function SelectedWork() {
           </article>
 
           <article
-            className="work-card work-card-inspire"
-          >
-            <div className="work-visual" aria-hidden="true">
-              <img className="inspire-logo" src="/brands/inspire-capital.svg" alt="" />
-            </div>
-            <div className="work-card-body">
-              <div className="work-card-copy">
-                <span className="work-type">Workforce operations</span>
-                <h3>Inspire Capital</h3>
-                <p>Workforce management and talent infrastructure spanning recruitment, onboarding, and payroll administration.</p>
-              </div>
-              <div className="work-status">
-                <span>Operations platform</span><span>Private system</span>
-              </div>
-            </div>
-          </article>
-
-          <article
-            className="work-card work-card-autopilot work-card-wide"
+            className="work-card work-card-autopilot"
           >
             <div className="work-visual" aria-hidden="true">
               <img className="autopilot-logo" src="/brands/autopilot.svg" alt="" />
@@ -103,6 +85,24 @@ export default function SelectedWork() {
               </div>
               <div className="work-status" aria-label="Supported Rituals platforms">
                 <span>iOS</span><span>Android</span><span>macOS</span>
+              </div>
+            </div>
+          </article>
+
+          <article
+            className="work-card work-card-inspire"
+          >
+            <div className="work-visual" aria-hidden="true">
+              <img className="inspire-logo" src="/brands/inspire-capital.svg" alt="" />
+            </div>
+            <div className="work-card-body">
+              <div className="work-card-copy">
+                <span className="work-type">Workforce operations</span>
+                <h3>Inspire Capital</h3>
+                <p>Workforce management and talent infrastructure spanning recruitment, onboarding, and payroll administration.</p>
+              </div>
+              <div className="work-status">
+                <span>Operations platform</span><span>Private system</span>
               </div>
             </div>
           </article>

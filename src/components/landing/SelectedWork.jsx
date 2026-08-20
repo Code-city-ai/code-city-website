@@ -1,6 +1,12 @@
 import React from 'react';
 import { ArrowUpRight } from 'lucide-react';
 
+const airdropServices = [
+  { name: 'Standard', icon: '/portfolio/airdrop-service-standard.png' },
+  { name: 'SeaDrop', icon: '/portfolio/airdrop-service-seadrop.png' },
+  { name: 'Express', icon: '/portfolio/airdrop-service-express.png' },
+];
+
 function ProjectLink({ href, children }) {
   return (
     <a href={href} target="_blank" rel="noreferrer">
@@ -29,13 +35,30 @@ export default function SelectedWork() {
           <article
             className="work-card work-card-airdrop work-card-featured"
           >
-            <div className="work-visual work-visual-preview">
-              <img
-                className="project-site-preview"
-                src="/portfolio/airdrop-ja.jpg"
-                alt="AIRDROP Jamaica website homepage"
-                loading="lazy"
-              />
+            <div className="work-visual work-visual-airdrop" aria-hidden="true">
+              <img className="project-site-preview" src="/portfolio/airdrop-ja.jpg" alt="" loading="lazy" />
+              <div className="airdrop-phone-cluster">
+                <img
+                  className="airdrop-phone airdrop-phone-light"
+                  src="/portfolio/airdrop-phone-light.png"
+                  alt=""
+                  loading="lazy"
+                />
+                <img
+                  className="airdrop-phone airdrop-phone-dark"
+                  src="/portfolio/airdrop-phone-dark.png"
+                  alt=""
+                  loading="lazy"
+                />
+                <div className="airdrop-service-boxes">
+                  {airdropServices.map((service) => (
+                    <div className="airdrop-service-box" key={service.name}>
+                      <img src={service.icon} alt="" loading="lazy" />
+                      <span>{service.name}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
             <div className="work-card-body">
               <div className="work-card-copy">
@@ -90,6 +113,24 @@ export default function SelectedWork() {
           </article>
 
           <article
+            className="work-card work-card-trade-city"
+          >
+            <div className="work-visual" aria-hidden="true">
+              <img className="trade-city-logo" src="/brands/trade-city.png" alt="" loading="lazy" />
+            </div>
+            <div className="work-card-body">
+              <div className="work-card-copy">
+                <span className="work-type">Trading intelligence</span>
+                <h3>Trade City</h3>
+                <p>A native trading command center that brings portfolio intelligence, market signals, disciplined execution, and Nova AI into one operating system.</p>
+              </div>
+              <div className="work-status" aria-label="Trade City platforms and capabilities">
+                <span>macOS</span><span>iOS</span><span>Nova AI</span>
+              </div>
+            </div>
+          </article>
+
+          <article
             className="work-card work-card-inspire"
           >
             <div className="work-visual" aria-hidden="true">
@@ -109,7 +150,7 @@ export default function SelectedWork() {
         </div>
 
         <div className="work-footnote">
-          <span>04 products</span>
+          <span>05 products</span>
           <p>Distinct businesses. One standard of craft.</p>
         </div>
       </div>

@@ -604,6 +604,10 @@ a {
 }
 
 .work-card-wide { grid-column: span 7; }
+.work-card-featured {
+  grid-column: 1 / -1;
+  grid-template-rows: auto auto;
+}
 
 .work-visual {
   position: relative;
@@ -615,14 +619,20 @@ a {
 }
 
 .work-card-airdrop .work-visual {
-  background: #f8fafc;
+  background: #07090c;
 }
 
-.airdrop-logo {
-  position: relative;
-  z-index: 2;
-  width: min(55%, 390px);
-  height: auto;
+.work-card-featured .work-visual {
+  height: clamp(360px, 42vw, 560px);
+  min-height: 0;
+}
+
+.project-site-preview {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: top center;
 }
 
 .work-card-autopilot .work-visual {
@@ -634,29 +644,6 @@ a {
   z-index: 2;
   width: min(64%, 300px);
   height: auto;
-}
-
-.work-card-rituals .work-visual {
-  gap: 18px;
-  align-content: center;
-  background: #21150f;
-}
-
-.rituals-logo {
-  position: relative;
-  z-index: 2;
-  width: 112px;
-  height: 112px;
-  border-radius: 25px;
-}
-
-.rituals-wordmark {
-  position: relative;
-  z-index: 2;
-  font-size: 0.78rem;
-  font-weight: 800;
-  letter-spacing: 0.34em;
-  transform: translateX(0.17em);
 }
 
 .work-card-inspire .work-visual {
@@ -1028,7 +1015,8 @@ a {
   .service-card { min-height: 380px; }
   .work-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .work-card { grid-column: span 1; }
-  .work-card-wide { grid-column: span 2; }
+  .work-card-wide,
+  .work-card-featured { grid-column: span 2; }
   .contact-layout { gap: 54px; }
 }
 
@@ -1042,9 +1030,11 @@ a {
   .service-principle { grid-template-columns: 1fr; }
   .work-grid { grid-template-columns: minmax(0, 1fr); }
   .work-card,
-  .work-card-wide { grid-column: span 1; }
+  .work-card-wide,
+  .work-card-featured { grid-column: span 1; }
   .work-card { grid-template-rows: minmax(240px, auto) auto; }
   .work-visual { min-height: 240px; }
+  .work-card-featured .work-visual { height: 250px; min-height: 0; }
   .work-card-body { min-height: 0; }
   .work-footnote { align-items: flex-start; flex-direction: column; gap: 12px; }
   .phase-row { grid-template-columns: 40px 1fr; min-height: 0; }

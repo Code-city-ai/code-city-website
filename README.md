@@ -13,6 +13,10 @@ The production Code City marketing site. The frontend is a lightweight React and
 
 Copy `.env.example` to `.env.local` and supply the public Supabase project URL and publishable anon key. Then use the package scripts for development, linting, type checks, and production builds.
 
+## Portfolio previews
+
+`npm run capture:portfolio` captures deterministic website previews into `public/portfolio`. A recurring Code City portfolio automation refreshes the previews every Monday and publishes only when a captured preview actually changes.
+
 ## Supabase
 
 Database changes live in `supabase/migrations`. The public inquiry endpoint lives in `supabase/functions/submit-inquiry`. The function expects `ALLOWED_ORIGINS` as a comma-separated allowlist and may use `RATE_LIMIT_SALT` to create non-reversible client-address hashes.

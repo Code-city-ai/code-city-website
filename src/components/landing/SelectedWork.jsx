@@ -27,10 +27,15 @@ export default function SelectedWork() {
 
         <div className="work-grid" id="work-grid">
           <article
-            className="work-card work-card-airdrop work-card-wide"
+            className="work-card work-card-airdrop work-card-featured"
           >
-            <div className="work-visual" aria-hidden="true">
-              <img className="airdrop-logo" src="/brands/airdrop.svg" alt="" />
+            <div className="work-visual work-visual-preview">
+              <img
+                className="project-site-preview"
+                src="/portfolio/airdrop-ja.jpg"
+                alt="AIRDROP Jamaica website homepage"
+                loading="lazy"
+              />
             </div>
             <div className="work-card-body">
               <div className="work-card-copy">
@@ -46,44 +51,7 @@ export default function SelectedWork() {
           </article>
 
           <article
-            className="work-card work-card-autopilot"
-          >
-            <div className="work-visual" aria-hidden="true">
-              <img className="autopilot-logo" src="/brands/autopilot.svg" alt="" />
-            </div>
-            <div className="work-card-body">
-              <div className="work-card-copy">
-                <span className="work-type">AI-powered operations</span>
-                <h3>AutoPilot CRM</h3>
-                <p>An omnichannel operating system for customer conversations, workflows, analytics, and automation.</p>
-              </div>
-              <div className="work-links">
-                <ProjectLink href="https://autopilotcrm.ai/">Visit AutoPilot</ProjectLink>
-              </div>
-            </div>
-          </article>
-
-          <article
-            className="work-card work-card-rituals"
-          >
-            <div className="work-visual" aria-hidden="true">
-              <img className="rituals-logo" src="/brands/rituals.png" alt="" />
-              <span className="rituals-wordmark">RITUALS</span>
-            </div>
-            <div className="work-card-body">
-              <div className="work-card-copy">
-                <span className="work-type">Native productivity</span>
-                <h3>Rituals</h3>
-                <p>A daily planning and life-management system built as one considered experience across mobile and desktop.</p>
-              </div>
-              <div className="work-status" aria-label="Supported platforms">
-                <span>iOS</span><span>Android</span><span>macOS</span>
-              </div>
-            </div>
-          </article>
-
-          <article
-            className="work-card work-card-inspire work-card-wide"
+            className="work-card work-card-inspire"
           >
             <div className="work-visual" aria-hidden="true">
               <div className="inspire-lockup">
@@ -105,10 +73,28 @@ export default function SelectedWork() {
               </div>
             </div>
           </article>
+
+          <article
+            className="work-card work-card-autopilot work-card-wide"
+          >
+            <div className="work-visual" aria-hidden="true">
+              <img className="autopilot-logo" src="/brands/autopilot.svg" alt="" />
+            </div>
+            <div className="work-card-body">
+              <div className="work-card-copy">
+                <span className="work-type">AI-powered operations</span>
+                <h3>AutoPilot CRM</h3>
+                <p>An omnichannel operating system for customer conversations, workflows, analytics, and automation.</p>
+              </div>
+              <div className="work-links">
+                <ProjectLink href="https://autopilotcrm.ai/">Visit AutoPilot</ProjectLink>
+              </div>
+            </div>
+          </article>
         </div>
 
         <div className="work-footnote">
-          <span>04 products</span>
+          <span>03 products</span>
           <p>Distinct businesses. One standard of craft.</p>
         </div>
       </div>

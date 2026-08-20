@@ -7,8 +7,6 @@ const capabilities = ['Product strategy', 'Experience design', 'Software enginee
 export default function Hero() {
   return (
     <section className="hero" aria-labelledby="hero-title">
-      <div className="hero-grid" aria-hidden="true" />
-
       <div className="site-container hero-inner">
         <motion.div
           className="hero-kicker"
@@ -16,7 +14,6 @@ export default function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <span className="hero-kicker-dot" />
           Independent digital product studio
         </motion.div>
 

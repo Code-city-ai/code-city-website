@@ -1,12 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { ArrowUpRight, BriefcaseBusiness } from 'lucide-react';
-
-const reveal = {
-  initial: { opacity: 1, y: 24 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: '-70px' },
-};
 
 function ProjectLink({ href, children }) {
   return (
@@ -33,14 +26,10 @@ export default function SelectedWork() {
         </div>
 
         <div className="work-grid" id="work-grid">
-          <motion.article
+          <article
             className="work-card work-card-airdrop work-card-wide"
-            {...reveal}
-            transition={{ duration: 0.58 }}
           >
             <div className="work-visual" aria-hidden="true">
-              <span className="work-orbit work-orbit-one" />
-              <span className="work-orbit work-orbit-two" />
               <img className="airdrop-logo" src="/brands/airdrop.svg" alt="" />
             </div>
             <div className="work-card-body">
@@ -54,15 +43,12 @@ export default function SelectedWork() {
                 <ProjectLink href="https://airdropus.com/">United States</ProjectLink>
               </div>
             </div>
-          </motion.article>
+          </article>
 
-          <motion.article
+          <article
             className="work-card work-card-autopilot"
-            {...reveal}
-            transition={{ duration: 0.58, delay: 0.06 }}
           >
             <div className="work-visual" aria-hidden="true">
-              <span className="autopilot-signal" />
               <img className="autopilot-logo" src="/brands/autopilot.svg" alt="" />
             </div>
             <div className="work-card-body">
@@ -75,15 +61,12 @@ export default function SelectedWork() {
                 <ProjectLink href="https://autopilotcrm.ai/">Visit AutoPilot</ProjectLink>
               </div>
             </div>
-          </motion.article>
+          </article>
 
-          <motion.article
+          <article
             className="work-card work-card-rituals"
-            {...reveal}
-            transition={{ duration: 0.58, delay: 0.06 }}
           >
             <div className="work-visual" aria-hidden="true">
-              <span className="rituals-glow" />
               <img className="rituals-logo" src="/brands/rituals.png" alt="" />
               <span className="rituals-wordmark">RITUALS</span>
             </div>
@@ -97,12 +80,10 @@ export default function SelectedWork() {
                 <span>iOS</span><span>Android</span><span>macOS</span>
               </div>
             </div>
-          </motion.article>
+          </article>
 
-          <motion.article
+          <article
             className="work-card work-card-inspire work-card-wide"
-            {...reveal}
-            transition={{ duration: 0.58, delay: 0.12 }}
           >
             <div className="work-visual" aria-hidden="true">
               <div className="inspire-lockup">
@@ -112,8 +93,6 @@ export default function SelectedWork() {
                   <small>CAPITAL</small>
                 </div>
               </div>
-              <span className="inspire-line inspire-line-one" />
-              <span className="inspire-line inspire-line-two" />
             </div>
             <div className="work-card-body">
               <div className="work-card-copy">
@@ -125,7 +104,7 @@ export default function SelectedWork() {
                 <span>Operations platform</span><span>Private system</span>
               </div>
             </div>
-          </motion.article>
+          </article>
         </div>
 
         <div className="work-footnote">

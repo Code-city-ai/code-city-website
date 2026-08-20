@@ -67,6 +67,7 @@ a {
 }
 
 .site-header {
+  --page-progress: 0;
   position: fixed;
   inset: 0 0 auto;
   z-index: 50;
@@ -75,7 +76,6 @@ a {
 }
 
 .header-shell {
-  --page-progress: 0;
   position: relative;
   min-height: 76px;
   display: grid;

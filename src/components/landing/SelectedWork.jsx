@@ -10,6 +10,7 @@ import {
   SiSwift,
   SiTypescript,
 } from 'react-icons/si';
+import TradeCityCharts from './TradeCityCharts';
 
 const airdropServiceIcons = [
   {
@@ -191,6 +192,112 @@ export default function SelectedWork() {
         <div className="work-stack" id="work-grid">
           <ProjectWindow
             index={1}
+            title="AutoPilot CRM"
+            type="AI-powered operations"
+            description="An omnichannel operating system for customer conversations, workflows, analytics, and automation."
+            className="work-card-autopilot"
+            links={<ProjectLink href="https://autopilotcrm.ai/">Visit AutoPilot</ProjectLink>}
+            tech={(
+              <>
+                <ProjectBadge icon={SiReact}>React</ProjectBadge>
+                <ProjectBadge icon={SiTypescript}>TypeScript</ProjectBadge>
+                <ProjectBadge icon={SiSupabase}>Supabase</ProjectBadge>
+              </>
+            )}
+          >
+            <ThemeImage
+              light="/portfolio/autopilot-light.jpg"
+              dark="/portfolio/autopilot-dark.jpg"
+              alt="AutoPilot CRM website"
+              className="autopilot-page-preview"
+            />
+          </ProjectWindow>
+
+          <ProjectWindow
+            index={2}
+            title="Rituals"
+            type="Native productivity"
+            description="A daily planning and life-management system built as one considered experience across mobile and desktop."
+            className="work-card-rituals"
+            tech={(
+              <>
+                <ProjectBadge icon={SiSwift}>Swift</ProjectBadge>
+                <ProjectBadge icon={SiKotlin}>Kotlin</ProjectBadge>
+                <ProjectBadge icon={SiApple}>iOS</ProjectBadge>
+                <ProjectBadge icon={SiAndroid}>Android</ProjectBadge>
+                <ProjectBadge icon={SiApple}>macOS</ProjectBadge>
+              </>
+            )}
+          >
+            <RitualsSlideshow />
+          </ProjectWindow>
+
+          <ProjectWindow
+            index={3}
+            title="Inspire Capital"
+            type="Workforce operations"
+            description="Workforce management and talent infrastructure spanning recruitment, onboarding, and payroll administration."
+            className="work-card-inspire"
+            tech={(
+              <>
+                <ProjectBadge>Operations platform</ProjectBadge>
+                <ProjectBadge>Private system</ProjectBadge>
+              </>
+            )}
+          >
+            <div className="inspire-brand-board">
+              <div className="inspire-brand-main">
+                <ThemeImage
+                  light="/brands/inspire-capital-dark-ink.svg?v=1"
+                  dark="/brands/inspire-capital.svg"
+                  alt="Inspire Capital"
+                  className="inspire-logo"
+                />
+                <p>People systems,<br />considered.</p>
+              </div>
+              <div className="inspire-system-map" aria-hidden="true">
+                <span><b>01</b> Recruitment</span>
+                <span><b>02</b> Onboarding</span>
+                <span><b>03</b> Payroll</span>
+              </div>
+            </div>
+          </ProjectWindow>
+
+          <ProjectWindow
+            index={4}
+            title="Trade City"
+            type="Trading intelligence"
+            description="A native trading command center unifying portfolio intelligence, market signals, disciplined execution, and Nova AI."
+            className="work-card-trade-city"
+            tech={(
+              <>
+                <ProjectBadge icon={SiSwift}>Swift</ProjectBadge>
+                <ProjectBadge icon={SiApple}>macOS</ProjectBadge>
+                <ProjectBadge icon={SiApple}>iOS</ProjectBadge>
+                <ProjectBadge icon={Sparkles}>Nova AI</ProjectBadge>
+              </>
+            )}
+          >
+            <ThemeImage
+              light="/portfolio/trade-city-light.jpg"
+              dark="/portfolio/trade-city-dark.jpg"
+              alt=""
+              className="trade-city-scenery"
+            />
+            <div className="trade-city-product" aria-label="Trade City product interface">
+              <aside>
+                <img src="/brands/trade-city.png" alt="Trade City" />
+                <span className="is-active">Overview</span>
+                <span>Markets</span>
+                <span>Portfolio</span>
+                <span>Nova</span>
+              </aside>
+              <TradeCityCharts />
+            </div>
+          </ProjectWindow>
+
+          <ProjectWindow
+            index={5}
             title="AirDrop Logistics"
             type="Multi-region logistics"
             description="A connected shipping and operations platform linking the United States with the Caribbean, Central America, and South America."
@@ -264,121 +371,6 @@ export default function SelectedWork() {
                 <img src="/portfolio/airdrop-logo-animated.webp" alt="" loading="lazy" />
               </picture>
             </motion.div>
-          </ProjectWindow>
-
-          <ProjectWindow
-            index={2}
-            title="AutoPilot CRM"
-            type="AI-powered operations"
-            description="An omnichannel operating system for customer conversations, workflows, analytics, and automation."
-            className="work-card-autopilot"
-            links={<ProjectLink href="https://autopilotcrm.ai/">Visit AutoPilot</ProjectLink>}
-            tech={(
-              <>
-                <ProjectBadge icon={SiReact}>React</ProjectBadge>
-                <ProjectBadge icon={SiTypescript}>TypeScript</ProjectBadge>
-                <ProjectBadge icon={SiSupabase}>Supabase</ProjectBadge>
-              </>
-            )}
-          >
-            <ThemeImage
-              light="/portfolio/autopilot-light.jpg"
-              dark="/portfolio/autopilot-dark.jpg"
-              alt="AutoPilot CRM website"
-              className="autopilot-page-preview"
-            />
-          </ProjectWindow>
-
-          <ProjectWindow
-            index={3}
-            title="Rituals"
-            type="Native productivity"
-            description="A daily planning and life-management system built as one considered experience across mobile and desktop."
-            className="work-card-rituals"
-            tech={(
-              <>
-                <ProjectBadge icon={SiSwift}>Swift</ProjectBadge>
-                <ProjectBadge icon={SiKotlin}>Kotlin</ProjectBadge>
-                <ProjectBadge icon={SiApple}>iOS</ProjectBadge>
-                <ProjectBadge icon={SiAndroid}>Android</ProjectBadge>
-                <ProjectBadge icon={SiApple}>macOS</ProjectBadge>
-              </>
-            )}
-          >
-            <RitualsSlideshow />
-          </ProjectWindow>
-
-          <ProjectWindow
-            index={4}
-            title="Trade City"
-            type="Trading intelligence"
-            description="A native trading command center unifying portfolio intelligence, market signals, disciplined execution, and Nova AI."
-            className="work-card-trade-city"
-            tech={(
-              <>
-                <ProjectBadge icon={SiSwift}>Swift</ProjectBadge>
-                <ProjectBadge icon={SiApple}>macOS</ProjectBadge>
-                <ProjectBadge icon={SiApple}>iOS</ProjectBadge>
-                <ProjectBadge icon={Sparkles}>Nova AI</ProjectBadge>
-              </>
-            )}
-          >
-            <ThemeImage
-              light="/portfolio/trade-city-light.jpg"
-              dark="/portfolio/trade-city-dark.jpg"
-              alt=""
-              className="trade-city-scenery"
-            />
-            <div className="trade-city-product" aria-label="Trade City product interface">
-              <aside>
-                <img src="/brands/trade-city.png" alt="Trade City" />
-                <span className="is-active">Overview</span>
-                <span>Markets</span>
-                <span>Portfolio</span>
-                <span>Nova</span>
-              </aside>
-              <div className="trade-city-dashboard">
-                <header><span>PORTFOLIO INTELLIGENCE</span><b>Market open</b></header>
-                <h4>Control the signal.</h4>
-                <div className="trade-city-metrics">
-                  <div><small>Portfolio value</small><strong>$128,420</strong><em>+4.8%</em></div>
-                  <div><small>Nova confidence</small><strong>86%</strong><em>LIVE</em></div>
-                  <div><small>Risk posture</small><strong>Balanced</strong><em>ACTIVE</em></div>
-                </div>
-                <div className="trade-city-market-line" aria-hidden="true"><i /><i /><i /><i /><i /><i /><i /><i /></div>
-              </div>
-            </div>
-          </ProjectWindow>
-
-          <ProjectWindow
-            index={5}
-            title="Inspire Capital"
-            type="Workforce operations"
-            description="Workforce management and talent infrastructure spanning recruitment, onboarding, and payroll administration."
-            className="work-card-inspire"
-            tech={(
-              <>
-                <ProjectBadge>Operations platform</ProjectBadge>
-                <ProjectBadge>Private system</ProjectBadge>
-              </>
-            )}
-          >
-            <div className="inspire-brand-board">
-              <div className="inspire-brand-main">
-                <ThemeImage
-                  light="/brands/inspire-capital-dark-ink.svg?v=1"
-                  dark="/brands/inspire-capital.svg"
-                  alt="Inspire Capital"
-                  className="inspire-logo"
-                />
-                <p>People systems,<br />considered.</p>
-              </div>
-              <div className="inspire-system-map" aria-hidden="true">
-                <span><b>01</b> Recruitment</span>
-                <span><b>02</b> Onboarding</span>
-                <span><b>03</b> Payroll</span>
-              </div>
-            </div>
           </ProjectWindow>
         </div>
 

@@ -136,16 +136,25 @@ export default function SelectedWork() {
             </div>
             <div className="work-card-body">
               <div className="work-card-copy">
-                <span className="work-type">Cross-border logistics</span>
-                <h3>AIRDROP Logistics</h3>
-                <p>A connected customer and operations platform serving international shipping across Jamaica and the United States.</p>
+                <div className="work-card-meta">
+                  <span className="work-index">01 / 05</span>
+                  <span className="work-type">Multi-region logistics</span>
+                </div>
+                <h3>AirDrop Logistics</h3>
+                <p>A connected shipping and operations platform linking the United States with the Caribbean, Central America, and South America.</p>
+                <div className="work-regions" aria-label="AirDrop Logistics operating regions">
+                  <span>United States</span>
+                  <span>Caribbean</span>
+                  <span>Central America</span>
+                  <span>South America</span>
+                </div>
               </div>
               <div className="work-card-actions">
-                <div className="work-links" aria-label="AIRDROP Logistics websites">
+                <div className="work-links" aria-label="AirDrop Logistics websites">
                   <ProjectLink href="https://airdropja.com/">Jamaica</ProjectLink>
                   <ProjectLink href="https://airdropus.com/">United States</ProjectLink>
                 </div>
-                <div className="work-status work-tech-stack" aria-label="AIRDROP technologies and platforms">
+                <div className="work-status work-tech-stack" aria-label="AirDrop technologies and platforms">
                   <ProjectBadge icon={SiSwift}>Swift</ProjectBadge>
                   <ProjectBadge icon={SiKotlin}>Kotlin</ProjectBadge>
                   <ProjectBadge icon={SiApple}>iOS</ProjectBadge>
@@ -164,7 +173,10 @@ export default function SelectedWork() {
             </div>
             <div className="work-card-body">
               <div className="work-card-copy">
-                <span className="work-type">AI-powered operations</span>
+                <div className="work-card-meta">
+                  <span className="work-index">02 / 05</span>
+                  <span className="work-type">AI-powered operations</span>
+                </div>
                 <h3>AutoPilot CRM</h3>
                 <p>An omnichannel operating system for customer conversations, workflows, analytics, and automation.</p>
               </div>
@@ -192,7 +204,10 @@ export default function SelectedWork() {
             </div>
             <div className="work-card-body">
               <div className="work-card-copy">
-                <span className="work-type">Native productivity</span>
+                <div className="work-card-meta">
+                  <span className="work-index">03 / 05</span>
+                  <span className="work-type">Native productivity</span>
+                </div>
                 <h3>Rituals</h3>
                 <p>A daily planning and life-management system built as one considered experience across mobile and desktop.</p>
               </div>
@@ -227,7 +242,10 @@ export default function SelectedWork() {
             </div>
             <div className="work-card-body">
               <div className="work-card-copy">
-                <span className="work-type">Trading intelligence</span>
+                <div className="work-card-meta">
+                  <span className="work-index">04 / 05</span>
+                  <span className="work-type">Trading intelligence</span>
+                </div>
                 <h3>Trade City</h3>
                 <p>A native trading command center that brings portfolio intelligence, market signals, disciplined execution, and Nova AI into one operating system.</p>
               </div>
@@ -257,7 +275,10 @@ export default function SelectedWork() {
             </div>
             <div className="work-card-body">
               <div className="work-card-copy">
-                <span className="work-type">Workforce operations</span>
+                <div className="work-card-meta">
+                  <span className="work-index">05 / 05</span>
+                  <span className="work-type">Workforce operations</span>
+                </div>
                 <h3>Inspire Capital</h3>
                 <p>Workforce management and talent infrastructure spanning recruitment, onboarding, and payroll administration.</p>
               </div>

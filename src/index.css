@@ -1227,7 +1227,7 @@ a {
 .airdrop-service-cards {
   position: absolute;
   z-index: 3;
-  top: 47%;
+  top: 50%;
   right: 3%;
   left: 22%;
   display: grid;
@@ -2515,7 +2515,7 @@ a {
   }
 
   .airdrop-service-cards {
-    top: 49%;
+    top: 52%;
     right: 2%;
     left: 17%;
     gap: 3px;

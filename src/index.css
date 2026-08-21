@@ -1597,6 +1597,465 @@ a {
 
 .work-footnote p { margin: 0; font-size: clamp(1rem, 1.5vw, 1.22rem); font-weight: 690; }
 
+/* Project stack: one equal-sized product window moves to the front at a time. */
+.work-stack {
+  display: flex;
+  flex-direction: column;
+  scroll-margin-top: 92px;
+}
+
+.work-window {
+  position: sticky;
+  top: calc(84px + var(--stack-offset));
+  z-index: var(--stack-z);
+  width: 100%;
+  height: clamp(570px, calc(100svh - 132px), 700px);
+  min-width: 0;
+  margin-bottom: clamp(92px, 16vh, 168px);
+  display: grid;
+  grid-template-rows: 46px minmax(0, 1fr) auto;
+  align-content: stretch;
+  overflow: hidden;
+  border: 1px solid var(--work-line);
+  border-radius: 22px;
+  background: #f4f0e8;
+  box-shadow: 0 28px 80px rgba(18, 20, 24, 0.13);
+  transform-origin: top center;
+}
+
+:root[data-theme='dark'] .work-window {
+  background: #101620;
+  box-shadow: 0 32px 92px rgba(0, 0, 0, 0.42);
+}
+
+.work-window:last-child { margin-bottom: 0; }
+
+.work-window-bar {
+  min-width: 0;
+  padding: 0 18px;
+  display: grid;
+  grid-template-columns: 90px minmax(0, 1fr) 90px;
+  align-items: center;
+  border-bottom: 1px solid var(--work-line);
+  background: #e4dfd6;
+  color: #262a31;
+}
+
+:root[data-theme='dark'] .work-window-bar {
+  background: #111720;
+  color: #e6e8ec;
+}
+
+.work-window-controls { display: flex; align-items: center; gap: 7px; }
+
+.work-window-controls span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #777d87;
+}
+
+.work-window-controls span:first-child { background: #f56d4f; }
+.work-window-controls span:nth-child(2) { background: #d2a950; }
+.work-window-controls span:nth-child(3) { background: #4d9a76; }
+
+.work-window-title {
+  overflow: hidden;
+  color: inherit;
+  font-size: 0.7rem;
+  font-weight: 760;
+  letter-spacing: 0.01em;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.work-window-title span { color: #7d828b; font-weight: 620; }
+
+.work-window-count {
+  color: #7d828b;
+  font: 690 0.62rem/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: 0.08em;
+  text-align: right;
+}
+
+.work-window .work-visual {
+  min-height: 0;
+  border: 0;
+  border-radius: 0;
+  transition: background-color 260ms ease;
+}
+
+.work-window:hover .work-visual,
+:root[data-theme='dark'] .work-window:hover .work-visual {
+  border-color: transparent;
+  box-shadow: none;
+  transform: none;
+}
+
+.work-window .work-card-body,
+.work-card-inspire .work-card-body {
+  min-height: 156px;
+  padding: 22px clamp(22px, 3vw, 34px) 24px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(260px, 0.8fr);
+  align-items: end;
+  gap: clamp(24px, 4vw, 56px);
+  border-top: 1px solid var(--work-line);
+  background: #f4f0e8;
+}
+
+:root[data-theme='dark'] .work-window .work-card-body {
+  background: #101620;
+}
+
+.work-window .work-card-copy { max-width: 720px; }
+.work-window .work-card-meta { min-height: 16px; }
+.work-window .work-card-meta::after { width: 28px; }
+
+.work-window .work-card-copy h3,
+.work-card-inspire .work-card-copy h3 {
+  margin: 12px 0 9px;
+  font-size: clamp(1.8rem, 3vw, 2.75rem);
+  line-height: 0.96;
+  letter-spacing: -0.05em;
+}
+
+.work-window .work-card-copy p,
+.work-card-inspire .work-card-copy p {
+  max-width: 700px;
+  color: var(--work-muted);
+  font-size: clamp(0.77rem, 1vw, 0.9rem);
+  line-height: 1.5;
+}
+
+.work-window .work-card-actions {
+  margin: 0;
+  align-items: flex-end;
+  gap: 14px;
+}
+
+.work-window .work-links,
+.work-window .work-status { justify-content: flex-end; }
+
+.work-window .work-links a { min-height: 36px; }
+.work-window .work-tech-stack span { min-height: auto; }
+
+.project-theme-asset {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  transition: opacity 240ms ease;
+}
+
+.project-theme-asset-dark { opacity: 0; }
+:root[data-theme='dark'] .project-theme-asset-light { opacity: 0; }
+:root[data-theme='dark'] .project-theme-asset-dark { opacity: 1; }
+
+/* AIRDROP uses the exact mobile product artwork and animated service assets. */
+.work-card-airdrop .work-visual { background: #f4f0e8; }
+:root[data-theme='dark'] .work-card-airdrop .work-visual { background: #030405; }
+
+.work-window .airdrop-promo-panel {
+  inset: 0 auto 0 0;
+  width: 52%;
+}
+
+.work-window .airdrop-logo-stage { inset: 0 0 0 52%; }
+
+.work-window .airdrop-logo-lockup { width: clamp(108px, 26%, 178px); }
+
+/* AutoPilot is a current capture of the real public product page. */
+.work-card-autopilot .work-visual { background: #eaf1f5; }
+:root[data-theme='dark'] .work-card-autopilot .work-visual { background: #191c23; }
+
+.autopilot-page-preview {
+  object-position: center top;
+}
+
+/* Rituals rotates through current simulator captures in the active site theme. */
+.work-card-rituals .work-visual { background: #ece7df; }
+:root[data-theme='dark'] .work-card-rituals .work-visual { background: #070707; }
+
+.project-slideshow,
+.rituals-slide-stage { position: absolute; inset: 0; }
+
+.rituals-brand-lockup {
+  position: absolute;
+  z-index: 4;
+  top: clamp(24px, 5vw, 54px);
+  left: clamp(24px, 5vw, 62px);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.rituals-brand-lockup img {
+  width: 48px;
+  height: 48px;
+  border-radius: 13px;
+}
+
+.rituals-brand-lockup span {
+  color: #17191d;
+  font-size: 0.8rem;
+  font-weight: 790;
+  letter-spacing: 0.25em;
+}
+
+:root[data-theme='dark'] .rituals-brand-lockup span { color: #f5f1e8; }
+
+.rituals-slide {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(28px) scale(0.975);
+  transition: opacity 480ms ease, transform 620ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.rituals-slide-active {
+  z-index: 2;
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(0) scale(1);
+}
+
+.rituals-device {
+  position: absolute;
+  top: 5%;
+  right: clamp(56px, 16vw, 230px);
+  width: min(27%, 210px);
+  height: 90%;
+  overflow: hidden;
+  border: 5px solid rgba(23, 25, 29, 0.92);
+  border-radius: 30px;
+  background: #050505;
+  box-shadow: 0 30px 60px rgba(17, 19, 23, 0.22);
+}
+
+:root[data-theme='dark'] .rituals-device {
+  border-color: rgba(245, 241, 232, 0.2);
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.55);
+}
+
+.rituals-screen { object-position: center top; }
+
+.rituals-slide figcaption {
+  position: absolute;
+  right: clamp(24px, 5vw, 62px);
+  bottom: 24px;
+  color: var(--work-muted);
+  font: 680 0.63rem/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.project-slide-controls {
+  position: absolute;
+  z-index: 6;
+  bottom: clamp(28px, 6vw, 62px);
+  left: clamp(24px, 5vw, 62px);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.project-slide-controls button {
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(17, 19, 23, 0.2);
+  border-radius: 9px;
+  background: transparent;
+  color: #676d76;
+  font: 690 0.58rem/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+  cursor: pointer;
+}
+
+:root[data-theme='dark'] .project-slide-controls button {
+  border-color: rgba(245, 241, 232, 0.18);
+  color: #9299a4;
+}
+
+.project-slide-controls button.is-active {
+  border-color: #f36a49;
+  background: #f36a49;
+  color: #111317;
+}
+
+.project-slide-controls > span {
+  margin-left: 8px;
+  color: #17191d;
+  font-size: 0.72rem;
+  font-weight: 720;
+}
+
+:root[data-theme='dark'] .project-slide-controls > span { color: #f5f1e8; }
+
+/* Trade City combines the canonical native scenery with its real navigation language. */
+.work-card-trade-city .work-visual { background: #d8e2e8; }
+:root[data-theme='dark'] .work-card-trade-city .work-visual { background: #07111a; }
+
+.trade-city-scenery { object-position: center center; }
+
+.trade-city-product {
+  position: absolute;
+  z-index: 3;
+  inset: clamp(22px, 4vw, 48px) clamp(22px, 5vw, 68px);
+  display: grid;
+  grid-template-columns: minmax(135px, 0.28fr) minmax(0, 1fr);
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.38);
+  border-radius: 18px;
+  background: rgba(237, 244, 247, 0.84);
+  box-shadow: 0 26px 70px rgba(4, 19, 31, 0.2);
+  backdrop-filter: blur(18px);
+  color: #10161c;
+}
+
+:root[data-theme='dark'] .trade-city-product {
+  border-color: rgba(255, 255, 255, 0.12);
+  background: rgba(8, 17, 26, 0.86);
+  color: #f0f3f5;
+}
+
+.trade-city-product aside {
+  padding: clamp(18px, 3vw, 30px);
+  display: flex;
+  flex-direction: column;
+  gap: 17px;
+  border-right: 1px solid rgba(17, 23, 29, 0.13);
+  font-size: 0.68rem;
+  font-weight: 680;
+}
+
+:root[data-theme='dark'] .trade-city-product aside { border-color: rgba(255, 255, 255, 0.12); }
+
+.trade-city-product aside img {
+  width: min(100%, 132px);
+  height: auto;
+  margin-bottom: auto;
+  filter: brightness(0) saturate(100%);
+}
+
+:root[data-theme='dark'] .trade-city-product aside img { filter: none; }
+.trade-city-product aside span { color: currentColor; opacity: 0.52; }
+.trade-city-product aside span.is-active { color: #f36a49; opacity: 1; }
+
+.trade-city-dashboard {
+  min-width: 0;
+  padding: clamp(20px, 3vw, 34px);
+  display: flex;
+  flex-direction: column;
+}
+
+.trade-city-dashboard header { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+.trade-city-dashboard header span { font-size: 0.59rem; font-weight: 780; letter-spacing: 0.16em; }
+.trade-city-dashboard header b { color: #47a978; font-size: 0.63rem; }
+
+.trade-city-dashboard h4 {
+  margin: 20px 0 auto;
+  font-size: clamp(1.55rem, 3vw, 3rem);
+  line-height: 0.95;
+  letter-spacing: -0.055em;
+}
+
+.trade-city-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-top: 1px solid rgba(17, 23, 29, 0.15);
+  border-bottom: 1px solid rgba(17, 23, 29, 0.15);
+}
+
+:root[data-theme='dark'] .trade-city-metrics { border-color: rgba(255, 255, 255, 0.13); }
+
+.trade-city-metrics div { min-width: 0; padding: 16px 12px 16px 0; display: flex; flex-direction: column; gap: 3px; }
+.trade-city-metrics small { color: currentColor; font-size: 0.58rem; opacity: 0.54; }
+.trade-city-metrics strong { overflow: hidden; font-size: clamp(0.84rem, 1.35vw, 1.2rem); text-overflow: ellipsis; }
+.trade-city-metrics em { color: #47a978; font-size: 0.53rem; font-style: normal; font-weight: 760; }
+
+.trade-city-market-line {
+  height: 54px;
+  padding-top: 14px;
+  display: flex;
+  align-items: end;
+  gap: 6px;
+}
+
+.trade-city-market-line i { width: 10%; height: 22%; border-radius: 2px 2px 0 0; background: #2d84be; }
+.trade-city-market-line i:nth-child(2) { height: 46%; }
+.trade-city-market-line i:nth-child(3) { height: 34%; }
+.trade-city-market-line i:nth-child(4) { height: 70%; background: #f36a49; }
+.trade-city-market-line i:nth-child(5) { height: 54%; }
+.trade-city-market-line i:nth-child(6) { height: 82%; }
+.trade-city-market-line i:nth-child(7) { height: 68%; background: #f36a49; }
+.trade-city-market-line i:nth-child(8) { height: 96%; }
+
+/* Inspire is equal in physical scale while remaining appropriately restrained. */
+.work-card-inspire,
+.work-card-inspire .work-visual { background: #e8e5f2; }
+:root[data-theme='dark'] .work-card-inspire,
+:root[data-theme='dark'] .work-card-inspire .work-visual { background: #242047; }
+
+.inspire-brand-board {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(250px, 0.65fr);
+}
+
+.inspire-brand-main {
+  position: relative;
+  padding: clamp(34px, 6vw, 72px);
+  border-right: 1px solid rgba(55, 47, 115, 0.2);
+}
+
+:root[data-theme='dark'] .inspire-brand-main { border-color: rgba(235, 232, 255, 0.16); }
+
+.inspire-logo {
+  inset: clamp(34px, 6vw, 72px) auto auto clamp(34px, 6vw, 72px);
+  width: min(50%, 330px);
+  height: auto;
+  object-fit: contain;
+}
+
+.inspire-brand-main p {
+  position: absolute;
+  left: clamp(34px, 6vw, 72px);
+  bottom: clamp(34px, 5vw, 62px);
+  margin: 0;
+  color: #302c65;
+  font-size: clamp(1.8rem, 4.2vw, 4.4rem);
+  font-weight: 720;
+  line-height: 0.92;
+  letter-spacing: -0.06em;
+}
+
+:root[data-theme='dark'] .inspire-brand-main p { color: #f1efff; }
+
+.inspire-system-map { padding: clamp(28px, 5vw, 58px); display: flex; flex-direction: column; justify-content: center; gap: 0; }
+
+.inspire-system-map span {
+  padding: 20px 0;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  border-bottom: 1px solid rgba(55, 47, 115, 0.2);
+  color: #302c65;
+  font-size: 0.78rem;
+  font-weight: 720;
+}
+
+:root[data-theme='dark'] .inspire-system-map span { border-color: rgba(235, 232, 255, 0.16); color: #f1efff; }
+.inspire-system-map b { color: #8178ca; font: 680 0.59rem/1 ui-monospace, SFMono-Regular, Menlo, monospace; }
+
 .approach-section {
   background: var(--orange);
   color: #111317;
@@ -1956,4 +2415,150 @@ a {
   .form-row { grid-template-columns: 1fr; }
   .form-footer { align-items: stretch; flex-direction: column; }
   .submit-button { width: 100%; }
+}
+
+@media (max-width: 980px) {
+  .work-window {
+    grid-column: auto;
+    height: clamp(560px, calc(100svh - 118px), 680px);
+  }
+
+  .work-window .work-card-body {
+    grid-template-columns: minmax(0, 1.25fr) minmax(220px, 0.75fr);
+    gap: 22px;
+  }
+
+  .work-window .work-card-copy p { max-width: 560px; }
+  .rituals-device { right: 12%; width: min(30%, 205px); }
+  .trade-city-product { grid-template-columns: 125px minmax(0, 1fr); }
+}
+
+@media (max-width: 680px) {
+  .work-heading { margin-bottom: 50px; }
+
+  .work-window,
+  .work-card-inspire {
+    top: calc(68px + var(--stack-mobile-offset));
+    height: clamp(600px, calc(100svh - 86px), 730px);
+    margin-bottom: 72px;
+    grid-template-rows: 42px minmax(0, 1fr) auto;
+    border-radius: 17px;
+  }
+
+  .work-window-bar {
+    padding: 0 12px;
+    grid-template-columns: 54px minmax(0, 1fr) 54px;
+  }
+
+  .work-window-controls { gap: 5px; }
+  .work-window-controls span { width: 6px; height: 6px; }
+  .work-window-title { font-size: 0.62rem; }
+  .work-window-title span { display: none; }
+  .work-window-count { font-size: 0.52rem; }
+
+  .work-window .work-visual,
+  .work-card-autopilot .work-visual,
+  .work-card-trade-city .work-visual,
+  .work-card-rituals .work-visual {
+    height: auto;
+    min-height: 0;
+  }
+
+  .work-window .work-card-body,
+  .work-card-inspire .work-card-body {
+    min-height: 222px;
+    padding: 17px 18px 19px;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 13px;
+  }
+
+  .work-window .work-card-copy h3,
+  .work-card-inspire .work-card-copy h3 {
+    margin: 9px 0 7px;
+    font-size: 1.74rem;
+  }
+
+  .work-window .work-card-copy p,
+  .work-card-inspire .work-card-copy p {
+    display: -webkit-box;
+    overflow: hidden;
+    font-size: 0.72rem;
+    line-height: 1.42;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .work-window .work-card-actions {
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .work-window .work-links,
+  .work-window .work-status { justify-content: flex-start; }
+  .work-window .work-links a { min-height: 32px; padding: 0 10px; font-size: 0.64rem; }
+  .work-window .work-tech-stack { gap: 6px 11px; }
+  .work-window .work-tech-stack span { font-size: 0.57rem; }
+  .work-window .work-tech-stack svg { width: 12px; height: 12px; }
+
+  .work-window .airdrop-promo-panel {
+    inset: 0 auto 0 0;
+    width: 58%;
+  }
+
+  .work-window .airdrop-logo-stage { inset: 0 0 0 58%; }
+
+  .airdrop-phone {
+    top: 4%;
+    left: 15%;
+    height: 98%;
+    max-width: 58%;
+  }
+
+  .airdrop-service-cards {
+    top: 49%;
+    right: 2%;
+    left: 17%;
+    gap: 3px;
+  }
+
+  .airdrop-service-card { min-height: 105px; }
+  .work-window .airdrop-logo-lockup { width: min(72%, 110px); }
+
+  .rituals-brand-lockup { top: 20px; left: 18px; gap: 10px; }
+  .rituals-brand-lockup img { width: 34px; height: 34px; border-radius: 9px; }
+  .rituals-brand-lockup span { font-size: 0.61rem; }
+  .rituals-device { top: 5%; right: 8%; width: 43%; height: 90%; border-width: 3px; border-radius: 22px; }
+  .rituals-slide figcaption { display: none; }
+  .project-slide-controls { bottom: 20px; left: 18px; gap: 5px; }
+  .project-slide-controls button { width: 28px; height: 28px; border-radius: 7px; font-size: 0.5rem; }
+  .project-slide-controls > span { display: none; }
+
+  .trade-city-product {
+    inset: 14px;
+    grid-template-columns: 84px minmax(0, 1fr);
+    border-radius: 13px;
+  }
+
+  .trade-city-product aside { padding: 14px 10px; gap: 12px; font-size: 0.52rem; }
+  .trade-city-product aside img { width: 70px; }
+  .trade-city-dashboard { padding: 15px 12px; }
+  .trade-city-dashboard header span { font-size: 0.45rem; }
+  .trade-city-dashboard header b { font-size: 0.48rem; }
+  .trade-city-dashboard h4 { margin: 15px 0 auto; font-size: 1.45rem; }
+  .trade-city-metrics div { padding: 11px 5px 11px 0; }
+  .trade-city-metrics small { font-size: 0.45rem; }
+  .trade-city-metrics strong { font-size: 0.72rem; }
+  .trade-city-metrics em { font-size: 0.43rem; }
+
+  .inspire-brand-board { grid-template-columns: minmax(0, 1.25fr) minmax(112px, 0.75fr); }
+  .inspire-brand-main { padding: 24px 20px; }
+  .inspire-logo { inset: 24px auto auto 20px; width: 68%; }
+  .inspire-brand-main p { left: 20px; bottom: 28px; font-size: clamp(1.55rem, 8.5vw, 2.35rem); }
+  .inspire-system-map { padding: 20px 12px; }
+  .inspire-system-map span { padding: 15px 0; gap: 7px; font-size: 0.58rem; }
+  .inspire-system-map b { font-size: 0.47rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rituals-slide { transition: none; }
 }

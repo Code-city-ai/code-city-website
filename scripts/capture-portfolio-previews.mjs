@@ -14,6 +14,20 @@ const previews = [
     url: 'https://airdropja.com/',
     output: 'airdrop-ja.jpg',
     readySelector: 'h1',
+    replaceAirdropLogo: true,
+  },
+  {
+    name: 'AutoPilot CRM dark',
+    url: 'https://autopilotcrm.ai/',
+    output: 'autopilot-dark.jpg',
+    readySelector: 'h1',
+  },
+  {
+    name: 'AutoPilot CRM light',
+    url: 'https://autopilotcrm.ai/',
+    output: 'autopilot-light.jpg',
+    readySelector: 'h1',
+    selectLightTheme: true,
   },
 ];
 
@@ -45,10 +59,16 @@ try {
 
     await page.locator(preview.readySelector).first().waitFor({ state: 'visible', timeout: 30_000 });
     await page.evaluate(() => document.fonts.ready);
-    await page.locator('img[alt="Airdrop"]').first().evaluate((image, source) => {
-      image.removeAttribute('srcset');
-      image.src = source;
-    }, airdropLogoDataUrl);
+    if (preview.replaceAirdropLogo) {
+      await page.locator('img[alt="Airdrop"]').first().evaluate((image, source) => {
+        image.removeAttribute('srcset');
+        image.src = source;
+      }, airdropLogoDataUrl);
+    }
+    if (preview.selectLightTheme) {
+      await page.locator('button[aria-label^="Cycle theme"]').click();
+      await page.waitForTimeout(500);
+    }
     await page.addStyleTag({
       content: `
         *, *::before, *::after {

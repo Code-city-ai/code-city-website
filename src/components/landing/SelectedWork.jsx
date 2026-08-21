@@ -4,7 +4,11 @@ import { ArrowUpRight, Sparkles } from 'lucide-react';
 import {
   SiAndroid,
   SiApple,
+  SiJavascript,
   SiKotlin,
+  SiLaravel,
+  SiPhp,
+  SiPython,
   SiReact,
   SiSupabase,
   SiSwift,
@@ -202,6 +206,7 @@ export default function SelectedWork() {
                 <ProjectBadge icon={SiReact}>React</ProjectBadge>
                 <ProjectBadge icon={SiTypescript}>TypeScript</ProjectBadge>
                 <ProjectBadge icon={SiSupabase}>Supabase</ProjectBadge>
+                <ProjectBadge icon={SiPython}>Python</ProjectBadge>
               </>
             )}
           >
@@ -310,6 +315,10 @@ export default function SelectedWork() {
             )}
             tech={(
               <>
+                <ProjectBadge icon={SiLaravel}>Laravel</ProjectBadge>
+                <ProjectBadge icon={SiPhp}>PHP</ProjectBadge>
+                <ProjectBadge icon={SiReact}>React</ProjectBadge>
+                <ProjectBadge icon={SiJavascript}>JavaScript</ProjectBadge>
                 <ProjectBadge icon={SiSwift}>Swift</ProjectBadge>
                 <ProjectBadge icon={SiKotlin}>Kotlin</ProjectBadge>
                 <ProjectBadge icon={SiApple}>iOS</ProjectBadge>

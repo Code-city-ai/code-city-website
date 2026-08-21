@@ -96,41 +96,26 @@ export default function Layout({ children, isContactPage = false }) {
 
         <footer className="site-footer" aria-labelledby="footer-title">
           <div className="site-container footer-shell">
-            <div className="footer-callout">
-              <div>
-                <span>Have a serious idea?</span>
-                <h2 id="footer-title">Build something <br />impossible to ignore.</h2>
-              </div>
-              <a href="/contact">Start a project <ArrowUpRight aria-hidden="true" /></a>
+            <div className="footer-brand-line">
+              <Brand />
             </div>
 
-            <div className="footer-directory">
-              <div className="footer-studio">
-                <Brand />
-                <p>Strategy, design, engineering, and growth for ambitious digital products.</p>
-                <span>Independent digital product studio</span>
-              </div>
-              <nav aria-label="Footer navigation">
-                <span>Explore</span>
-                {navItems.map((item) => <a key={item.href} href={resolveNavHref(item.href)}>{item.label}</a>)}
-              </nav>
-              <div className="footer-capabilities">
-                <span>Capabilities</span>
-                <p>Product strategy</p>
-                <p>Experience design</p>
-                <p>Software engineering</p>
-                <p>Growth systems</p>
-              </div>
-              <div className="footer-contact">
-                <span>New business</span>
-                <a href="/contact">Contact Code City <ArrowUpRight aria-hidden="true" /></a>
-                <p>Available for select partnerships worldwide.</p>
+            <div className="footer-contact-stage">
+              <a className="footer-contact-link" href="/contact">
+                <span id="footer-title">Contact us</span>
+                <span className="footer-contact-arrow" aria-hidden="true">
+                  <ArrowUpRight />
+                </span>
+              </a>
+              <div className="footer-structure" aria-hidden="true">
+                <i />
+                <i />
+                <i />
               </div>
             </div>
 
             <div className="footer-bottom">
               <span>© {new Date().getFullYear()} Code City</span>
-              <span>Serious ideas. Remarkable software.</span>
               <a href="#top">Back to top ↑</a>
             </div>
           </div>

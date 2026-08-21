@@ -594,10 +594,10 @@ a {
 }
 
 .work-card {
-  grid-column: span 5;
+  grid-column: span 6;
   min-width: 0;
   display: grid;
-  grid-template-rows: minmax(290px, 1fr) auto;
+  grid-template-rows: 220px auto;
   border: 1px solid var(--work-line);
   background: #fbf8f2;
   border-radius: 24px;
@@ -625,7 +625,7 @@ a {
 
 .work-visual {
   position: relative;
-  min-height: 290px;
+  min-height: 220px;
   display: grid;
   place-items: center;
   overflow: hidden;
@@ -658,7 +658,7 @@ a {
   position: absolute;
   z-index: 3;
   inset: 18% auto 0 0;
-  width: 44%;
+  width: 48%;
   overflow: hidden;
   border-right: 1px solid rgba(17, 19, 23, 0.14);
   background: #f4f0e8;
@@ -667,7 +667,7 @@ a {
 .airdrop-logo-stage {
   position: absolute;
   z-index: 2;
-  inset: 18% 0 0 44%;
+  inset: 18% 0 0 48%;
   display: grid;
   place-items: center;
   overflow: hidden;
@@ -767,33 +767,95 @@ a {
   50% { opacity: 1; transform: scale(0.94); }
 }
 
-.airdrop-promo-art {
+.airdrop-phone {
   position: absolute;
-  inset: auto auto 0 0;
-  width: 96%;
-  height: 96%;
+  z-index: 1;
+  top: 3%;
+  left: 26%;
+  width: auto;
+  height: 106%;
+  max-width: 52%;
   display: block;
   object-fit: contain;
-  object-position: left bottom;
+  object-position: top center;
 }
 
-.airdrop-promo-art-dark { display: none; }
-:root[data-theme='dark'] .airdrop-promo-art-light { display: none; }
-:root[data-theme='dark'] .airdrop-promo-art-dark { display: block; }
+.airdrop-phone-dark { display: none; }
+:root[data-theme='dark'] .airdrop-phone-light { display: none; }
+:root[data-theme='dark'] .airdrop-phone-dark { display: block; }
+
+.airdrop-service-cards {
+  position: absolute;
+  z-index: 3;
+  top: 47%;
+  right: 3%;
+  left: 22%;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.airdrop-service-card {
+  min-width: 0;
+  min-height: 190px;
+  padding: 14px 8px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  border: 1px solid rgba(17, 19, 23, 0.1);
+  border-radius: 14px;
+  background: rgba(250, 250, 249, 0.94);
+  color: #24262a;
+  box-shadow: 0 12px 32px rgba(17, 19, 23, 0.08);
+}
+
+:root[data-theme='dark'] .airdrop-service-card {
+  border-color: rgba(245, 241, 232, 0.15);
+  background: rgba(43, 43, 43, 0.96);
+  color: #f7f4ed;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.2);
+}
+
+.airdrop-service-icon {
+  width: clamp(42px, 4.2vw, 58px);
+  height: clamp(42px, 4.2vw, 58px);
+  margin-bottom: 6px;
+  object-fit: contain;
+  filter: drop-shadow(0 5px 9px rgba(0, 0, 0, 0.14));
+  transform-origin: center;
+}
+
+.airdrop-service-card strong {
+  font-size: clamp(0.64rem, 0.85vw, 0.8rem);
+  line-height: 1.1;
+}
+
+.airdrop-service-card span {
+  margin-top: 4px;
+  font-size: clamp(0.5rem, 0.62vw, 0.62rem);
+  line-height: 1.2;
+}
+
+.airdrop-service-card p {
+  margin: 13px 0 0;
+  font-size: clamp(0.45rem, 0.54vw, 0.54rem);
+  line-height: 1.42;
+}
+
+.airdrop-service-card em {
+  margin-top: auto;
+  padding-top: 12px;
+  color: #f46848;
+  font-size: clamp(0.46rem, 0.55vw, 0.56rem);
+  font-style: normal;
+  text-decoration: underline;
+}
 
 .work-card-autopilot,
-.work-card-trade-city {
-  grid-column: 1 / -1;
-  grid-template-columns: minmax(340px, 0.85fr) minmax(0, 1.15fr);
-  grid-template-rows: minmax(340px, auto);
-}
-
-.work-card-autopilot .work-visual,
-.work-card-trade-city .work-visual {
-  grid-column: 2;
-  grid-row: 1;
-  min-height: 340px;
-}
+.work-card-rituals { grid-column: span 6; }
+.work-card-trade-city { grid-column: span 8; }
+.work-card-inspire { grid-column: span 4; }
 
 .work-card-autopilot .work-visual {
   background: #eef2f1;
@@ -806,26 +868,17 @@ a {
 :root[data-theme='dark'] .work-card-autopilot .work-visual { background: #090c12; }
 :root[data-theme='dark'] .work-card-trade-city .work-visual { background: #0b131a; }
 
-.work-card-autopilot .work-card-body,
-.work-card-trade-city .work-card-body {
-  grid-column: 1;
-  grid-row: 1;
-  min-height: 340px;
-  border-top: 0;
-  border-right: 1px solid var(--work-line);
-}
-
 .autopilot-logo {
   position: relative;
   z-index: 2;
-  width: min(64%, 300px);
+  width: min(58%, 245px);
   height: auto;
 }
 
 .trade-city-lockup {
   position: relative;
   z-index: 2;
-  width: min(76%, 590px);
+  width: min(68%, 380px);
   display: grid;
   place-items: center;
 }
@@ -857,30 +910,27 @@ a {
 :root[data-theme='dark'] .project-theme-asset-dark { opacity: 1; }
 
 .work-card-inspire .work-visual {
-  min-height: 160px;
   background: #e8e5f2;
 }
 
 :root[data-theme='dark'] .work-card-inspire .work-visual { background: #2f2b68; }
 
 .work-card-inspire {
-  grid-column: 9 / -1;
   align-self: start;
-  grid-template-rows: 160px auto;
+  grid-template-rows: 150px auto;
   border-radius: 20px;
 }
 
 .inspire-logo {
   position: relative;
   z-index: 2;
-  width: min(72%, 280px);
+  width: min(64%, 240px);
   height: auto;
 }
 
 .work-card-inspire .work-card-body {
-  min-height: 238px;
-  padding: 24px;
-  gap: 24px;
+  min-height: 230px;
+  padding: 26px;
 }
 
 .work-card-inspire .work-card-copy h3 {
@@ -893,13 +943,10 @@ a {
 }
 
 .work-card-rituals {
-  grid-column: 1 / -1;
-  grid-template-columns: minmax(0, 1.15fr) minmax(340px, 0.85fr);
-  grid-template-rows: minmax(340px, auto);
+  grid-template-rows: 220px auto;
 }
 
 .work-card-rituals .work-visual {
-  min-height: 340px;
   background: #f0ece4;
 }
 
@@ -912,14 +959,14 @@ a {
 }
 
 .rituals-logo {
-  width: clamp(88px, 10vw, 122px);
-  height: clamp(88px, 10vw, 122px);
-  border-radius: 28px;
+  width: clamp(70px, 7vw, 92px);
+  height: clamp(70px, 7vw, 92px);
+  border-radius: 22px;
 }
 
 .rituals-lockup span {
   color: #17191d;
-  font-size: clamp(1.3rem, 2.4vw, 2.25rem);
+  font-size: clamp(1.15rem, 1.8vw, 1.72rem);
   font-weight: 760;
   letter-spacing: 0.28em;
   transform: translateX(0.14em);
@@ -928,15 +975,9 @@ a {
 
 :root[data-theme='dark'] .rituals-lockup span { color: #f5f1e8; }
 
-.work-card-rituals .work-card-body {
-  min-height: 340px;
-  border-top: 0;
-  border-left: 1px solid var(--work-line);
-}
-
 .work-card-body {
-  min-height: 282px;
-  padding: 30px clamp(24px, 3.5vw, 42px) 34px;
+  min-height: 260px;
+  padding: 28px clamp(24px, 3vw, 34px) 30px;
   display: flex;
   flex-direction: column;
   gap: 30px;
@@ -955,7 +996,7 @@ a {
 
 .work-card-copy h3 {
   margin: 17px 0 14px;
-  font-size: clamp(2rem, 3.2vw, 3.3rem);
+  font-size: clamp(1.85rem, 2.5vw, 2.65rem);
   line-height: 0.96;
   letter-spacing: -0.052em;
 }
@@ -974,6 +1015,18 @@ a {
   flex-wrap: wrap;
   gap: 8px;
 }
+
+.work-card-actions {
+  margin-top: auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 14px 24px;
+}
+
+.work-card-actions .work-links,
+.work-card-actions .work-status { margin-top: 0; }
 
 .work-links a,
 .work-status span {
@@ -994,6 +1047,21 @@ a {
 :root[data-theme='dark'] .work-links a:hover { color: #080b10; }
 .work-links svg { width: 14px; height: 14px; }
 .work-status span { color: var(--work-muted); }
+
+.work-tech-stack span {
+  min-height: 34px;
+  padding: 0 10px;
+  gap: 7px;
+  border-radius: 8px;
+  font-size: 0.66rem;
+}
+
+.work-tech-stack svg {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+  color: var(--work-ink);
+}
 
 .work-footnote {
   margin-top: 32px;
@@ -1277,10 +1345,27 @@ a {
   .work-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .work-card { grid-column: span 1; }
   .work-card-featured { grid-column: span 2; }
-  .work-card-autopilot,
-  .work-card-trade-city,
-  .work-card-rituals { grid-column: 1 / -1; }
-  .work-card-inspire { grid-column: 2; }
+  .airdrop-service-card {
+    min-height: 145px;
+    padding: 10px 5px 8px;
+    border-radius: 11px;
+  }
+  .airdrop-service-icon {
+    width: 38px;
+    height: 38px;
+    margin-bottom: 4px;
+  }
+  .airdrop-service-card strong { font-size: 0.62rem; }
+  .airdrop-service-card span { margin-top: 2px; font-size: 0.48rem; }
+  .airdrop-service-card p {
+    margin-top: 8px;
+    font-size: 0.42rem;
+    line-height: 1.35;
+  }
+  .airdrop-service-card em {
+    padding-top: 7px;
+    font-size: 0.43rem;
+  }
   .contact-layout { gap: 54px; }
 }
 
@@ -1295,44 +1380,43 @@ a {
   .work-grid { grid-template-columns: minmax(0, 1fr); }
   .work-card,
   .work-card-featured { grid-column: span 1; }
-  .work-card { grid-template-rows: minmax(240px, auto) auto; }
-  .work-card-autopilot,
-  .work-card-trade-city,
-  .work-card-rituals {
-    grid-column: span 1;
-    grid-template-columns: 1fr;
-    grid-template-rows: minmax(240px, auto) auto;
-  }
+  .work-card { grid-template-rows: 220px auto; }
+  .work-card-featured { grid-template-rows: 300px auto; }
   .work-card-autopilot .work-visual,
   .work-card-trade-city .work-visual,
-  .work-card-rituals .work-visual { min-height: 240px; }
-  .work-card-autopilot .work-visual,
-  .work-card-trade-city .work-visual {
-    grid-column: 1;
-    grid-row: 1;
-  }
-  .work-card-autopilot .work-card-body,
-  .work-card-trade-city .work-card-body,
-  .work-card-rituals .work-card-body {
-    grid-column: 1;
-    grid-row: 2;
-    min-height: 0;
-    border-top: 1px solid var(--work-line);
-    border-left: 0;
-  }
-  .work-card-autopilot .work-card-body,
-  .work-card-trade-city .work-card-body { border-right: 0; }
-  .work-card-inspire {
-    grid-column: span 1;
-    grid-template-rows: 150px auto;
-  }
-  .work-card-inspire .work-visual { min-height: 150px; }
+  .work-card-rituals .work-visual { min-height: 220px; }
   .airdrop-promo-panel {
     inset: 18% auto 0 0;
-    width: 54%;
+    width: 57%;
   }
+  .airdrop-phone {
+    top: 4%;
+    left: 16%;
+    height: 96%;
+    max-width: 56%;
+  }
+  .airdrop-service-cards {
+    top: 47%;
+    right: 2%;
+    left: 18%;
+    gap: 3px;
+  }
+  .airdrop-service-card {
+    min-height: 112px;
+    padding: 8px 3px 7px;
+    border-radius: 8px;
+  }
+  .airdrop-service-icon {
+    width: 27px;
+    height: 27px;
+    margin-bottom: 4px;
+  }
+  .airdrop-service-card strong { font-size: 0.48rem; }
+  .airdrop-service-card span { margin-top: 2px; font-size: 0.4rem; }
+  .airdrop-service-card p,
+  .airdrop-service-card em { display: none; }
   .airdrop-logo-stage {
-    inset: 18% 0 0 54%;
+    inset: 18% 0 0 57%;
   }
   .airdrop-logo-lockup {
     width: min(70%, 112px);
@@ -1341,8 +1425,8 @@ a {
   .airdrop-ring-outer { width: 94%; }
   .airdrop-ring-middle { width: 74%; }
   .airdrop-ring-inner { width: 57%; }
-  .work-visual { min-height: 240px; }
-  .work-card-featured .work-visual { height: 250px; min-height: 0; }
+  .work-visual { min-height: 220px; }
+  .work-card-featured .work-visual { height: 300px; min-height: 0; }
   .work-card-body { min-height: 0; }
   .work-footnote { align-items: flex-start; flex-direction: column; gap: 12px; }
   .phase-row { grid-template-columns: 40px 1fr; min-height: 0; }

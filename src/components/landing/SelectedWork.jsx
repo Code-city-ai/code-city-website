@@ -1,6 +1,36 @@
 import React from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
-import { ArrowUpRight } from 'lucide-react';
+import { ArrowUpRight, Sparkles } from 'lucide-react';
+import {
+  SiAndroid,
+  SiApple,
+  SiKotlin,
+  SiReact,
+  SiSupabase,
+  SiSwift,
+  SiTypescript,
+} from 'react-icons/si';
+
+const airdropServiceIcons = [
+  {
+    name: 'Standard',
+    mode: 'Air Freight',
+    detail: '2 to 3 business days after items are delivered to our warehouse',
+    src: '/portfolio/airdrop-service-standard.png',
+  },
+  {
+    name: 'SeaDrop',
+    mode: 'Sea Freight',
+    detail: '2 to 4 weeks after items are delivered to our warehouse',
+    src: '/portfolio/airdrop-service-seadrop.png',
+  },
+  {
+    name: 'Express',
+    mode: 'Air Freight',
+    detail: '1 to 2 business days after items are delivered to our warehouse',
+    src: '/portfolio/airdrop-service-express.png',
+  },
+];
 
 function ProjectLink({ href, children }) {
   return (
@@ -8,6 +38,15 @@ function ProjectLink({ href, children }) {
       {children}
       <ArrowUpRight aria-hidden="true" />
     </a>
+  );
+}
+
+function ProjectBadge({ icon: Icon, children }) {
+  return (
+    <span>
+      {Icon ? <Icon aria-hidden="true" /> : null}
+      {children}
+    </span>
   );
 }
 
@@ -41,18 +80,34 @@ export default function SelectedWork() {
                 viewport={{ once: true, amount: 0.35 }}
                 transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
               >
-                <img
-                  className="airdrop-promo-art airdrop-promo-art-light"
-                  src="/portfolio/airdrop-promo-visual-light.png"
-                  alt=""
-                  loading="lazy"
-                />
-                <img
-                  className="airdrop-promo-art airdrop-promo-art-dark"
-                  src="/portfolio/airdrop-promo-visual-dark.png"
-                  alt=""
-                  loading="lazy"
-                />
+                <img className="airdrop-phone airdrop-phone-light" src="/portfolio/airdrop-phone-light.png" alt="" loading="lazy" />
+                <img className="airdrop-phone airdrop-phone-dark" src="/portfolio/airdrop-phone-dark.png" alt="" loading="lazy" />
+                <div className="airdrop-service-cards">
+                  {airdropServiceIcons.map((service, index) => (
+                    <div className="airdrop-service-card" key={service.name}>
+                      <motion.img
+                        className="airdrop-service-icon"
+                        src={service.src}
+                        alt=""
+                        loading="lazy"
+                        animate={reduceMotion ? undefined : {
+                          y: [0, -6, 0],
+                          rotate: [0, index === 1 ? 1.5 : -1.5, 0],
+                        }}
+                        transition={reduceMotion ? undefined : {
+                          duration: 3.8 + (index * 0.35),
+                          delay: index * 0.3,
+                          repeat: Infinity,
+                          ease: 'easeInOut',
+                        }}
+                      />
+                      <strong>{service.name}</strong>
+                      <span>{service.mode}</span>
+                      <p>{service.detail}</p>
+                      <em>Read More</em>
+                    </div>
+                  ))}
+                </div>
               </motion.div>
               <motion.div
                 className="airdrop-logo-stage"
@@ -85,9 +140,18 @@ export default function SelectedWork() {
                 <h3>AIRDROP Logistics</h3>
                 <p>A connected customer and operations platform serving international shipping across Jamaica and the United States.</p>
               </div>
-              <div className="work-links" aria-label="AIRDROP Logistics websites">
-                <ProjectLink href="https://airdropja.com/">Jamaica</ProjectLink>
-                <ProjectLink href="https://airdropus.com/">United States</ProjectLink>
+              <div className="work-card-actions">
+                <div className="work-links" aria-label="AIRDROP Logistics websites">
+                  <ProjectLink href="https://airdropja.com/">Jamaica</ProjectLink>
+                  <ProjectLink href="https://airdropus.com/">United States</ProjectLink>
+                </div>
+                <div className="work-status work-tech-stack" aria-label="AIRDROP technologies and platforms">
+                  <ProjectBadge icon={SiSwift}>Swift</ProjectBadge>
+                  <ProjectBadge icon={SiKotlin}>Kotlin</ProjectBadge>
+                  <ProjectBadge icon={SiApple}>iOS</ProjectBadge>
+                  <ProjectBadge icon={SiApple}>macOS</ProjectBadge>
+                  <ProjectBadge icon={SiAndroid}>Android</ProjectBadge>
+                </div>
               </div>
             </div>
           </article>
@@ -104,8 +168,15 @@ export default function SelectedWork() {
                 <h3>AutoPilot CRM</h3>
                 <p>An omnichannel operating system for customer conversations, workflows, analytics, and automation.</p>
               </div>
-              <div className="work-links">
-                <ProjectLink href="https://autopilotcrm.ai/">Visit AutoPilot</ProjectLink>
+              <div className="work-card-actions">
+                <div className="work-links">
+                  <ProjectLink href="https://autopilotcrm.ai/">Visit AutoPilot</ProjectLink>
+                </div>
+                <div className="work-status work-tech-stack" aria-label="AutoPilot technologies">
+                  <ProjectBadge icon={SiReact}>React</ProjectBadge>
+                  <ProjectBadge icon={SiTypescript}>TypeScript</ProjectBadge>
+                  <ProjectBadge icon={SiSupabase}>Supabase</ProjectBadge>
+                </div>
               </div>
             </div>
           </article>
@@ -125,8 +196,12 @@ export default function SelectedWork() {
                 <h3>Rituals</h3>
                 <p>A daily planning and life-management system built as one considered experience across mobile and desktop.</p>
               </div>
-              <div className="work-status" aria-label="Supported Rituals platforms">
-                <span>iOS</span><span>Android</span><span>macOS</span>
+              <div className="work-status work-tech-stack" aria-label="Rituals technologies and platforms">
+                <ProjectBadge icon={SiSwift}>Swift</ProjectBadge>
+                <ProjectBadge icon={SiKotlin}>Kotlin</ProjectBadge>
+                <ProjectBadge icon={SiApple}>iOS</ProjectBadge>
+                <ProjectBadge icon={SiAndroid}>Android</ProjectBadge>
+                <ProjectBadge icon={SiApple}>macOS</ProjectBadge>
               </div>
             </div>
           </article>
@@ -156,8 +231,11 @@ export default function SelectedWork() {
                 <h3>Trade City</h3>
                 <p>A native trading command center that brings portfolio intelligence, market signals, disciplined execution, and Nova AI into one operating system.</p>
               </div>
-              <div className="work-status" aria-label="Trade City platforms and capabilities">
-                <span>macOS</span><span>iOS</span><span>Nova AI</span>
+              <div className="work-status work-tech-stack" aria-label="Trade City technologies and platforms">
+                <ProjectBadge icon={SiSwift}>Swift</ProjectBadge>
+                <ProjectBadge icon={SiApple}>macOS</ProjectBadge>
+                <ProjectBadge icon={SiApple}>iOS</ProjectBadge>
+                <ProjectBadge icon={Sparkles}>Nova AI</ProjectBadge>
               </div>
             </div>
           </article>

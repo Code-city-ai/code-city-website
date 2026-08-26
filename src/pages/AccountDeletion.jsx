@@ -3,6 +3,11 @@ import PolicyPage from '@/components/PolicyPage';
 
 const sections = [
   {
+    id: 'web-and-in-app-options',
+    title: 'Web and in-app options',
+    content: <p>This page provides a public web route for people who no longer have an app installed or cannot access an in-app deletion control. Products that allow account creation must also provide any in-app deletion path required by the platform where that product is distributed.</p>,
+  },
+  {
     id: 'request-deletion',
     title: 'How to request deletion',
     content: (
@@ -47,7 +52,7 @@ export default function AccountDeletion() {
     <PolicyPage
       eyebrow="Account deletion"
       title={<>Your account.<br />Your decision.</>}
-      introduction="The official route for requesting deletion of an account connected to a product designed or maintained by Code City."
+      introduction="The public web route for requesting deletion of an account connected to a product designed or maintained by Code City."
       metadata={{
         title: 'Code City Account Deletion Policy',
         description: 'Official instructions for requesting deletion of an account connected to a Code City product.',

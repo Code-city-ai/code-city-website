@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { ArrowDownRight, Clock3, Compass, MessagesSquare } from 'lucide-react';
 import InquiryForm from '@/components/InquiryForm';
+import usePageMetadata from '@/hooks/usePageMetadata';
 
 const expectations = [
   {
@@ -24,11 +25,11 @@ const expectations = [
 ];
 
 export default function Contact() {
-  useEffect(() => {
-    const previousTitle = document.title;
-    document.title = 'Contact Code City — Start a project';
-    return () => { document.title = previousTitle; };
-  }, []);
+  usePageMetadata({
+    title: 'Contact Code City — Start a project',
+    description: 'Start a new project, partnership, or business conversation with Code City.',
+    path: '/contact',
+  });
 
   return (
     <div className="contact-page">

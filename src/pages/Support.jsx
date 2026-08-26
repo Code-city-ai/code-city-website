@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { ArrowDownRight, ArrowUpRight, Box, Bug, KeyRound, LifeBuoy, ShieldCheck } from 'lucide-react';
 import SupportForm from '@/components/SupportForm';
+import usePageMetadata from '@/hooks/usePageMetadata';
 
 const routingSteps = [
   { number: '01', label: 'Choose the product', icon: Box },
@@ -9,23 +10,11 @@ const routingSteps = [
 ];
 
 export default function Support() {
-  useEffect(() => {
-    const previousTitle = document.title;
-    const description = document.querySelector('meta[name="description"]');
-    const canonical = document.querySelector('link[rel="canonical"]');
-    const previousDescription = description?.getAttribute('content');
-    const previousCanonical = canonical?.getAttribute('href');
-
-    document.title = 'Code City Support — Product help';
-    description?.setAttribute('content', 'Official customer support for software products designed and maintained by Code City.');
-    canonical?.setAttribute('href', 'https://codecity.ai/support');
-
-    return () => {
-      document.title = previousTitle;
-      if (previousDescription) description?.setAttribute('content', previousDescription);
-      if (previousCanonical) canonical?.setAttribute('href', previousCanonical);
-    };
-  }, []);
+  usePageMetadata({
+    title: 'Code City Support — Product help',
+    description: 'Official customer support for software products designed and maintained by Code City.',
+    path: '/support',
+  });
 
   return (
     <div className="support-page">

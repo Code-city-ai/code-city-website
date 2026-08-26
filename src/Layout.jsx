@@ -112,26 +112,40 @@ export default function Layout({ children, currentPage = 'home', isInnerPage = f
           <div className="site-container footer-shell">
             <div className="footer-brand-line">
               <Brand />
+              <span>Independent digital product studio</span>
             </div>
 
-            <div className="footer-contact-stage">
-              <a className="footer-contact-link" href="/contact">
-                <span id="footer-title">Contact us</span>
-                <span className="footer-contact-arrow" aria-hidden="true">
-                  <ArrowUpRight />
-                </span>
-              </a>
-              <div className="footer-structure" aria-hidden="true">
-                <i />
-                <i />
-                <i />
+            <div className="footer-main">
+              <div className="footer-statement">
+                <span>New business</span>
+                <h2 id="footer-title">Have a serious idea?</h2>
+                <a href="/contact">
+                  Contact Code City
+                  <ArrowUpRight aria-hidden="true" />
+                </a>
               </div>
+
+              <nav className="footer-directory" aria-label="Footer navigation">
+                <div>
+                  <span>Company</span>
+                  <a href="/careers" aria-current={currentPage === 'careers' ? 'page' : undefined}>Careers</a>
+                </div>
+                <div>
+                  <span>Support</span>
+                  <a href="/support" aria-current={currentPage === 'support' ? 'page' : undefined}>Product support</a>
+                </div>
+                <div>
+                  <span>Legal</span>
+                  <a href="/privacy" aria-current={currentPage === 'privacy' ? 'page' : undefined}>Privacy policy</a>
+                  <a href="/account-deletion" aria-current={currentPage === 'account-deletion' ? 'page' : undefined}>Account deletion</a>
+                </div>
+              </nav>
             </div>
 
             <div className="footer-bottom">
               <span>© {new Date().getFullYear()} Code City</span>
+              <span>Serious ideas. Remarkable software.</span>
               <div>
-                <a href="/support" aria-current={currentPage === 'support' ? 'page' : undefined}>Product support</a>
                 <a href="#top">Back to top ↑</a>
               </div>
             </div>

@@ -153,6 +153,7 @@ a {
   transition: transform 180ms ease;
 }
 .desktop-nav a:hover::after { transform: scaleX(1); transform-origin: left; }
+.desktop-nav a[aria-current='page']::after { transform: scaleX(1); transform-origin: left; }
 
 .header-actions {
   display: flex;
@@ -2458,6 +2459,7 @@ a {
 .contact-page-intro p { margin: 0; color: var(--muted-text); font-size: clamp(1rem, 1.35vw, 1.2rem); line-height: 1.65; }
 .contact-page-intro a { margin-top: 34px; padding-bottom: 10px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); font-size: 0.82rem; font-weight: 760; }
 .contact-page-intro a svg { width: 18px; height: 18px; }
+.contact-page-intro .contact-page-support-link { margin-top: 16px; color: var(--muted-text); font-size: 0.76rem; }
 
 .contact-page-process { background: var(--surface); border-bottom: 1px solid var(--line); }
 .contact-expectations { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
@@ -2539,6 +2541,7 @@ a {
 .support-hero-copy > p { max-width: 670px; margin: clamp(34px, 4vw, 56px) 0 0; color: var(--muted-text); font-size: clamp(1.02rem, 1.4vw, 1.24rem); line-height: 1.65; }
 .support-hero-copy > a { width: min(100%, 420px); margin-top: 36px; padding: 0 0 12px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); font-size: 0.82rem; font-weight: 770; }
 .support-hero-copy > a svg { width: 18px; height: 18px; }
+.support-hero-copy > .support-new-project-link { margin-top: 16px; color: var(--muted-text); font-size: 0.76rem; }
 
 .support-routing-console {
   position: relative;

@@ -38,8 +38,9 @@ export default function Contact() {
           <div className="contact-page-hero-grid">
             <h1 id="contact-page-title">Tell us what <br />you’re building.</h1>
             <div className="contact-page-intro">
-              <p>Bring the ambition, the friction, or simply the beginning of an idea. We’ll help make the next move precise.</p>
+              <p>For new projects, partnerships, and business inquiries, bring the ambition, the friction, or simply the beginning of an idea. We’ll help make the next move precise.</p>
               <a href="#project-brief">Start the brief <ArrowDownRight aria-hidden="true" /></a>
+              <a className="contact-page-support-link" href="/support">Already use one of our products? Get support <ArrowDownRight aria-hidden="true" /></a>
             </div>
           </div>
         </div>

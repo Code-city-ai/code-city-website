@@ -6,6 +6,7 @@ const navItems = [
   { label: 'Work', href: '/#work' },
   { label: 'Approach', href: '/#why-us' },
   { label: 'Technology', href: '/#technology' },
+  { label: 'Support', href: '/support', page: 'support' },
 ];
 
 function Brand() {
@@ -42,7 +43,7 @@ export default function Layout({ children, currentPage = 'home', isInnerPage = f
   }, []);
 
   const closeMenu = () => setMobileMenuOpen(false);
-  const resolveNavHref = (href) => (isInnerPage ? href : href.slice(1));
+  const resolveNavHref = (href) => (isInnerPage || !href.startsWith('/#') ? href : href.slice(1));
 
   return (
     <div className="site-shell" id="top">
@@ -51,7 +52,15 @@ export default function Layout({ children, currentPage = 'home', isInnerPage = f
             <Brand />
 
             <nav className="desktop-nav" aria-label="Primary navigation">
-              {navItems.map((item) => <a key={item.href} href={resolveNavHref(item.href)}>{item.label}</a>)}
+              {navItems.map((item) => (
+                <a
+                  key={item.href}
+                  href={resolveNavHref(item.href)}
+                  aria-current={item.page === currentPage ? 'page' : undefined}
+                >
+                  {item.label}
+                </a>
+              ))}
             </nav>
 
             <div className="header-actions">
@@ -83,7 +92,12 @@ export default function Layout({ children, currentPage = 'home', isInnerPage = f
           <nav className="mobile-nav" id="mobile-navigation" aria-label="Mobile navigation">
             <div className="site-container mobile-nav-inner">
               {navItems.map((item, index) => (
-                <a key={item.href} href={resolveNavHref(item.href)} onClick={closeMenu}>
+                <a
+                  key={item.href}
+                  href={resolveNavHref(item.href)}
+                  onClick={closeMenu}
+                  aria-current={item.page === currentPage ? 'page' : undefined}
+                >
                   <span>{String(index + 1).padStart(2, '0')}</span>{item.label}
                 </a>
               ))}

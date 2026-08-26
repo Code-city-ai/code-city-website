@@ -39,8 +39,9 @@ export default function Support() {
           <div className="support-hero-grid">
             <div className="support-hero-copy">
               <h1 id="support-page-title">Get support.<br /><em>Keep moving.</em></h1>
-              <p>One clear route to the people who design, build, and maintain Code City products.</p>
+              <p>For existing customers and product users, this is the direct route to the people who design, build, and maintain Code City products.</p>
               <a href="#support-request">Start a support request <ArrowDownRight aria-hidden="true" /></a>
+              <a className="support-new-project-link" href="/contact">Planning a new project? Contact Code City <ArrowUpRight aria-hidden="true" /></a>
             </div>
 
             <div className="support-routing-console" aria-label="How support requests are routed">

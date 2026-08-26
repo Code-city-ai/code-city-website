@@ -28,5 +28,4 @@ dist-ssr
 *.sln
 *.sw?
 
-base44/.app.jsonc
 supabase/.temp/

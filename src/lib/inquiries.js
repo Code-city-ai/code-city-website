@@ -32,3 +32,24 @@ export async function submitInquiry(payload) {
 
   return body;
 }
+
+export async function submitSupportRequest({ name, email, product, issueType, reference, message, website, sourceUrl }) {
+  const supportMessage = [
+    `Product: ${product}`,
+    `Issue type: ${issueType}`,
+    reference ? `Reference: ${reference}` : null,
+    '',
+    message,
+  ].filter((line) => line !== null).join('\n');
+
+  return submitInquiry({
+    name,
+    email,
+    organization: product,
+    projectType: 'product-support',
+    budgetRange: '',
+    message: supportMessage,
+    website,
+    sourceUrl,
+  });
+}

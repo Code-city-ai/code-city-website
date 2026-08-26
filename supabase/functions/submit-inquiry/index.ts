@@ -14,6 +14,7 @@ const PROJECT_TYPES = new Set([
   'mobile-app',
   'growth-system',
   'not-sure',
+  'product-support',
 ]);
 
 const BUDGET_RANGES = new Set([

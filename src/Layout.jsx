@@ -17,7 +17,7 @@ function Brand() {
   );
 }
 
-export default function Layout({ children, isContactPage = false }) {
+export default function Layout({ children, currentPage = 'home', isInnerPage = false }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [theme, setTheme] = useState(() => localStorage.getItem('codecity-theme') || 'dark');
@@ -42,7 +42,7 @@ export default function Layout({ children, isContactPage = false }) {
   }, []);
 
   const closeMenu = () => setMobileMenuOpen(false);
-  const resolveNavHref = (href) => (isContactPage ? href : href.slice(1));
+  const resolveNavHref = (href) => (isInnerPage ? href : href.slice(1));
 
   return (
     <div className="site-shell" id="top">
@@ -63,7 +63,7 @@ export default function Layout({ children, isContactPage = false }) {
               >
                 {isDark ? <Sun aria-hidden="true" /> : <Moon aria-hidden="true" />}
               </button>
-              <a className="header-cta" href="/contact" aria-current={isContactPage ? 'page' : undefined}>Let&apos;s build</a>
+              <a className="header-cta" href="/contact" aria-current={currentPage === 'contact' ? 'page' : undefined}>Let&apos;s build</a>
               <button
                 className="icon-button menu-button"
                 type="button"
@@ -116,7 +116,10 @@ export default function Layout({ children, isContactPage = false }) {
 
             <div className="footer-bottom">
               <span>© {new Date().getFullYear()} Code City</span>
-              <a href="#top">Back to top ↑</a>
+              <div>
+                <a href="/support" aria-current={currentPage === 'support' ? 'page' : undefined}>Product support</a>
+                <a href="#top">Back to top ↑</a>
+              </div>
             </div>
           </div>
         </footer>

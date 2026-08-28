@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { ArrowUpRight, CheckCircle2, LoaderCircle } from 'lucide-react';
 import { submitInquiry } from '@/lib/inquiries';
+import { trackEvent } from '@/lib/marketing';
 
 const initialForm = {
   name: '',
@@ -15,6 +16,13 @@ const initialForm = {
 export default function InquiryForm({ className = '' }) {
   const [form, setForm] = useState(initialForm);
   const [status, setStatus] = useState({ type: 'idle', message: '' });
+  const hasTrackedStart = useRef(false);
+
+  const trackStart = () => {
+    if (hasTrackedStart.current) return;
+    hasTrackedStart.current = true;
+    trackEvent('contact_form_started', { form_type: 'project-inquiry' });
+  };
 
   const updateField = (event) => {
     setForm((current) => ({ ...current, [event.target.name]: event.target.value }));
@@ -37,7 +45,7 @@ export default function InquiryForm({ className = '' }) {
   };
 
   return (
-    <form className={`inquiry-form ${className}`.trim()} onSubmit={handleSubmit} noValidate>
+    <form className={`inquiry-form ${className}`.trim()} onSubmit={handleSubmit} onFocusCapture={trackStart} noValidate>
       <div className="form-row">
         <label>
           <span>Your name</span>

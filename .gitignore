@@ -16,6 +16,8 @@ node_modules
 dist
 dist-ssr
 *.local
+__pycache__/
+*.py[cod]
 
 # Editor directories and files
 .vscode/*
@@ -29,3 +31,5 @@ dist-ssr
 *.sw?
 
 supabase/.temp/
+.vercel
+.env*

@@ -1,4 +1,10 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "functions": {
+    "api/**/*.py": {
+      "excludeFiles": "{tests/**,__tests__/**,**/*.test.py,**/test_*.py}"
+    }
+  },
   "rewrites": [
     { "source": "/contact", "destination": "/index.html" },
     { "source": "/contact/", "destination": "/index.html" },
@@ -9,6 +15,9 @@
     { "source": "/account-deletion", "destination": "/index.html" },
     { "source": "/account-deletion/", "destination": "/index.html" },
     { "source": "/careers", "destination": "/index.html" },
-    { "source": "/careers/", "destination": "/index.html" }
+    { "source": "/careers/", "destination": "/index.html" },
+    { "source": "/sign-in", "destination": "/index.html" },
+    { "source": "/sign-in/", "destination": "/index.html" },
+    { "source": "/admin/:path*", "destination": "/index.html" }
   ]
 }

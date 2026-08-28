@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { ArrowUpRight, CheckCircle2, LoaderCircle } from 'lucide-react';
 import { submitSupportRequest } from '@/lib/inquiries';
+import { trackEvent } from '@/lib/marketing';
 
 const initialForm = {
   name: '',
@@ -15,6 +16,13 @@ const initialForm = {
 export default function SupportForm() {
   const [form, setForm] = useState(initialForm);
   const [status, setStatus] = useState({ type: 'idle', message: '' });
+  const hasTrackedStart = useRef(false);
+
+  const trackStart = () => {
+    if (hasTrackedStart.current) return;
+    hasTrackedStart.current = true;
+    trackEvent('support_form_started', { form_type: 'support' });
+  };
 
   const updateField = (event) => {
     setForm((current) => ({ ...current, [event.target.name]: event.target.value }));
@@ -37,7 +45,7 @@ export default function SupportForm() {
   };
 
   return (
-    <form className="support-form" onSubmit={handleSubmit}>
+    <form className="support-form" onSubmit={handleSubmit} onFocusCapture={trackStart}>
       <div className="support-form-heading">
         <div>
           <span>Official support channel</span>

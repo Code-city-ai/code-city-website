@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ArrowUpRight, Menu, Moon, Sun, X } from 'lucide-react';
+import Brand from '@/components/Brand';
 
 const navItems = [
   { label: 'Capabilities', href: '/#services' },
@@ -8,15 +9,6 @@ const navItems = [
   { label: 'Technology', href: '/#technology' },
   { label: 'Support', href: '/support', page: 'support' },
 ];
-
-function Brand() {
-  return (
-    <a className="brand" href="/" aria-label="Code City home">
-      <span className="brand-mark" aria-hidden="true"><i /><i /><i /></span>
-      <span className="brand-name">CODE CITY</span>
-    </a>
-  );
-}
 
 export default function Layout({ children, currentPage = 'home', isInnerPage = false }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -129,6 +121,7 @@ export default function Layout({ children, currentPage = 'home', isInnerPage = f
                 <div>
                   <span>Company</span>
                   <a href="/careers" aria-current={currentPage === 'careers' ? 'page' : undefined}>Careers</a>
+                  <a href="/sign-in">Team sign-in</a>
                 </div>
                 <div>
                   <span>Support</span>

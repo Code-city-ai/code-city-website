@@ -29,7 +29,7 @@ const publicResult = (result: NotificationBatchResult) => ({
 
 export default {
   fetch: withSupabase(
-    { auth: 'secret:code-city-notifications' },
+    { auth: 'secret:code_city_notifications' },
     async (request, context) => {
       if (request.method !== 'POST') return jsonResponse({ error: 'Method not allowed.' }, 405);
 

@@ -22,3 +22,16 @@ test('submit-inquiry verifies publishable keys inside the function', async () =>
   assert.match(functionSource, /const supabase = context\.supabaseAdmin/);
   assert.doesNotMatch(functionSource, /createClient\(/);
 });
+
+test('notification retries require the dedicated valid named secret key', async () => {
+  const [config, functionSource, schedulerMigration] = await Promise.all([
+    readProjectFile('supabase/config.toml'),
+    readProjectFile('supabase/functions/process-inquiry-notifications/index.ts'),
+    readProjectFile('supabase/migrations/20260828200000_schedule_inquiry_notification_worker.sql'),
+  ]);
+
+  assert.match(config, /\[functions\.process-inquiry-notifications\]\s+verify_jwt\s*=\s*false/);
+  assert.match(functionSource, /auth:\s*'secret:code_city_notifications'/);
+  assert.doesNotMatch(functionSource, /secret:code-city-notifications/);
+  assert.match(schedulerMigration, /where name = 'code_city_notifications_secret_key'/);
+});

@@ -261,6 +261,20 @@ def hash_client_address(address: str) -> str:
     return hashlib.sha256(f"{salt}:{address or 'unknown'}".encode("utf-8")).hexdigest()
 
 
+def _supabase_server_headers(api_key: str) -> dict[str, str]:
+    headers = {
+        "apikey": api_key,
+        "Content-Type": "application/json",
+        "User-Agent": "code-city-tracker/1.0",
+    }
+    # New sb_secret keys authenticate through `apikey` and are not JWTs. The
+    # legacy service-role key remains a JWT and still uses Authorization while
+    # the project completes its key migration.
+    if not api_key.startswith("sb_secret_"):
+        headers["Authorization"] = f"Bearer {api_key}"
+    return headers
+
+
 def record_event(payload: dict[str, Any]) -> bool:
     supabase_url = os.environ.get("SUPABASE_URL", "").rstrip("/")
     service_role_key = os.environ.get("SUPABASE_SERVICE_ROLE_KEY", "")
@@ -274,12 +288,7 @@ def record_event(payload: dict[str, Any]) -> bool:
     request = urllib.request.Request(
         f"{supabase_url}/rest/v1/rpc/record_marketing_event_v2",
         data=json.dumps(payload, separators=(",", ":")).encode("utf-8"),
-        headers={
-            "apikey": service_role_key,
-            "Authorization": f"Bearer {service_role_key}",
-            "Content-Type": "application/json",
-            "User-Agent": "code-city-tracker/1.0",
-        },
+        headers=_supabase_server_headers(service_role_key),
         method="POST",
     )
 

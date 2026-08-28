@@ -23,7 +23,6 @@ export async function submitInquiry(payload) {
     method: 'POST',
     headers: {
       apikey: anonKey,
-      Authorization: `Bearer ${anonKey}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({

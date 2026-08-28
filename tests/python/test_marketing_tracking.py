@@ -7,7 +7,13 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from unittest.mock import patch
 
-from api._tracking import TrackingError, hash_client_address, is_obvious_bot, validate_payload
+from api._tracking import (
+    TrackingError,
+    _supabase_server_headers,
+    hash_client_address,
+    is_obvious_bot,
+    validate_payload,
+)
 
 
 class MarketingTrackingValidationTests(unittest.TestCase):
@@ -88,6 +94,16 @@ class MarketingTrackingValidationTests(unittest.TestCase):
             with self.assertRaises(TrackingError) as context:
                 hash_client_address("203.0.113.10")
         self.assertEqual(context.exception.status, 503)
+
+    def test_new_secret_key_is_never_sent_as_a_bearer_jwt(self):
+        headers = _supabase_server_headers("sb_secret_test-only")
+        self.assertEqual(headers["apikey"], "sb_secret_test-only")
+        self.assertNotIn("Authorization", headers)
+
+    def test_legacy_service_role_jwt_keeps_its_authorization_header(self):
+        headers = _supabase_server_headers("eyJtest-only")
+        self.assertEqual(headers["apikey"], "eyJtest-only")
+        self.assertEqual(headers["Authorization"], "Bearer eyJtest-only")
 
     def test_old_clients_derive_attribution_presence(self):
         payload = self.payload()

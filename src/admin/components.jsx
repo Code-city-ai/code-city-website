@@ -18,10 +18,9 @@ export const formatMoney = (value, currency = 'USD') => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: code,
-      maximumFractionDigits: 0,
     }).format(amount);
   } catch {
-    return `${new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(amount)} ${code || 'USD'}`;
+    return `${new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 }).format(amount)} ${code || 'USD'}`;
   }
 };
 

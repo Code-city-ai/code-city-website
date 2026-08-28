@@ -50,14 +50,17 @@ export default function Login() {
           <p>Use the administrator account provisioned through Code City&apos;s secure Supabase workspace.</p>
 
           <form onSubmit={handleSubmit}>
-            <label><span>Email address</span><input type="email" value={email} onChange={(event) => setEmail(event.target.value)} autoComplete="username" required placeholder="you@codecity.ai" /></label>
-            <label>
-              <span className="portal-password-label">Password <button type="button" onClick={handlePasswordReset} disabled={status.loading}>Forgot password?</button></span>
+            <div className="portal-login-field">
+              <label htmlFor="code-city-admin-email"><span>Email address</span></label>
+              <input id="code-city-admin-email" type="email" value={email} onChange={(event) => setEmail(event.target.value)} autoComplete="username" required placeholder="you@codecity.ai" />
+            </div>
+            <div className="portal-login-field">
+              <div className="portal-password-label"><label htmlFor="code-city-admin-password">Password</label><button type="button" onClick={handlePasswordReset} disabled={status.loading}>Forgot password?</button></div>
               <div className="portal-password-field">
-                <input type={showPassword ? 'text' : 'password'} value={password} onChange={(event) => setPassword(event.target.value)} autoComplete="current-password" required placeholder="Enter your password" />
+                <input id="code-city-admin-password" type={showPassword ? 'text' : 'password'} value={password} onChange={(event) => setPassword(event.target.value)} autoComplete="current-password" required placeholder="Enter your password" />
                 <button type="button" onClick={() => setShowPassword((value) => !value)} aria-label={showPassword ? 'Hide password' : 'Show password'}>{showPassword ? <EyeOff /> : <Eye />}</button>
               </div>
-            </label>
+            </div>
             {(status.error || authError || !configured) && <div className="portal-login-error" role="alert">{status.error || authError}</div>}
             {status.message && <div className="portal-login-message" role="status">{status.message}</div>}
             <button type="submit" disabled={status.loading || !configured}>

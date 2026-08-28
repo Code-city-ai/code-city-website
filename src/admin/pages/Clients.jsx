@@ -183,7 +183,7 @@ export default function Clients() {
   const [operators, setOperators] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
   const selectedIdRef = useRef(selectedId);
-  const [context, setContext] = useState({ notes: [], activity: [], noteTotal: 0, activityTotal: 0, noteHasMore: false, activityHasMore: false });
+  const [context, setContext] = useState({ timeline: [], timelineHasMore: false });
   const [contextState, setContextState] = useState({ loading: false, error: null });
   const [historyLoading, setHistoryLoading] = useState(false);
   const [contextVersion, setContextVersion] = useState(0);
@@ -222,7 +222,7 @@ export default function Clients() {
   }, [selectedId]);
   useEffect(() => {
     setHistoryLoading(false);
-    setContext({ notes: [], activity: [], noteTotal: 0, activityTotal: 0, noteHasMore: false, activityHasMore: false });
+    setContext({ timeline: [], timelineHasMore: false });
     if (!selectedId) {
       setContextState({ loading: false, error: null });
       return undefined;
@@ -258,22 +258,7 @@ export default function Clients() {
   const selectedOpenTotals = groupCurrencyTotals(selectedProjects.filter((project) => !['completed', 'lost'].includes(project.status)));
   const directoryPartial = clientHasMore || clients.length < clientTotal;
 
-  const timeline = useMemo(() => [
-    ...context.notes.map((item) => ({
-      id: `note-${item.id}`,
-      kind: 'note',
-      title: item.admin_profiles?.full_name || 'Code City team',
-      body: item.body,
-      at: item.created_at,
-    })),
-    ...context.activity.map((item) => ({
-      id: `activity-${item.id}`,
-      kind: 'activity',
-      title: item.admin_profiles?.full_name || 'System automation',
-      body: item.summary || item.event_type?.replaceAll('_', ' ') || 'Relationship updated',
-      at: item.created_at,
-    })),
-  ].sort((left, right) => new Date(right.at).getTime() - new Date(left.at).getTime()), [context]);
+  const timeline = context.timeline;
 
   const refreshSelected = async (clientId = selectedId, isNew = false) => {
     if (!clientId) return;
@@ -312,35 +297,22 @@ export default function Clients() {
   };
 
   const loadMoreHistory = async () => {
-    if (!selected || historyLoading) return;
+    if (!selected || historyLoading || !context.timelineHasMore) return;
     const targetClientId = selected.id;
-    const loadNotes = context.noteHasMore;
-    const loadActivity = context.activityHasMore;
-    if (!loadNotes && !loadActivity) return;
     setHistoryLoading(true);
     setActionError('');
     try {
-      const lastNote = context.notes.at(-1);
-      const lastActivity = context.activity.at(-1);
+      const lastItem = context.timeline.at(-1);
       const nextPage = await loadClientContext(targetClientId, {
-        noteCursor: loadNotes && lastNote ? { created_at: lastNote.created_at, id: lastNote.id } : null,
-        activityCursor: loadActivity && lastActivity ? { created_at: lastActivity.created_at, id: lastActivity.id } : null,
-        skipNotes: !loadNotes,
-        skipActivity: !loadActivity,
+        cursor: lastItem ? { created_at: lastItem.created_at, sort_key: lastItem.sort_key } : null,
       });
       if (selectedIdRef.current === targetClientId) {
         setContext((current) => {
-          const noteIds = new Set(current.notes.map((item) => item.id));
-          const activityIds = new Set(current.activity.map((item) => item.id));
-          const mergedNotes = [...current.notes, ...nextPage.notes.filter((item) => !noteIds.has(item.id))];
-          const mergedActivity = [...current.activity, ...nextPage.activity.filter((item) => !activityIds.has(item.id))];
+          const timelineKeys = new Set(current.timeline.map((item) => item.sort_key));
+          const mergedTimeline = [...current.timeline, ...nextPage.timeline.filter((item) => !timelineKeys.has(item.sort_key))];
           return {
-            notes: mergedNotes,
-            activity: mergedActivity,
-            noteTotal: Math.max(current.noteTotal, mergedNotes.length),
-            activityTotal: Math.max(current.activityTotal, mergedActivity.length),
-            noteHasMore: loadNotes ? nextPage.noteHasMore : current.noteHasMore,
-            activityHasMore: loadActivity ? nextPage.activityHasMore : current.activityHasMore,
+            timeline: mergedTimeline,
+            timelineHasMore: nextPage.timelineHasMore,
           };
         });
       }
@@ -462,7 +434,19 @@ export default function Clients() {
     try {
       const created = await addClientNote(targetClientId, profile.user_id, note);
       if (selectedIdRef.current === targetClientId) {
-        setContext((current) => ({ ...current, notes: [created, ...current.notes], noteTotal: current.noteTotal + 1 }));
+        const timelineItem = {
+          client_id: targetClientId,
+          kind: 'note',
+          sort_key: `note:${created.id}`,
+          source_id: created.id,
+          title: profile.full_name || 'Code City team',
+          body: created.body,
+          created_at: created.created_at,
+        };
+        setContext((current) => ({
+          ...current,
+          timeline: [timelineItem, ...current.timeline],
+        }));
         setNote('');
       }
     } catch (error) {
@@ -588,10 +572,10 @@ export default function Clients() {
               {contextState.error && <div className="client-context-error" role="alert"><span>Relationship history could not be loaded.</span><button type="button" onClick={() => setContextVersion((value) => value + 1)}>Retry</button></div>}
               <div className="client-timeline">
                 {timeline.map((item) => (
-                  <article className={item.kind} key={item.id}><i /><div><strong>{item.title}</strong>{item.body && <p>{item.body}</p>}<span>{formatDate(item.at, true)}</span></div></article>
+                  <article className={item.kind} key={item.sort_key}><i /><div><strong>{item.title}</strong>{item.body && <p>{item.body}</p>}<span>{formatDate(item.created_at, true)}</span></div></article>
                 ))}
                 {!contextState.loading && !contextState.error && !timeline.length && <p className="client-panel-empty">The first relationship action will appear here.</p>}
-                {!contextState.loading && !contextState.error && (context.noteHasMore || context.activityHasMore) && <button className="client-history-more" type="button" onClick={loadMoreHistory} disabled={historyLoading}>{historyLoading ? 'Loading older history' : 'Load older history'}</button>}
+                {!contextState.loading && !contextState.error && context.timelineHasMore && <button className="client-history-more" type="button" onClick={loadMoreHistory} disabled={historyLoading}>{historyLoading ? 'Loading older history' : 'Load older history'}</button>}
               </div>
             </section>
           </div>

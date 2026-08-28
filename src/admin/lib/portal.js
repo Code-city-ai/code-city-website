@@ -161,53 +161,27 @@ export async function loadClientWorkspace(clientId) {
 }
 
 export async function loadClientContext(clientId, {
-  noteCursor = null,
-  activityCursor = null,
-  skipNotes = false,
-  skipActivity = false,
+  cursor = null,
   limit = 200,
 } = {}) {
   const client = requireSupabase();
   const safeLimit = Math.min(250, Math.max(1, Number(limit) || 200));
-  let notesQuery = client
-      .from('client_notes')
-      .select('id, client_id, author_user_id, body, created_at, admin_profiles(full_name)')
-      .eq('client_id', clientId)
-      .order('created_at', { ascending: false })
-      .order('id', { ascending: false })
-      .limit(safeLimit + 1);
-  let activityQuery = client
-      .from('client_activity')
-      .select('id, client_id, actor_user_id, project_id, entity_type, entity_id, event_type, summary, metadata, created_at, admin_profiles(full_name)')
-      .eq('client_id', clientId)
-      .order('created_at', { ascending: false })
-      .order('id', { ascending: false })
-      .limit(safeLimit + 1);
-  if (noteCursor?.created_at && noteCursor?.id) {
-    notesQuery = notesQuery.or(`created_at.lt.${noteCursor.created_at},and(created_at.eq.${noteCursor.created_at},id.lt.${noteCursor.id})`);
+  let timelineQuery = client
+    .from('client_relationship_timeline')
+    .select('client_id, kind, sort_key, source_id, title, body, created_at')
+    .eq('client_id', clientId)
+    .order('created_at', { ascending: false })
+    .order('sort_key', { ascending: false })
+    .limit(safeLimit + 1);
+  if (cursor?.created_at && cursor?.sort_key) {
+    timelineQuery = timelineQuery.or(`created_at.lt.${cursor.created_at},and(created_at.eq.${cursor.created_at},sort_key.lt.${cursor.sort_key})`);
   }
-  if (activityCursor?.created_at && activityCursor?.id) {
-    activityQuery = activityQuery.or(`created_at.lt.${activityCursor.created_at},and(created_at.eq.${activityCursor.created_at},id.lt.${activityCursor.id})`);
-  }
-  const [notes, activity, noteTotal, activityTotal] = await Promise.all([
-    skipNotes ? Promise.resolve({ data: [], error: null }) : notesQuery,
-    skipActivity ? Promise.resolve({ data: [], error: null }) : activityQuery,
-    client.from('client_notes').select('id', { count: 'exact', head: true }).eq('client_id', clientId),
-    client.from('client_activity').select('id', { count: 'exact', head: true }).eq('client_id', clientId),
-  ]);
-  if (notes.error) throw notes.error;
-  if (activity.error) throw activity.error;
-  if (noteTotal.error) throw noteTotal.error;
-  if (activityTotal.error) throw activityTotal.error;
-  const noteRows = notes.data || [];
-  const activityRows = activity.data || [];
+  const { data, error } = await timelineQuery;
+  if (error) throw error;
+  const rows = data || [];
   return {
-    notes: noteRows.slice(0, safeLimit),
-    activity: activityRows.slice(0, safeLimit),
-    noteHasMore: noteRows.length > safeLimit,
-    activityHasMore: activityRows.length > safeLimit,
-    noteTotal: noteTotal.count ?? Math.min(noteRows.length, safeLimit),
-    activityTotal: activityTotal.count ?? Math.min(activityRows.length, safeLimit),
+    timeline: rows.slice(0, safeLimit),
+    timelineHasMore: rows.length > safeLimit,
   };
 }
 
@@ -369,7 +343,7 @@ export async function addClientNote(clientId, authorUserId, body) {
   const { data, error } = await client
     .from('client_notes')
     .insert({ client_id: clientId, author_user_id: authorUserId, body: note })
-    .select('id, client_id, author_user_id, body, created_at, admin_profiles(full_name)')
+    .select('id, client_id, author_user_id, body, created_at')
     .single();
   if (error) throw error;
   return data;

@@ -46,8 +46,11 @@ test('client creation and primary-contact changes stay behind operator-only RPCs
   assert.match(portal, /export async function loadClientWorkspace\(clientId\)/);
   assert.match(portal, /\.order\('created_at', \{ ascending: false \}\)\s*\.order\('id', \{ ascending: false \}\)/);
   assert.match(portal, /created_at\.lt\.\$\{cursor\.created_at\}.*id\.lt\.\$\{cursor\.id\}/);
-  assert.match(portal, /noteTotal: noteTotal\.count/);
-  assert.match(portal, /created_at\.lt\.\$\{noteCursor\.created_at\}.*id\.lt\.\$\{noteCursor\.id\}/);
+  assert.match(portal, /export async function loadClientContext\(clientId/);
+  assert.match(portal, /from\('client_relationship_timeline'\)/);
+  assert.match(portal, /created_at\.lt\.\$\{cursor\.created_at\}.*sort_key\.lt\.\$\{cursor\.sort_key\}/);
+  assert.match(portal, /from\('client_relationship_timeline'\)\s*\.select\('client_id, kind, sort_key, source_id, title, body, created_at'\)/);
+  assert.doesNotMatch(portal, /timelineTotal/);
   assert.match(portal, /p_expected_updated_at:/);
   assert.match(portal, /\.eq\('updated_at', expectedUpdatedAt\)/);
   assert.match(portal, /client_contact_conflict/);
@@ -56,7 +59,11 @@ test('client creation and primary-contact changes stay behind operator-only RPCs
 });
 
 test('client history is append-only and mutation activity is trigger-generated', async () => {
-  const migration = await readProjectFile('supabase/migrations/20260828201000_complete_client_workspace_backend.sql');
+  const [migration, timelineMigration, portal] = await Promise.all([
+    readProjectFile('supabase/migrations/20260828201000_complete_client_workspace_backend.sql'),
+    readProjectFile('supabase/migrations/20260828203000_create_client_relationship_timeline.sql'),
+    readProjectFile('src/admin/lib/portal.js'),
+  ]);
 
   assert.match(migration, /create trigger clients_log_workspace_activity/);
   assert.match(migration, /create trigger client_contacts_log_workspace_activity/);
@@ -64,6 +71,11 @@ test('client history is append-only and mutation activity is trigger-generated',
   assert.match(migration, /insert into public\.client_activity/);
   assert.doesNotMatch(migration, /grant (?:update|delete)[^;]*public\.client_notes to authenticated/);
   assert.doesNotMatch(migration, /grant (?:insert|update|delete)[^;]*public\.client_activity to authenticated/);
+  assert.match(timelineMigration, /with \(security_invoker = true\)/);
+  assert.match(timelineMigration, /union all/);
+  assert.match(portal, /from\('client_relationship_timeline'\)/);
+  assert.match(portal, /\.order\('created_at'.*\.order\('sort_key'/s);
+  assert.doesNotMatch(portal, /noteCursor|activityCursor/);
 });
 
 test('the inquiry outbox upsert names its unique constraint and avoids PL/pgSQL ambiguity', async () => {

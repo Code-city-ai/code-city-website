@@ -106,24 +106,22 @@ test('public intake claims only its inquiry and delivers to the two approved rec
     ]);
     assert.equal(supabase.rpcCalls.filter(({ name }) => name === 'finalize_inquiry_notification_delivery').length, 2);
     assert.ok(!supabase.updates.some(({ table, value }) => table === 'portal_work_items' && value === 'Automate inquiry notification retries'));
-    const mailgunLedger = supabase.updates.find(({ table, value }) => (
+    assert.ok(!supabase.updates.some(({ table, value }) => (
       table === 'portal_work_items' && value === 'Connect Mailgun notification delivery'
-    ));
-    assert.equal(mailgunLedger.values.status, 'completed');
+    )));
   } finally {
     globalThis.fetch = originalFetch;
   }
 });
 
-test('an idle scheduled run completes only the worker ledger', async () => {
+test('an idle scheduled run preserves both evidence-gated ledger states', async () => {
   const supabase = fakeSupabase();
   const result = await processInquiryNotificationBatch(supabase, { mailgunConfig });
 
   assert.equal(result.state, 'idle');
-  const workerLedger = supabase.updates.find(({ table, value }) => (
+  assert.ok(!supabase.updates.some(({ table, value }) => (
     table === 'portal_work_items' && value === 'Automate inquiry notification retries'
-  ));
-  assert.equal(workerLedger.values.status, 'completed');
+  )));
   assert.ok(!supabase.updates.some(({ table, value }) => (
     table === 'portal_work_items' && value === 'Connect Mailgun notification delivery'
   )));
@@ -155,6 +153,14 @@ test('one unexpected delivery failure does not prevent another claim from finali
     assert.equal(result.workerErrors, 1);
     assert.equal(result.accepted, 1);
     assert.equal(supabase.rpcCalls.filter(({ name }) => name === 'finalize_inquiry_notification_delivery').length, 2);
+    const mailgunLedger = supabase.updates.find(({ table, value }) => (
+      table === 'portal_work_items' && value === 'Connect Mailgun notification delivery'
+    ));
+    assert.equal(mailgunLedger.values.status, 'in_progress');
+    assert.match(mailgunLedger.values.blocked_reason, /unresolved deliveries/i);
+    assert.ok(!supabase.updates.some(({ table, value }) => (
+      table === 'portal_work_items' && value === 'Automate inquiry notification retries'
+    )));
   } finally {
     globalThis.fetch = originalFetch;
   }

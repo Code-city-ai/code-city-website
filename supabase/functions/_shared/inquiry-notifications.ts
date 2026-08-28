@@ -217,7 +217,7 @@ export const sendMailgunNotification = async (
 
 const updateWorkerWorkItem = async (
   supabase: SupabaseClient,
-  status: 'blocked' | 'in_progress' | 'completed',
+  status: 'blocked' | 'in_progress',
   blockedReason: string | null,
 ) => {
   const { error } = await supabase
@@ -225,9 +225,7 @@ const updateWorkerWorkItem = async (
     .update({
       status,
       blocked_reason: blockedReason,
-      description: status === 'completed'
-        ? 'The service-only Mailgun outbox worker runs every minute with nonblocking claims, bounded retries, and stale-lease recovery.'
-        : 'Run the service-only Mailgun outbox worker every minute with nonblocking claims, bounded retries, and stale-lease recovery.',
+      description: 'Run the service-only Mailgun outbox worker every minute with nonblocking claims, bounded retries, and stale-lease recovery.',
     })
     .eq('title', WORKER_WORK_ITEM_TITLE);
   if (error) console.error('Notification worker ledger update failed', { code: error.code });
@@ -235,7 +233,7 @@ const updateWorkerWorkItem = async (
 
 const updateMailgunWorkItem = async (
   supabase: SupabaseClient,
-  status: 'blocked' | 'in_progress' | 'completed',
+  status: 'blocked' | 'in_progress',
   blockedReason: string | null,
 ) => {
   const { error } = await supabase
@@ -243,9 +241,7 @@ const updateMailgunWorkItem = async (
     .update({
       status,
       blocked_reason: blockedReason,
-      description: status === 'completed'
-        ? 'Mailgun is connected with server-only credentials and provider acceptance is verified for both Code City recipients.'
-        : 'Connect the verified Mailgun sending domain and server-only API key, then verify provider acceptance to both Code City recipients.',
+      description: 'Connect the verified Mailgun sending domain and server-only API key, then verify provider acceptance to both Code City recipients.',
     })
     .eq('title', MAILGUN_WORK_ITEM_TITLE);
   if (error) console.error('Mailgun work-item update failed', { code: error.code });
@@ -337,7 +333,7 @@ export const processInquiryNotificationBatch = async (
   const config = options.mailgunConfig === undefined ? getMailgunConfig() : options.mailgunConfig;
   const shouldUpdateWorkerLedger = options.updateWorkerLedger ?? true;
   const recordWorkerState = (
-    status: 'blocked' | 'in_progress' | 'completed',
+    status: 'blocked' | 'in_progress',
     blockedReason: string | null,
   ) => shouldUpdateWorkerLedger
     ? updateWorkerWorkItem(supabase, status, blockedReason)
@@ -395,10 +391,9 @@ export const processInquiryNotificationBatch = async (
 
   const claimed = (data || []) as ClaimedInquiryDelivery[];
   if (claimed.length === 0) {
-    // An idle queue proves the scheduled worker is healthy, but it does not by
-    // itself prove that Mailgun has accepted a message. Preserve the latest
-    // provider-backed Mailgun state instead of upgrading or downgrading it.
-    await recordWorkerState('completed', null);
+    // A zero-row claim can also follow terminal-attempt normalization. It is
+    // not sufficient evidence to promote either global work item. Preserve the
+    // last evidence-gated state; explicit runtime failures still downgrade it.
     return emptyBatchResult('idle', true);
   }
 
@@ -449,11 +444,10 @@ export const processInquiryNotificationBatch = async (
       ),
     ]);
   } else {
-    await Promise.all([
-      updateMailgunIntegration(supabase, 'connected', null, acceptedAt),
-      updateMailgunWorkItem(supabase, 'completed', null),
-      recordWorkerState('completed', null),
-    ]);
+    // Provider acceptance is persisted per delivery above. Do not promote
+    // global implementation work from one batch: an operational verification
+    // gate confirms dual-recipient acceptance and the live cron separately.
+    await updateMailgunIntegration(supabase, 'connected', null, acceptedAt);
   }
 
   return result;

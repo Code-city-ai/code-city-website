@@ -43,7 +43,7 @@ export async function loadInquiries() {
   const client = requireSupabase();
   const { data, error } = await client
     .from('project_inquiries')
-    .select('*')
+    .select('*, inquiry_notification_deliveries(recipient, status, attempts, last_error, last_attempt_at, accepted_at, delivered_at)')
     .order('created_at', { ascending: false })
     .limit(250);
   if (error) throw error;
@@ -102,16 +102,19 @@ export async function loadClients() {
 export async function loadMarketing() {
   const client = requireSupabase();
   const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
-  const [visitors, sessions, events, pageviews, formSubmits, attributableInquiries, campaigns, integrations, workItems] = await Promise.all([
+  const until = new Date().toISOString();
+  const [visitors, sessions, events, pageviews, formStarts, inquiries, attributableInquiries, campaigns, integrations, workItems, funnel] = await Promise.all([
     client.from('marketing_visitors').select('id', { count: 'exact', head: true }).gte('last_seen_at', since),
     client.from('marketing_sessions').select('id', { count: 'exact', head: true }).gte('started_at', since),
     client.from('marketing_events').select('id', { count: 'exact', head: true }).gte('occurred_at', since),
     client.from('marketing_events').select('id', { count: 'exact', head: true }).eq('event_name', 'page_viewed').gte('occurred_at', since),
-    client.from('marketing_events').select('id', { count: 'exact', head: true }).in('event_name', ['contact_form_submitted', 'support_form_submitted', 'inquiry_submitted']).gte('occurred_at', since),
-    client.from('project_inquiries').select('id', { count: 'exact', head: true }).not('utm_source', 'is', null).gte('created_at', since),
+    client.from('marketing_events').select('id', { count: 'exact', head: true }).eq('event_name', 'contact_form_started').gte('occurred_at', since),
+    client.from('project_inquiries').select('id', { count: 'exact', head: true }).neq('project_type', 'product-support').neq('status', 'spam').gte('created_at', since),
+    client.from('project_inquiries').select('id', { count: 'exact', head: true }).neq('project_type', 'product-support').neq('status', 'spam').not('attribution_captured_at', 'is', null).gte('created_at', since),
     client.from('marketing_campaigns').select('*, marketing_daily_metrics(*)').order('updated_at', { ascending: false }),
     client.from('marketing_integrations').select('*').order('provider'),
     client.from('portal_work_items').select('*').order('sort_order'),
+    client.rpc('get_marketing_funnel', { p_from: since, p_to: until }),
   ]);
 
   return {
@@ -120,9 +123,11 @@ export async function loadMarketing() {
       sessions: unwrap(sessions),
       events: unwrap(events),
       pageviews: unwrap(pageviews),
-      formSubmits: unwrap(formSubmits),
+      formStarts: unwrap(formStarts),
+      formSubmits: unwrap(inquiries),
       attributableInquiries: unwrap(attributableInquiries),
     },
+    funnel: unwrap(funnel) || [],
     campaigns: unwrap(campaigns) || [],
     integrations: unwrap(integrations) || [],
     workItems: unwrap(workItems) || [],

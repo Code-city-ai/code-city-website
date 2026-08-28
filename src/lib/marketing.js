@@ -1,6 +1,15 @@
+import {
+  ATTRIBUTION_FIELDS,
+  emptyAttribution,
+  normalizeAttributionValue,
+  parseAttribution,
+  resolveAttributionSession,
+} from '@/lib/attribution';
+
 const VISITOR_KEY = 'codecity-marketing-visitor';
 const SESSION_KEY = 'codecity-marketing-session';
-const ATTRIBUTION_KEY = 'codecity-marketing-attribution';
+const ATTRIBUTION_KEY = 'codecity-marketing-attribution-v2';
+const CONSENT_KEY = 'codecity-tracking-consent';
 const SESSION_TIMEOUT_MS = 30 * 60 * 1000;
 
 const uuid = () => crypto.randomUUID();
@@ -21,6 +30,32 @@ const writeJson = (storage, key, value) => {
   }
 };
 
+const removeItem = (storage, key) => {
+  try {
+    storage.removeItem(key);
+  } catch {
+    // Storage can be unavailable in strict privacy modes.
+  }
+};
+
+const readSessionItem = (key) => {
+  try {
+    return sessionStorage.getItem(key);
+  } catch {
+    return null;
+  }
+};
+
+const trackingAllowed = () => {
+  if (window.location.pathname === '/sign-in' || window.location.pathname.startsWith('/admin')) return false;
+  try {
+    if (localStorage.getItem(CONSENT_KEY) === 'denied') return false;
+  } catch {
+    // Continue without a stored preference.
+  }
+  return Reflect.get(navigator, 'globalPrivacyControl') !== true && navigator.doNotTrack !== '1';
+};
+
 const getVisitorId = () => {
   try {
     let visitorId = localStorage.getItem(VISITOR_KEY);
@@ -34,18 +69,38 @@ const getVisitorId = () => {
   }
 };
 
-const getSession = () => {
+const resolveTrackingContext = () => {
   const now = Date.now();
+  const incoming = parseAttribution(window.location.search, document.referrer);
   const current = readJson(sessionStorage, SESSION_KEY);
-  if (current?.id && now - current.lastActivityAt < SESSION_TIMEOUT_MS) {
-    const active = { ...current, lastActivityAt: now };
-    writeJson(sessionStorage, SESSION_KEY, active);
-    return { ...active, isNew: false };
+  const storedTouch = readJson(sessionStorage, ATTRIBUTION_KEY);
+  const resolved = resolveAttributionSession({
+    currentSession: current,
+    storedTouch,
+    incomingTouch: incoming,
+    now,
+    newSessionId: uuid(),
+    timeoutMs: SESSION_TIMEOUT_MS,
+  });
+  const { session, touch, isNew, touchOccurred } = resolved;
+
+  if (isNew) {
+    removeItem(sessionStorage, ATTRIBUTION_KEY);
+  }
+  if (touch.attributionPresent && (touchOccurred || storedTouch?.sessionId !== session.id)) {
+    writeJson(sessionStorage, ATTRIBUTION_KEY, touch);
   }
 
-  const next = { id: uuid(), startedAt: now, lastActivityAt: now };
-  writeJson(sessionStorage, SESSION_KEY, next);
-  return { ...next, isNew: true };
+  writeJson(sessionStorage, SESSION_KEY, session);
+
+  return {
+    visitorId: getVisitorId(),
+    sessionId: session.id,
+    sessionStartedAt: new Date(session.startedAt).toISOString(),
+    isNew,
+    attributionTouchOccurred: touchOccurred,
+    ...touch,
+  };
 };
 
 const currentDevice = () => {
@@ -55,70 +110,96 @@ const currentDevice = () => {
   return 'desktop';
 };
 
-const captureAttribution = () => {
-  const existing = readJson(sessionStorage, ATTRIBUTION_KEY) || {};
-  const params = new URLSearchParams(window.location.search);
-  const captured = {
-    utmSource: params.get('utm_source') || existing.utmSource || '',
-    utmMedium: params.get('utm_medium') || existing.utmMedium || '',
-    utmCampaign: params.get('utm_campaign') || existing.utmCampaign || '',
-    utmContent: params.get('utm_content') || existing.utmContent || '',
-    utmTerm: params.get('utm_term') || existing.utmTerm || '',
-    referrer: existing.referrer || document.referrer || '',
-  };
-  writeJson(sessionStorage, ATTRIBUTION_KEY, captured);
-  return captured;
-};
+const publicContext = (context) => ({
+  visitorId: context.visitorId,
+  sessionId: context.sessionId,
+  sessionStartedAt: context.sessionStartedAt || null,
+  ...Object.fromEntries(
+    ATTRIBUTION_FIELDS.map((field) => [field, normalizeAttributionValue(field, context[field])]),
+  ),
+  attributionPresent: Boolean(context.attributionPresent),
+  attributionTouchOccurred: Boolean(context.attributionTouchOccurred),
+  attributionCapturedAt: context.attributionCapturedAt || null,
+  referrer: context.referrer || '',
+});
 
 export const getAttributionContext = () => {
   try {
-    const session = getSession();
-    return {
-      visitorId: getVisitorId(),
-      sessionId: session.id,
-      ...captureAttribution(),
-    };
+    if (!trackingAllowed()) {
+      const touch = emptyAttribution('');
+      return { ...publicContext(touch), visitorId: null, sessionId: null };
+    }
+    return publicContext(resolveTrackingContext());
   } catch {
-    return { visitorId: uuid(), sessionId: uuid() };
+    return { visitorId: null, sessionId: null };
   }
+};
+
+const dispatchEvent = (context, eventName, properties) => {
+  const payload = {
+    eventId: uuid(),
+    ...publicContext(context),
+    eventName,
+    occurredAt: new Date().toISOString(),
+    path: `${window.location.pathname}${window.location.hash}`.slice(0, 500),
+    deviceType: currentDevice(),
+    properties,
+  };
+
+  fetch('/api/track', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+    keepalive: true,
+  }).catch(() => {});
 };
 
 export const trackEvent = (eventName, properties = {}) => {
   try {
-    const session = getSession();
-    const attribution = captureAttribution();
-    const payload = {
-      eventId: uuid(),
-      visitorId: getVisitorId(),
-      sessionId: session.id,
-      eventName,
-      occurredAt: new Date().toISOString(),
-      path: `${window.location.pathname}${window.location.hash}`.slice(0, 500),
-      deviceType: currentDevice(),
-      properties,
-      ...attribution,
-    };
-
-    fetch('/api/track', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-      keepalive: true,
-    }).catch(() => {});
-
-    if (session.isNew && eventName !== 'session_started') {
-      trackEvent('session_started', { component: 'site' });
+    if (!trackingAllowed()) return null;
+    const context = resolveTrackingContext();
+    if (context.isNew && eventName !== 'session_started') {
+      dispatchEvent(context, 'session_started', { component: 'site' });
     }
+    dispatchEvent(context, eventName, properties);
+    return context.sessionId;
   } catch {
-    // Local storage and tracking failures are deliberately non-blocking.
+    return null;
   }
 };
 
 export const initializeMarketingTracking = () => {
-  if (window.location.pathname === '/sign-in' || window.location.pathname.startsWith('/admin')) return;
-  trackEvent('page_viewed', { component: 'site' });
+  if (!trackingAllowed() || document.documentElement.dataset.codeCityMarketingInitialized === 'true') return;
+  document.documentElement.dataset.codeCityMarketingInitialized = 'true';
+
+  const initialSessionId = trackEvent('page_viewed', { component: 'site' });
+  let engaged = initialSessionId
+    ? readSessionItem(`codecity-marketing-engaged:${initialSessionId}`) === '1'
+    : false;
+
+  const handleScroll = () => {
+    const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+    if (scrollable > 0 && window.scrollY / scrollable >= 0.4) markEngaged();
+  };
+
+  const markEngaged = () => {
+    if (engaged) return;
+    const sessionId = trackEvent('session_engaged', { component: 'site' });
+    if (!sessionId) return;
+    engaged = true;
+    try {
+      sessionStorage.setItem(`codecity-marketing-engaged:${sessionId}`, '1');
+    } catch {
+      // Engagement remains best-effort when storage is unavailable.
+    }
+    window.removeEventListener('scroll', handleScroll);
+  };
+
+  window.addEventListener('scroll', handleScroll, { passive: true });
+  window.setTimeout(markEngaged, 15_000);
 
   document.addEventListener('click', (event) => {
+    markEngaged();
     if (!(event.target instanceof Element)) return;
     const link = event.target.closest('a, button');
     if (!(link instanceof HTMLElement)) return;

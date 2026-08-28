@@ -25,7 +25,7 @@ export default function Marketing() {
 
   if (state.loading) return <LoadingState label="Assembling attribution intelligence" />;
   if (state.error) return <ErrorState error={state.error} retry={load} />;
-  const { metrics, integrations, workItems } = state.data;
+  const { metrics, funnel, integrations, workItems } = state.data;
   const conversionRate = metrics.sessions ? ((metrics.formSubmits / metrics.sessions) * 100).toFixed(1) : '0.0';
 
   return (
@@ -40,8 +40,29 @@ export default function Marketing() {
         <MetricCard eyebrow="Sessions" value={metrics.sessions} detail="30-minute activity windows" />
         <MetricCard eyebrow="Page views" value={metrics.pageviews} detail={`${metrics.events} total tracked events`} />
         <MetricCard eyebrow="Form conversions" value={metrics.formSubmits} detail={`${conversionRate}% of sessions`} />
-        <MetricCard eyebrow="Attributed inquiries" value={metrics.attributableInquiries} detail="UTM source recorded" />
+        <MetricCard eyebrow="Attributed inquiries" value={metrics.attributableInquiries} detail="Campaign or click identity recorded" />
       </section>
+
+      <Panel eyebrow="First-party funnel · 30 days" title="Campaign touch to qualified demand.">
+        {funnel.length ? (
+          <div className="portal-table-wrap"><table className="portal-table marketing-table marketing-funnel-table"><thead><tr><th>Source / campaign</th><th>Visitors</th><th>Sessions</th><th>Engaged</th><th>Form starts</th><th>Inquiries</th><th>Qualified</th><th>Won</th><th>Session → inquiry</th></tr></thead><tbody>
+            {funnel.map((row) => {
+              const rate = Number(row.sessions) ? (Number(row.inquiries) / Number(row.sessions) * 100).toFixed(1) : '0.0';
+              return <tr key={`${row.source}:${row.medium}:${row.campaign}`}>
+                <td><strong>{row.campaign === 'unassigned' ? row.source : row.campaign}</strong><span>{row.source} · {row.medium}</span></td>
+                <td>{row.visitors}</td>
+                <td>{row.sessions}</td>
+                <td>{row.engaged_sessions}</td>
+                <td>{row.form_starts}</td>
+                <td>{row.inquiries}</td>
+                <td>{row.qualified_inquiries}</td>
+                <td>{row.won_inquiries}</td>
+                <td>{rate}%</td>
+              </tr>;
+            })}
+          </tbody></table></div>
+        ) : <EmptyState title="The first campaign touch has not arrived" message="Direct and paid campaign rows will appear here as real sessions and stored inquiries are recorded. Qualified means the inquiry has ever reached a qualified stage." />}
+      </Panel>
 
       <Panel eyebrow="Campaign ledger" title="Spend must meet evidence.">
         {campaignRows.length ? (

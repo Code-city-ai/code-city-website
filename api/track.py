@@ -9,6 +9,7 @@ from typing import Any
 from api._tracking import (
     TrackingError,
     hash_client_address,
+    is_obvious_bot,
     record_event,
     validate_origin,
     validate_payload,
@@ -53,9 +54,15 @@ class handler(BaseHTTPRequestHandler):
             except (UnicodeDecodeError, json.JSONDecodeError) as exc:
                 raise TrackingError("invalid_json", "Valid JSON is required.") from exc
 
+            if is_obvious_bot(self.headers.get("User-Agent")):
+                self._write_json(202, {"accepted": False}, origin)
+                return
+
             validated = validate_payload(payload)
-            forwarded = (self.headers.get("X-Forwarded-For") or "").split(",", 1)[0].strip()
-            client_address = forwarded or self.headers.get("CF-Connecting-IP") or "unknown"
+            vercel_forwarded = (self.headers.get("X-Vercel-Forwarded-For") or "").split(",", 1)[0].strip()
+            real_ip = (self.headers.get("X-Real-IP") or "").strip()
+            forwarded_chain = [part.strip() for part in (self.headers.get("X-Forwarded-For") or "").split(",") if part.strip()]
+            client_address = vercel_forwarded or real_ip or (forwarded_chain[-1] if forwarded_chain else "unknown")
             validated["p_ip_hash"] = hash_client_address(client_address)
             accepted = record_event(validated)
             self._write_json(202, {"accepted": accepted}, origin)

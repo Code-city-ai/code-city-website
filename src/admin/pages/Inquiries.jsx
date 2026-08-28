@@ -18,6 +18,7 @@ const sourcePath = (value) => {
 
 export default function Inquiries() {
   const { profile } = useAdminAuth();
+  const canOperate = ['owner', 'admin', 'agent'].includes(profile.role);
   const requestedId = new URLSearchParams(window.location.search).get('selected');
   const [inquiries, setInquiries] = useState([]);
   const [selectedId, setSelectedId] = useState(requestedId);
@@ -26,6 +27,7 @@ export default function Inquiries() {
   const [query, setQuery] = useState('');
   const [note, setNote] = useState('');
   const [busy, setBusy] = useState('');
+  const [actionError, setActionError] = useState('');
   const [state, setState] = useState({ loading: true, error: null });
 
   const load = useCallback(() => {
@@ -41,7 +43,12 @@ export default function Inquiries() {
 
   useEffect(load, [load]);
   useEffect(() => {
-    if (!selectedId) return;
+    setActionError('');
+    setNote('');
+    if (!selectedId) {
+      setContext({ notes: [], activity: [] });
+      return;
+    }
     loadInquiryContext(selectedId).then(setContext).catch(() => setContext({ notes: [], activity: [] }));
   }, [selectedId]);
 
@@ -53,25 +60,37 @@ export default function Inquiries() {
     return matchesFilter && haystack.includes(query.toLowerCase());
   }), [filter, inquiries, query]);
   const selected = inquiries.find((inquiry) => inquiry.id === selectedId) || filtered[0];
+  const canPromote = canOperate && selected && ['new', 'reviewing', 'qualified', 'proposal', 'won'].includes(selected.status);
+  const deliveries = [...(selected?.inquiry_notification_deliveries || [])]
+    .sort((left, right) => left.recipient.localeCompare(right.recipient));
 
   const changeInquiry = async (changes) => {
-    if (!selected) return;
+    if (!selected || !canOperate) return;
+    setActionError('');
     setBusy('update');
     try {
       const updated = await updateInquiry(selected.id, changes);
       setInquiries((rows) => rows.map((row) => row.id === updated.id ? updated : row));
       setContext(await loadInquiryContext(selected.id));
+    } catch (error) {
+      setActionError(error?.message || 'The inquiry could not be updated.');
     } finally {
       setBusy('');
     }
   };
 
   const handlePromote = async () => {
-    if (!selected) return;
+    if (!selected || !canOperate) return;
+    setActionError('');
     setBusy('promote');
     try {
       await promoteInquiry(selected.id);
       load();
+    } catch (error) {
+      const message = error?.message?.includes('inquiry_not_eligible_for_promotion')
+        ? 'This terminal inquiry cannot be promoted. Reopen it only if the relationship is active.'
+        : error?.message || 'The inquiry could not be promoted.';
+      setActionError(message);
     } finally {
       setBusy('');
     }
@@ -79,12 +98,15 @@ export default function Inquiries() {
 
   const handleNote = async (event) => {
     event.preventDefault();
-    if (!note.trim() || !selected) return;
+    if (!note.trim() || !selected || !canOperate) return;
+    setActionError('');
     setBusy('note');
     try {
       const created = await addInquiryNote(selected.id, profile.user_id, note);
       setContext((current) => ({ ...current, notes: [created, ...current.notes] }));
       setNote('');
+    } catch (error) {
+      setActionError(error?.message || 'The note could not be added.');
     } finally {
       setBusy('');
     }
@@ -117,14 +139,34 @@ export default function Inquiries() {
         <section className="inquiry-detail-panel">
           <header className="inquiry-detail-header">
             <div><span>{selected.organization || 'Independent inquiry'}</span><h2>{selected.name}</h2><a href={`mailto:${selected.email}`}><Mail />{selected.email}</a></div>
-            <button type="button" onClick={handlePromote} disabled={busy === 'promote' || selected.client_id}><UserRoundCheck />{selected.client_id ? 'Client created' : 'Promote to client'}</button>
+            <button type="button" onClick={handlePromote} disabled={!canPromote || busy === 'promote' || selected.client_id}><UserRoundCheck />{selected.client_id ? 'Client created' : !canOperate ? 'Read-only access' : canPromote ? 'Promote to client' : 'Terminal inquiry'}</button>
           </header>
 
+          {actionError && <div className="inquiry-action-error" role="alert">{actionError}</div>}
+
           <div className="inquiry-controls">
-            <label><span>Status</span><select value={selected.status} onChange={(event) => changeInquiry({ status: event.target.value })} disabled={busy === 'update'}>{statusOptions.map((status) => <option key={status}>{status}</option>)}</select></label>
-            <label><span>Priority</span><select value={selected.priority} onChange={(event) => changeInquiry({ priority: event.target.value })} disabled={busy === 'update'}>{priorityOptions.map((priority) => <option key={priority}>{priority}</option>)}</select></label>
+            <label><span>Status</span><select value={selected.status} onChange={(event) => changeInquiry({ status: event.target.value })} disabled={!canOperate || busy === 'update'}>{statusOptions.map((status) => <option key={status}>{status}</option>)}</select></label>
+            <label><span>Priority</span><select value={selected.priority} onChange={(event) => changeInquiry({ priority: event.target.value })} disabled={!canOperate || busy === 'update'}>{priorityOptions.map((priority) => <option key={priority}>{priority}</option>)}</select></label>
             <div><span>Email delivery</span><StatusTag value={selected.notification_status} /></div>
           </div>
+
+          <section className="inquiry-delivery-evidence" aria-label="Email delivery evidence">
+            <header><span>Recipient evidence</span><strong>{deliveries.length} / 2 delivery records</strong></header>
+            <div>
+              {deliveries.map((delivery) => (
+                <article key={delivery.recipient}>
+                  <div><Mail aria-hidden="true" /><strong>{delivery.recipient}</strong></div>
+                  <StatusTag value={delivery.status} />
+                  <small>
+                    {delivery.attempts ? `Attempt ${delivery.attempts}` : 'Not attempted'}
+                    {delivery.last_attempt_at ? ` · ${formatDate(delivery.last_attempt_at, true)}` : ''}
+                  </small>
+                  {delivery.last_error && <p>{delivery.last_error}</p>}
+                </article>
+              ))}
+              {!deliveries.length && <p className="inquiry-delivery-empty">Delivery evidence will appear after the durable notification migration is active.</p>}
+            </div>
+          </section>
 
           <div className="inquiry-message">
             <span>{selected.project_type.replaceAll('-', ' ')}{selected.budget_range ? ` · ${selected.budget_range.replaceAll('-', ' ')}` : ''}</span>
@@ -139,8 +181,8 @@ export default function Inquiries() {
           </div>
 
           <form className="inquiry-note-form" onSubmit={handleNote}>
-            <label><span>Internal note</span><textarea value={note} onChange={(event) => setNote(event.target.value)} rows={3} maxLength={4000} placeholder="Record the next decision, context, or follow-up." /></label>
-            <button type="submit" disabled={!note.trim() || busy === 'note'}>{busy === 'note' ? <Check /> : <ArrowUpRight />}Add note</button>
+            <label><span>Internal note</span><textarea value={note} onChange={(event) => setNote(event.target.value)} rows={3} maxLength={4000} disabled={!canOperate} placeholder={canOperate ? 'Record the next decision, context, or follow-up.' : 'Viewer access is read-only.'} /></label>
+            <button type="submit" disabled={!canOperate || !note.trim() || busy === 'note'}>{busy === 'note' ? <Check /> : <ArrowUpRight />}{canOperate ? 'Add note' : 'Read only'}</button>
           </form>
 
           <div className="inquiry-history">

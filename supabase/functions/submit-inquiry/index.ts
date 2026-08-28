@@ -1,4 +1,5 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.112.3';
+import { processInquiryNotificationBatch } from '../_shared/inquiry-notifications.ts';
 
 const DEFAULT_ORIGINS = new Set([
   'http://127.0.0.1:5173',
@@ -25,6 +26,11 @@ const BUDGET_RANGES = new Set([
   'undecided',
 ]);
 
+// The public contract is character-based. A 64 KB transport ceiling safely
+// accommodates every bounded field in multibyte UTF-8 without letting an
+// oversized or unknown JSON body reach parsing and database work.
+const MAX_REQUEST_BYTES = 64_000;
+
 type InquiryPayload = {
   name?: unknown;
   email?: unknown;
@@ -34,6 +40,7 @@ type InquiryPayload = {
   message?: unknown;
   sourceUrl?: unknown;
   website?: unknown;
+  submissionId?: unknown;
   visitorId?: unknown;
   sessionId?: unknown;
   utmSource?: unknown;
@@ -41,24 +48,17 @@ type InquiryPayload = {
   utmCampaign?: unknown;
   utmContent?: unknown;
   utmTerm?: unknown;
+  gclid?: unknown;
+  fbclid?: unknown;
+  msclkid?: unknown;
+  ttclid?: unknown;
+  campaignExternalId?: unknown;
+  adsetExternalId?: unknown;
+  adExternalId?: unknown;
+  attributionPresent?: unknown;
+  attributionCapturedAt?: unknown;
   referrer?: unknown;
 };
-
-type StoredInquiry = {
-  id: string;
-  name: string;
-  email: string;
-  organization: string | null;
-  project_type: string;
-  budget_range: string | null;
-  message: string;
-  source_url: string | null;
-};
-
-const NOTIFICATION_RECIPIENTS = [
-  'dev@codecity.ai',
-  'aytamzid@airdropja.com',
-];
 
 const jsonResponse = (body: Record<string, unknown>, status: number, origin: string) => new Response(
   JSON.stringify(body),
@@ -98,91 +98,60 @@ const cleanOptionalUuid = (value: unknown) => {
   return cleaned.toLowerCase();
 };
 
-const escapeHtml = (value: string | null) => (value || '')
-  .replace(/&/g, '&amp;')
-  .replace(/</g, '&lt;')
-  .replace(/>/g, '&gt;')
-  .replace(/"/g, '&quot;')
-  .replace(/'/g, '&#039;');
-
-const emailSubject = (inquiry: StoredInquiry) => {
-  const kind = inquiry.project_type === 'product-support' ? 'Support request' : 'Project inquiry';
-  const identity = inquiry.organization || inquiry.name;
-  return `[Code City] ${kind} — ${identity}`.replace(/[\r\n]+/g, ' ').slice(0, 180);
+const cleanTelemetryString = (value: unknown, maxLength: number) => {
+  if (typeof value !== 'string') return null;
+  return value.trim().slice(0, maxLength) || null;
 };
 
-const emailHtml = (inquiry: StoredInquiry) => {
-  const rows = [
-    ['Name', inquiry.name],
-    ['Email', inquiry.email],
-    ['Organization / product', inquiry.organization],
-    ['Type', inquiry.project_type.replace(/-/g, ' ')],
-    ['Investment range', inquiry.budget_range?.replace(/-/g, ' ') || null],
-    ['Source', inquiry.source_url],
-  ].filter(([, value]) => value);
-
-  return `<!doctype html>
-<html><body style="margin:0;background:#0b0d12;color:#f4f0e8;font-family:Arial,sans-serif">
-  <div style="max-width:680px;margin:0 auto;padding:36px 24px">
-    <p style="margin:0 0 22px;color:#ff5a36;font-size:12px;letter-spacing:.14em;text-transform:uppercase">Code City · New inbound request</p>
-    <h1 style="margin:0 0 28px;font-size:30px;line-height:1.1">${escapeHtml(inquiry.organization || inquiry.name)}</h1>
-    <div style="border:1px solid #2d323c;border-radius:16px;overflow:hidden">
-      ${rows.map(([label, value]) => `<div style="padding:14px 18px;border-bottom:1px solid #2d323c"><span style="display:block;color:#8f98a8;font-size:11px;letter-spacing:.1em;text-transform:uppercase">${escapeHtml(label)}</span><strong style="display:block;margin-top:5px;font-size:15px">${escapeHtml(value)}</strong></div>`).join('')}
-      <div style="padding:18px"><span style="display:block;color:#8f98a8;font-size:11px;letter-spacing:.1em;text-transform:uppercase">Message</span><div style="margin-top:8px;white-space:pre-wrap;line-height:1.65">${escapeHtml(inquiry.message)}</div></div>
-    </div>
-    <p style="margin:22px 0 0;color:#8f98a8;font-size:12px">Inquiry ID: ${escapeHtml(inquiry.id)}</p>
-  </div>
-</body></html>`;
+const cleanTelemetryUuid = (value: unknown) => {
+  const cleaned = cleanTelemetryString(value, 36);
+  return cleaned && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(cleaned)
+    ? cleaned.toLowerCase()
+    : null;
 };
 
-const sendMailgunNotification = async (inquiry: StoredInquiry) => {
-  const apiKey = Deno.env.get('MAILGUN_API_KEY');
-  const domain = Deno.env.get('MAILGUN_DOMAIN');
-  const from = Deno.env.get('MAILGUN_FROM');
-  const apiBase = (Deno.env.get('MAILGUN_API_BASE') || 'https://api.mailgun.net').replace(/\/$/, '');
+const cleanOptionalBoolean = (value: unknown) => {
+  return typeof value === 'boolean' ? value : null;
+};
 
-  if (!apiKey || !domain || !from) {
-    return { status: 'configuration_required' as const, error: 'Mailgun server secrets are not configured.' };
+const cleanOptionalTimestamp = (value: unknown) => {
+  const cleaned = cleanTelemetryString(value, 50);
+  if (!cleaned) return null;
+  const parsed = new Date(cleaned);
+  if (Number.isNaN(parsed.getTime())) return null;
+  const now = Date.now();
+  if (parsed.getTime() < now - 31 * 24 * 60 * 60 * 1000 || parsed.getTime() > now + 5 * 60 * 1000) {
+    return null;
   }
+  return parsed.toISOString();
+};
 
-  const form = new FormData();
-  form.set('from', from);
-  for (const recipient of NOTIFICATION_RECIPIENTS) form.append('to', recipient);
-  form.set('h:Reply-To', inquiry.email);
-  form.set('subject', emailSubject(inquiry));
-  form.set('html', emailHtml(inquiry));
-  form.set('text', [
-    emailSubject(inquiry),
-    `Name: ${inquiry.name}`,
-    `Email: ${inquiry.email}`,
-    inquiry.organization ? `Organization / product: ${inquiry.organization}` : null,
-    `Type: ${inquiry.project_type}`,
-    inquiry.budget_range ? `Investment range: ${inquiry.budget_range}` : null,
-    inquiry.source_url ? `Source: ${inquiry.source_url}` : null,
-    '',
-    inquiry.message,
-    '',
-    `Inquiry ID: ${inquiry.id}`,
-  ].filter((line) => line !== null).join('\n'));
-
-  let response: Response;
+const cleanSourceUrl = (value: unknown) => {
+  const cleaned = typeof value === 'string' ? value.trim() : '';
+  if (!cleaned) return null;
   try {
-    response = await fetch(`${apiBase}/v3/${encodeURIComponent(domain)}/messages`, {
-      method: 'POST',
-      headers: { Authorization: `Basic ${btoa(`api:${apiKey}`)}` },
-      body: form,
-    });
+    const url = new URL(cleaned);
+    if (!['http:', 'https:'].includes(url.protocol) || url.username || url.password) return null;
+    url.search = '';
+    url.hash = '';
+    return url.toString().slice(0, 500);
   } catch {
-    console.error('Mailgun inquiry notification request failed');
-    return { status: 'failed' as const, error: 'Mailgun could not be reached.' };
+    return null;
   }
+};
 
-  if (!response.ok) {
-    console.error('Mailgun inquiry notification failed', { status: response.status });
-    return { status: 'failed' as const, error: `Mailgun returned HTTP ${response.status}.` };
+const cleanReferrer = (value: unknown) => {
+  const cleaned = typeof value === 'string' ? value.trim() : '';
+  if (!cleaned) return null;
+  try {
+    const url = new URL(cleaned);
+    if (!['http:', 'https:'].includes(url.protocol) || url.username || url.password) return null;
+    url.search = '';
+    url.hash = '';
+    return url.toString().slice(0, 1000);
+  } catch {
+    return null;
   }
-
-  return { status: 'sent' as const, error: null };
 };
 
 const allowedOrigins = () => {
@@ -194,12 +163,52 @@ const allowedOrigins = () => {
 };
 
 const hashClientAddress = async (request: Request) => {
-  const forwarded = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim();
-  const clientAddress = forwarded || request.headers.get('cf-connecting-ip') || 'unknown';
-  const salt = Deno.env.get('RATE_LIMIT_SALT') || Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
+  const cloudflareAddress = request.headers.get('cf-connecting-ip')?.trim();
+  const forwarded = request.headers.get('x-forwarded-for')?.split(',').at(-1)?.trim();
+  const clientAddress = cloudflareAddress || forwarded || 'unknown';
+  const salt = Deno.env.get('RATE_LIMIT_SALT') || '';
+  if (salt.length < 32) throw new Error('MISSING_SERVER_CONFIG');
   const bytes = new TextEncoder().encode(`${salt}:${clientAddress}`);
   const digest = await crypto.subtle.digest('SHA-256', bytes);
   return Array.from(new Uint8Array(digest)).map((byte) => byte.toString(16).padStart(2, '0')).join('');
+};
+
+const readLimitedBody = async (request: Request) => {
+  if (!request.body) return '';
+
+  const reader = request.body.getReader();
+  const chunks: Uint8Array[] = [];
+  let byteLength = 0;
+
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      if (!value) continue;
+
+      byteLength += value.byteLength;
+      if (byteLength > MAX_REQUEST_BYTES) {
+        await reader.cancel('Request body exceeds the accepted size.').catch(() => {});
+        throw new Error('REQUEST_TOO_LARGE');
+      }
+      chunks.push(value);
+    }
+  } finally {
+    reader.releaseLock();
+  }
+
+  const bytes = new Uint8Array(byteLength);
+  let offset = 0;
+  for (const chunk of chunks) {
+    bytes.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+
+  try {
+    return new TextDecoder('utf-8', { fatal: true }).decode(bytes);
+  } catch {
+    throw new Error('INVALID_INPUT');
+  }
 };
 
 Deno.serve(async (request) => {
@@ -225,10 +234,21 @@ Deno.serve(async (request) => {
   if (!originAllowed) return jsonResponse({ error: 'Origin not allowed.' }, 403, responseOrigin);
 
   const contentLength = Number(request.headers.get('content-length') || 0);
-  if (contentLength > 12_000) return jsonResponse({ error: 'Request is too large.' }, 413, responseOrigin);
+  if (contentLength > MAX_REQUEST_BYTES) return jsonResponse({ error: 'Request is too large.' }, 413, responseOrigin);
 
   try {
-    const payload = await request.json() as InquiryPayload;
+    const body = await readLimitedBody(request);
+
+    let decoded: unknown;
+    try {
+      decoded = JSON.parse(body);
+    } catch {
+      throw new Error('INVALID_INPUT');
+    }
+    if (!decoded || typeof decoded !== 'object' || Array.isArray(decoded)) {
+      throw new Error('INVALID_INPUT');
+    }
+    const payload = decoded as InquiryPayload;
 
     if (typeof payload.website === 'string' && payload.website.trim()) {
       return jsonResponse({ ok: true }, 200, responseOrigin);
@@ -240,15 +260,33 @@ Deno.serve(async (request) => {
     const projectType = cleanRequiredString(payload.projectType, 2, 40);
     const budgetRange = cleanOptionalString(payload.budgetRange, 40);
     const message = cleanRequiredString(payload.message, 20, 3000);
-    const sourceUrl = cleanOptionalString(payload.sourceUrl, 500);
-    const visitorKey = cleanOptionalUuid(payload.visitorId);
-    const sessionKey = cleanOptionalUuid(payload.sessionId);
-    const utmSource = cleanOptionalString(payload.utmSource, 120);
-    const utmMedium = cleanOptionalString(payload.utmMedium, 120);
-    const utmCampaign = cleanOptionalString(payload.utmCampaign, 190);
-    const utmContent = cleanOptionalString(payload.utmContent, 190);
-    const utmTerm = cleanOptionalString(payload.utmTerm, 190);
-    const referrer = cleanOptionalString(payload.referrer, 1000);
+    const sourceUrl = cleanSourceUrl(payload.sourceUrl);
+    const submissionKey = cleanOptionalUuid(payload.submissionId) || crypto.randomUUID();
+    const visitorKey = cleanTelemetryUuid(payload.visitorId);
+    const sessionKey = cleanTelemetryUuid(payload.sessionId);
+    const rawUtmSource = cleanTelemetryString(payload.utmSource, 120);
+    const utmMedium = cleanTelemetryString(payload.utmMedium, 120);
+    const utmCampaign = cleanTelemetryString(payload.utmCampaign, 190);
+    const utmContent = cleanTelemetryString(payload.utmContent, 190);
+    const utmTerm = cleanTelemetryString(payload.utmTerm, 190);
+    const gclid = cleanTelemetryString(payload.gclid, 255);
+    const fbclid = cleanTelemetryString(payload.fbclid, 255);
+    const msclkid = cleanTelemetryString(payload.msclkid, 255);
+    const ttclid = cleanTelemetryString(payload.ttclid, 255);
+    const campaignExternalId = cleanTelemetryString(payload.campaignExternalId, 255);
+    const adsetExternalId = cleanTelemetryString(payload.adsetExternalId, 255);
+    const adExternalId = cleanTelemetryString(payload.adExternalId, 255);
+    const suppliedAttributionPresent = cleanOptionalBoolean(payload.attributionPresent);
+    const attributionPresent = Boolean(
+      suppliedAttributionPresent
+      || rawUtmSource || utmMedium || utmCampaign || utmContent || utmTerm
+      || gclid || fbclid || msclkid || ttclid || campaignExternalId || adsetExternalId || adExternalId
+    );
+    const attributionCapturedAt = attributionPresent
+      ? cleanOptionalTimestamp(payload.attributionCapturedAt) || new Date().toISOString()
+      : null;
+    const utmSource = rawUtmSource || (gclid ? 'google' : msclkid ? 'microsoft_ads' : ttclid ? 'tiktok' : null);
+    const referrer = cleanReferrer(payload.referrer);
 
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new Error('INVALID_INPUT');
     if (!PROJECT_TYPES.has(projectType)) throw new Error('INVALID_INPUT');
@@ -275,51 +313,92 @@ Deno.serve(async (request) => {
 
     if (!rateAllowed) return jsonResponse({ error: 'Please wait before sending another inquiry.' }, 429, responseOrigin);
 
-    const { data: storedInquiry, error: insertError } = await supabase.from('project_inquiries').insert({
-      name,
-      email,
-      organization,
-      project_type: projectType,
-      budget_range: budgetRange,
-      message,
-      source_url: sourceUrl,
-      visitor_key: visitorKey,
-      session_key: sessionKey,
-      utm_source: utmSource,
-      utm_medium: utmMedium,
-      utm_campaign: utmCampaign,
-      utm_content: utmContent,
-      utm_term: utmTerm,
-      referrer,
-    }).select('id, name, email, organization, project_type, budget_range, message, source_url').single<StoredInquiry>();
+    const { data: intakeRows, error: intakeError } = await supabase.rpc(
+      'create_inquiry_with_notification_outbox',
+      {
+        p_submission_key: submissionKey,
+        p_name: name,
+        p_email: email,
+        p_project_type: projectType,
+        p_message: message,
+        p_organization: organization,
+        p_budget_range: budgetRange,
+        p_source_url: sourceUrl,
+        p_attribution_captured_at: attributionCapturedAt,
+        p_visitor_key: visitorKey,
+        p_session_key: sessionKey,
+        p_utm_source: utmSource,
+        p_utm_medium: utmMedium,
+        p_utm_campaign: utmCampaign,
+        p_utm_content: utmContent,
+        p_utm_term: utmTerm,
+        p_gclid: gclid,
+        p_fbclid: fbclid,
+        p_msclkid: msclkid,
+        p_ttclid: ttclid,
+        p_campaign_external_id: campaignExternalId,
+        p_adset_external_id: adsetExternalId,
+        p_ad_external_id: adExternalId,
+        p_referrer: referrer,
+      },
+    );
 
-    if (insertError) {
-      console.error('Inquiry insert failed', { code: insertError.code });
+    if (intakeError) {
+      console.error('Atomic inquiry intake failed', { code: intakeError.code });
+      if (intakeError.code === '22023') throw new Error('INVALID_INPUT');
       throw new Error('DATABASE_ERROR');
     }
 
-    const notification = await sendMailgunNotification(storedInquiry);
-    const { error: notificationUpdateError } = await supabase
-      .from('project_inquiries')
-      .update({
-        notification_status: notification.status,
-        notification_error: notification.error,
-        notified_at: notification.status === 'sent' ? new Date().toISOString() : null,
-      })
-      .eq('id', storedInquiry.id);
+    const intake = (intakeRows as Array<{
+      inquiry_id: string;
+      duplicate: boolean;
+      notification_status: string;
+    }> | null)?.[0];
+    if (!intake?.inquiry_id) throw new Error('DATABASE_ERROR');
 
-    if (notificationUpdateError) {
-      console.error('Inquiry notification status update failed', { code: notificationUpdateError.code });
+    const { data: conversionRecorded, error: conversionError } = await supabase.rpc('record_inquiry_conversion', {
+      p_inquiry_id: intake.inquiry_id,
+    });
+    if (conversionError || conversionRecorded !== true) {
+      console.error('Inquiry conversion recording failed', { code: conversionError?.code || 'NOT_RECORDED' });
     }
 
-    await supabase.from('marketing_integrations').update({
-      status: notification.status === 'sent' ? 'connected' : notification.status === 'failed' ? 'error' : 'needs_configuration',
-      last_sync_at: notification.status === 'sent' ? new Date().toISOString() : null,
-      last_error: notification.error,
-    }).eq('slug', 'mailgun');
+    // Storage is the acceptance boundary. An immediate Mailgun attempt is best
+    // effort because the durable outbox and scheduled worker own eventual
+    // delivery; a transient worker failure must not make the customer create a
+    // duplicate inquiry.
+    try {
+      await processInquiryNotificationBatch(supabase, {
+        batchSize: 2,
+        inquiryId: intake.inquiry_id,
+        updateWorkerLedger: false,
+      });
+    } catch (notificationError) {
+      console.error('Immediate inquiry notification attempt failed', {
+        reason: notificationError instanceof Error ? notificationError.message : 'UNKNOWN',
+      });
+    }
 
-    return jsonResponse({ ok: true, inquiryId: storedInquiry.id, notification: notification.status }, 201, responseOrigin);
+    const { data: persistedNotification, error: persistedNotificationError } = await supabase
+      .from('project_inquiries')
+      .select('notification_status, notification_error')
+      .eq('id', intake.inquiry_id)
+      .single<{ notification_status: string; notification_error: string | null }>();
+    if (persistedNotificationError || !persistedNotification) {
+      console.error('Persisted notification status lookup failed', { code: persistedNotificationError?.code || 'NOT_FOUND' });
+    }
+
+    const notificationStatus = persistedNotification?.notification_status || intake.notification_status || 'not_attempted';
+    return jsonResponse({
+      ok: true,
+      inquiryId: intake.inquiry_id,
+      notification: notificationStatus,
+      duplicate: intake.duplicate,
+    }, intake.duplicate ? 200 : 201, responseOrigin);
   } catch (error) {
+    if (error instanceof Error && error.message === 'REQUEST_TOO_LARGE') {
+      return jsonResponse({ error: 'Request is too large.' }, 413, responseOrigin);
+    }
     if (error instanceof Error && error.message === 'INVALID_INPUT') {
       return jsonResponse({ error: 'Please check the form and try again.' }, 400, responseOrigin);
     }

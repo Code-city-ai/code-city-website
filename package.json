@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "test": "node --test tests/js/*.test.js && python3 -m unittest discover -s tests/python",
     "capture:portfolio": "node scripts/capture-portfolio-previews.mjs",
     "lint": "eslint . --max-warnings=0",
     "typecheck": "tsc -p ./jsconfig.json --noEmit",

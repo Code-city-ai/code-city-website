@@ -252,6 +252,7 @@
 .portal-status-active,
 .portal-status-won,
 .portal-status-completed,
+.portal-status-accepted,
 .portal-status-sent { color: #75d4a3; border-color: #285c45; background: #10251d; }
 .portal-status-new,
 .portal-status-in-progress,
@@ -349,7 +350,21 @@
 .inquiry-attribution span,
 .inquiry-note-form label > span { color: var(--portal-dim); font-size: 0.6rem; font-weight: 800; letter-spacing: 0.09em; text-transform: uppercase; }
 .inquiry-controls select { min-height: 38px; padding: 0 10px; border: 1px solid var(--portal-line); border-radius: 7px; background: #0b1018; color: var(--portal-text); text-transform: capitalize; }
+.inquiry-delivery-evidence { padding: 18px 30px 20px; border-bottom: 1px solid var(--portal-line-soft); background: #0a0f16; }
+.inquiry-delivery-evidence > header { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.inquiry-delivery-evidence > header span { color: var(--portal-dim); font-size: 0.6rem; font-weight: 800; letter-spacing: 0.09em; text-transform: uppercase; }
+.inquiry-delivery-evidence > header strong { color: var(--portal-muted); font-size: 0.64rem; font-weight: 700; }
+.inquiry-delivery-evidence > div { margin-top: 12px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.inquiry-delivery-evidence article { min-width: 0; padding: 12px; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 6px 10px; border: 1px solid var(--portal-line); border-radius: 9px; background: var(--portal-panel); }
+.inquiry-delivery-evidence article > div { min-width: 0; display: flex; align-items: center; gap: 7px; }
+.inquiry-delivery-evidence article svg { width: 14px; flex: 0 0 auto; color: var(--portal-dim); }
+.inquiry-delivery-evidence article strong { overflow: hidden; color: #d8dde5; font-size: 0.68rem; text-overflow: ellipsis; white-space: nowrap; }
+.inquiry-delivery-evidence article small { grid-column: 1 / -1; color: var(--portal-dim); font-size: 0.61rem; }
+.inquiry-delivery-evidence article p,
+.inquiry-delivery-empty { grid-column: 1 / -1; margin: 2px 0 0; color: #d69588; font-size: 0.64rem; line-height: 1.5; }
+.inquiry-delivery-empty { color: var(--portal-dim); }
 .inquiry-message { padding: 26px 30px; border-bottom: 1px solid var(--portal-line-soft); }
+.inquiry-action-error { margin: 18px 30px 0; padding: 11px 13px; border: 1px solid #5e3933; border-radius: 8px; background: #211516; color: #e49a90; font-size: 0.7rem; line-height: 1.5; }
 .inquiry-message p { margin: 12px 0 0; color: #cbd1da; white-space: pre-wrap; line-height: 1.7; font-size: 0.85rem; }
 .inquiry-attribution { padding: 18px 30px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; border-bottom: 1px solid var(--portal-line-soft); }
 .inquiry-attribution div { display: grid; gap: 7px; }
@@ -554,6 +569,7 @@
   .inquiry-controls { padding-inline: 20px; grid-template-columns: 1fr 1fr; }
   .inquiry-controls > div { grid-column: 1 / -1; }
   .inquiry-message,
+  .inquiry-delivery-evidence,
   .inquiry-attribution,
   .inquiry-note-form,
   .inquiry-history { padding-inline: 20px; }
@@ -577,6 +593,7 @@
   .inquiry-attribution { grid-template-columns: 1fr; }
   .inquiry-controls { grid-template-columns: 1fr; }
   .inquiry-controls > div { grid-column: auto; }
+  .inquiry-delivery-evidence > div { grid-template-columns: 1fr; }
   .settings-mail-status { grid-template-columns: auto 1fr; }
   .settings-mail-status .portal-status { grid-column: 2; }
   .settings-mail dl div { grid-template-columns: 1fr; padding-block: 10px; gap: 5px; }

@@ -1,4 +1,6 @@
-import { getAttributionContext, trackEvent } from '@/lib/marketing';
+import { getAttributionContext } from '@/lib/marketing';
+import { normalizeSourceUrl } from '@/lib/attribution';
+import { composeSupportMessage } from '@/lib/support';
 
 const getInquiryEndpoint = () => {
   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL?.replace(/\/$/, '');
@@ -24,7 +26,11 @@ export async function submitInquiry(payload) {
       Authorization: `Bearer ${anonKey}`,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ ...payload, ...attribution }),
+    body: JSON.stringify({
+      ...payload,
+      sourceUrl: normalizeSourceUrl(payload.sourceUrl),
+      ...attribution,
+    }),
   });
 
   const body = await response.json().catch(() => ({}));
@@ -33,22 +39,11 @@ export async function submitInquiry(payload) {
     throw new Error(body.error || 'We could not send your inquiry. Please try again.');
   }
 
-  trackEvent(
-    payload.projectType === 'product-support' ? 'support_form_submitted' : 'contact_form_submitted',
-    { form_type: payload.projectType === 'product-support' ? 'support' : 'project-inquiry' },
-  );
-
   return body;
 }
 
-export async function submitSupportRequest({ name, email, product, issueType, reference, message, website, sourceUrl }) {
-  const supportMessage = [
-    `Product: ${product}`,
-    `Issue type: ${issueType}`,
-    reference ? `Reference: ${reference}` : null,
-    '',
-    message,
-  ].filter((line) => line !== null).join('\n');
+export async function submitSupportRequest({ name, email, product, issueType, reference, message, website, sourceUrl, submissionId }) {
+  const supportMessage = composeSupportMessage({ product, issueType, reference, message });
 
   return submitInquiry({
     name,
@@ -59,5 +54,6 @@ export async function submitSupportRequest({ name, email, product, issueType, re
     message: supportMessage,
     website,
     sourceUrl,
+    submissionId,
   });
 }

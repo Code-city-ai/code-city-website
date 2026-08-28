@@ -17,6 +17,8 @@ export default function InquiryForm({ className = '' }) {
   const [form, setForm] = useState(initialForm);
   const [status, setStatus] = useState({ type: 'idle', message: '' });
   const hasTrackedStart = useRef(false);
+  const submissionId = useRef(null);
+  if (!submissionId.current) submissionId.current = crypto.randomUUID();
 
   const trackStart = () => {
     if (hasTrackedStart.current) return;
@@ -35,9 +37,11 @@ export default function InquiryForm({ className = '' }) {
     try {
       await submitInquiry({
         ...form,
+        submissionId: submissionId.current,
         sourceUrl: window.location.href,
       });
       setForm(initialForm);
+      submissionId.current = crypto.randomUUID();
       setStatus({ type: 'success', message: 'Your project is in. We’ll review it and follow up personally.' });
     } catch (error) {
       setStatus({ type: 'error', message: error.message });
@@ -45,7 +49,7 @@ export default function InquiryForm({ className = '' }) {
   };
 
   return (
-    <form className={`inquiry-form ${className}`.trim()} onSubmit={handleSubmit} onFocusCapture={trackStart} noValidate>
+    <form className={`inquiry-form ${className}`.trim()} onSubmit={handleSubmit} onFocusCapture={trackStart}>
       <div className="form-row">
         <label>
           <span>Your name</span>

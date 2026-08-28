@@ -28,11 +28,12 @@ export default function Settings() {
       </Panel>
 
       <Panel eyebrow="Notification rail" title="Inquiry delivery" className="settings-mail">
-        <div className="settings-mail-status"><span><Mail /></span><div><strong>Mailgun</strong><p>Every project and support inquiry is stored first, then delivered to both operational recipients.</p></div><StatusTag value={mailgun?.status || 'not_connected'} /></div>
+        <div className="settings-mail-status"><span><Mail /></span><div><strong>Mailgun</strong><p>Every project and support inquiry is stored first, then submitted to Mailgun for both operational recipients.</p></div><StatusTag value={mailgun?.status || 'not_connected'} /></div>
         <dl>
           <div><dt>Recipient 01</dt><dd>dev@codecity.ai</dd></div>
           <div><dt>Recipient 02</dt><dd>aytamzid@airdropja.com</dd></div>
           <div><dt>Failure behavior</dt><dd>Keep the inquiry; flag delivery in the inbox.</dd></div>
+          <div><dt>Delivery proof</dt><dd>Provider acceptance and per-recipient delivery are tracked separately.</dd></div>
           <div><dt>Secrets</dt><dd>Server-side only; never exposed in Vite.</dd></div>
         </dl>
         {mailgun?.last_error && <div className="settings-blocker">{mailgun.last_error}</div>}

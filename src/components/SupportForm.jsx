@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react';
 import { ArrowUpRight, CheckCircle2, LoaderCircle } from 'lucide-react';
 import { submitSupportRequest } from '@/lib/inquiries';
 import { trackEvent } from '@/lib/marketing';
+import { SUPPORT_ISSUE_MAX_LENGTH } from '@/lib/support';
 
 const initialForm = {
   name: '',
@@ -17,6 +18,8 @@ export default function SupportForm() {
   const [form, setForm] = useState(initialForm);
   const [status, setStatus] = useState({ type: 'idle', message: '' });
   const hasTrackedStart = useRef(false);
+  const submissionId = useRef(null);
+  if (!submissionId.current) submissionId.current = crypto.randomUUID();
 
   const trackStart = () => {
     if (hasTrackedStart.current) return;
@@ -35,9 +38,11 @@ export default function SupportForm() {
     try {
       await submitSupportRequest({
         ...form,
+        submissionId: submissionId.current,
         sourceUrl: window.location.href,
       });
       setForm(initialForm);
+      submissionId.current = crypto.randomUUID();
       setStatus({ type: 'success', message: 'Your support request is in. Code City will follow up using the email you provided.' });
     } catch (error) {
       setStatus({ type: 'error', message: error.message });
@@ -99,7 +104,7 @@ export default function SupportForm() {
 
       <label>
         <span>Describe the issue</span>
-        <textarea name="message" value={form.message} onChange={updateField} minLength={20} maxLength={3000} required rows={6} placeholder="What happened, what did you expect, and which device or browser were you using?" />
+        <textarea name="message" value={form.message} onChange={updateField} minLength={20} maxLength={SUPPORT_ISSUE_MAX_LENGTH} required rows={6} placeholder="What happened, what did you expect, and which device or browser were you using?" />
       </label>
 
       <label className="honeypot" aria-hidden="true">

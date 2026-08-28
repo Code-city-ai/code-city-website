@@ -373,6 +373,9 @@
 .inquiry-delivery-evidence article svg { width: 14px; flex: 0 0 auto; color: var(--portal-dim); }
 .inquiry-delivery-evidence article strong { overflow: hidden; color: #d8dde5; font-size: 0.68rem; text-overflow: ellipsis; white-space: nowrap; }
 .inquiry-delivery-evidence article small { grid-column: 1 / -1; color: var(--portal-dim); font-size: 0.61rem; }
+.inquiry-delivery-evidence .inquiry-delivery-milestone strong { color: var(--portal-text); font-size: inherit; }
+.inquiry-delivery-evidence .inquiry-provider-event { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.inquiry-delivery-evidence .inquiry-provider-event code { color: #b9c4d2; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.59rem; }
 .inquiry-delivery-evidence article p,
 .inquiry-delivery-empty { grid-column: 1 / -1; margin: 2px 0 0; color: #d69588; font-size: 0.64rem; line-height: 1.5; }
 .inquiry-delivery-empty { color: var(--portal-dim); }

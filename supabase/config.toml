@@ -8,3 +8,6 @@ verify_jwt = false
 
 [functions.process-inquiry-notifications]
 verify_jwt = false
+
+[functions.mailgun-webhook]
+verify_jwt = false

@@ -35,3 +35,15 @@ test('notification retries require the dedicated valid named secret key', async 
   assert.doesNotMatch(functionSource, /secret:code-city-notifications/);
   assert.match(schedulerMigration, /where name = 'code_city_notifications_secret_key'/);
 });
+
+test('Mailgun webhooks use provider signatures instead of Supabase JWTs', async () => {
+  const [config, functionSource] = await Promise.all([
+    readProjectFile('supabase/config.toml'),
+    readProjectFile('supabase/functions/mailgun-webhook/index.ts'),
+  ]);
+
+  assert.match(config, /\[functions\.mailgun-webhook\]\s+verify_jwt\s*=\s*false/);
+  assert.match(functionSource, /MAILGUN_WEBHOOK_SIGNING_KEY/);
+  assert.match(functionSource, /reconcile_mailgun_delivery_event/);
+  assert.doesNotMatch(functionSource, /MAILGUN_API_KEY/);
+});

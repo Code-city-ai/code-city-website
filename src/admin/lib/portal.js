@@ -76,7 +76,7 @@ export async function loadInquiries() {
   const client = requireSupabase();
   const { data, error } = await client
     .from('project_inquiries')
-    .select('*, inquiry_notification_deliveries(recipient, status, attempts, last_error, last_attempt_at, accepted_at, delivered_at)')
+    .select('*, inquiry_notification_deliveries(recipient, status, attempts, last_error, last_attempt_at, accepted_at, delivered_at, failed_at, provider_event_at, provider_event_id)')
     .order('created_at', { ascending: false })
     .limit(250);
   if (error) throw error;

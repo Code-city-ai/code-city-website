@@ -121,7 +121,6 @@ export default function Layout({ children, currentPage = 'home', isInnerPage = f
                 <div>
                   <span>Company</span>
                   <a href="/careers" aria-current={currentPage === 'careers' ? 'page' : undefined}>Careers</a>
-                  <a href="/sign-in">Team sign-in</a>
                 </div>
                 <div>
                   <span>Support</span>

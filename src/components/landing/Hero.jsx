@@ -82,12 +82,16 @@ export default function Hero() {
     <section className="hero" aria-labelledby="hero-title">
       <div className="site-container hero-inner">
         <motion.div
-          className="hero-kicker"
+          className="hero-utility"
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          Independent digital product studio
+          <div className="hero-kicker">Independent digital product studio</div>
+          <a className="hero-team-signin" href="/sign-in">
+            Team sign in
+            <ArrowUpRight aria-hidden="true" />
+          </a>
         </motion.div>
 
         <div className="hero-layout">

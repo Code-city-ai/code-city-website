@@ -16,6 +16,27 @@ const sourcePath = (value) => {
   }
 };
 
+const deliveryMilestone = (delivery) => {
+  if (delivery.status === 'delivered') {
+    return { label: 'Delivered', at: delivery.delivered_at || delivery.provider_event_at };
+  }
+  if (delivery.status === 'bounced') {
+    return { label: 'Bounced', at: delivery.failed_at || delivery.provider_event_at };
+  }
+  if (delivery.status === 'accepted') {
+    return { label: 'Accepted', at: delivery.accepted_at || delivery.provider_event_at };
+  }
+  return {
+    label: delivery.attempts ? `Attempt ${delivery.attempts}` : 'Not attempted',
+    at: delivery.last_attempt_at,
+  };
+};
+
+const providerEventLabel = (eventId) => {
+  if (!eventId) return '';
+  return eventId.length > 18 ? `${eventId.slice(0, 8)}…${eventId.slice(-8)}` : eventId;
+};
+
 export default function Inquiries() {
   const { profile } = useAdminAuth();
   const canOperate = ['owner', 'admin', 'agent'].includes(profile.role);
@@ -153,17 +174,26 @@ export default function Inquiries() {
           <section className="inquiry-delivery-evidence" aria-label="Email delivery evidence">
             <header><span>Recipient evidence</span><strong>{deliveries.length} / 2 delivery records</strong></header>
             <div>
-              {deliveries.map((delivery) => (
-                <article key={delivery.recipient}>
-                  <div><Mail aria-hidden="true" /><strong>{delivery.recipient}</strong></div>
-                  <StatusTag value={delivery.status} />
-                  <small>
-                    {delivery.attempts ? `Attempt ${delivery.attempts}` : 'Not attempted'}
-                    {delivery.last_attempt_at ? ` · ${formatDate(delivery.last_attempt_at, true)}` : ''}
-                  </small>
-                  {delivery.last_error && <p>{delivery.last_error}</p>}
-                </article>
-              ))}
+              {deliveries.map((delivery) => {
+                const milestone = deliveryMilestone(delivery);
+                return (
+                  <article key={delivery.recipient}>
+                    <div><Mail aria-hidden="true" /><strong>{delivery.recipient}</strong></div>
+                    <StatusTag value={delivery.status} />
+                    <small className="inquiry-delivery-milestone">
+                      <strong>{milestone.label}</strong>
+                      {milestone.at ? ` · ${formatDate(milestone.at, true)}` : ''}
+                    </small>
+                    {delivery.provider_event_id && (
+                      <small className="inquiry-provider-event">
+                        Mailgun event <code title={delivery.provider_event_id}>{providerEventLabel(delivery.provider_event_id)}</code>
+                        {delivery.provider_event_at ? ` · ${formatDate(delivery.provider_event_at, true)}` : ''}
+                      </small>
+                    )}
+                    {delivery.last_error && <p>{delivery.last_error}</p>}
+                  </article>
+                );
+              })}
               {!deliveries.length && <p className="inquiry-delivery-empty">Delivery evidence will appear after the durable notification migration is active.</p>}
             </div>
           </section>

@@ -205,6 +205,13 @@ a {
 
 .hero-inner { width: min(100% - 48px, 1320px); }
 
+.hero-utility {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
 .hero-kicker {
   display: inline-flex;
   align-items: center;
@@ -215,6 +222,22 @@ a {
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
+
+.hero-team-signin {
+  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  border-bottom: 1px solid color-mix(in srgb, var(--ink) 24%, transparent);
+  font-size: 0.72rem;
+  font-weight: 760;
+  letter-spacing: 0.035em;
+  transition: border-color 180ms ease, color 180ms ease, transform 180ms ease;
+}
+
+.hero-team-signin svg { width: 15px; height: 15px; stroke-width: 1.8; }
+.hero-team-signin:hover { border-color: var(--orange); color: var(--orange); transform: translateY(-1px); }
+.hero-team-signin:focus-visible { outline: 2px solid var(--orange); outline-offset: 5px; }
 
 .hero-layout {
   margin-top: 32px;
@@ -799,7 +822,9 @@ a {
   .header-actions { gap: 7px; }
   .icon-button { width: 41px; height: 41px; }
   .hero { min-height: auto; padding-bottom: 50px; }
+  .hero-utility { gap: 16px; }
   .hero-kicker { font-size: 0.62rem; }
+  .hero-team-signin { flex: 0 0 auto; font-size: 0.66rem; }
   .hero-layout { margin-top: 34px; }
   .hero-copy h1 { font-size: clamp(3.4rem, 17vw, 5.5rem); }
   .hero-copy > p { margin-top: 28px; font-size: 1rem; }

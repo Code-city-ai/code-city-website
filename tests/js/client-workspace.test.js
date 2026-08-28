@@ -66,6 +66,16 @@ test('client history is append-only and mutation activity is trigger-generated',
   assert.doesNotMatch(migration, /grant (?:insert|update|delete)[^;]*public\.client_activity to authenticated/);
 });
 
+test('the inquiry outbox upsert names its unique constraint and avoids PL/pgSQL ambiguity', async () => {
+  const migration = await readProjectFile('supabase/migrations/20260828202000_fix_inquiry_outbox_conflict.sql');
+
+  assert.match(
+    migration,
+    /on conflict on constraint inquiry_notification_deliveries_unique do nothing/,
+  );
+  assert.doesNotMatch(migration, /on conflict \(inquiry_id, provider, recipient\)/);
+});
+
 test('the client screen keeps one canonical editor and exposes incomplete marketing work honestly', async () => {
   const [screen, dashboard, portal, migration, environment] = await Promise.all([
     readProjectFile('src/admin/pages/Clients.jsx'),

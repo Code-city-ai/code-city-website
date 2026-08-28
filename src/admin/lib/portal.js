@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase';
+import { summarizeTrackedSessionConversions } from '@/admin/lib/marketingMetrics';
 
 const requireSupabase = () => {
   if (!supabase) throw new Error('Supabase is not configured.');
@@ -353,13 +354,11 @@ export async function loadMarketing() {
   const client = requireSupabase();
   const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
   const until = new Date().toISOString();
-  const [visitors, sessions, events, pageviews, formStarts, inquiries, attributableInquiries, campaigns, integrations, workItems, funnel] = await Promise.all([
+  const [visitors, events, pageviews, formStarts, attributableInquiries, campaigns, integrations, workItems, funnel] = await Promise.all([
     client.from('marketing_visitors').select('id', { count: 'exact', head: true }).gte('last_seen_at', since),
-    client.from('marketing_sessions').select('id', { count: 'exact', head: true }).gte('started_at', since),
     client.from('marketing_events').select('id', { count: 'exact', head: true }).gte('occurred_at', since),
     client.from('marketing_events').select('id', { count: 'exact', head: true }).eq('event_name', 'page_viewed').gte('occurred_at', since),
     client.from('marketing_events').select('id', { count: 'exact', head: true }).eq('event_name', 'contact_form_started').gte('occurred_at', since),
-    client.from('project_inquiries').select('id', { count: 'exact', head: true }).neq('project_type', 'product-support').neq('status', 'spam').gte('created_at', since),
     client.from('project_inquiries').select('id', { count: 'exact', head: true }).neq('project_type', 'product-support').neq('status', 'spam').not('attribution_captured_at', 'is', null).gte('created_at', since),
     client.from('marketing_campaigns').select('*, marketing_daily_metrics(*)').order('updated_at', { ascending: false }),
     client.from('marketing_integrations').select('*').order('provider'),
@@ -367,17 +366,20 @@ export async function loadMarketing() {
     client.rpc('get_marketing_funnel', { p_from: since, p_to: until }),
   ]);
 
+  const funnelRows = unwrap(funnel) || [];
+  const conversionSummary = summarizeTrackedSessionConversions(funnelRows);
+
   return {
     metrics: {
       visitors: unwrap(visitors),
-      sessions: unwrap(sessions),
+      sessions: conversionSummary.trackedSessions,
       events: unwrap(events),
       pageviews: unwrap(pageviews),
       formStarts: unwrap(formStarts),
-      formSubmits: unwrap(inquiries),
+      convertedSessions: conversionSummary.convertedSessions,
       attributableInquiries: unwrap(attributableInquiries),
     },
-    funnel: unwrap(funnel) || [],
+    funnel: funnelRows,
     campaigns: unwrap(campaigns) || [],
     integrations: unwrap(integrations) || [],
     workItems: unwrap(workItems) || [],

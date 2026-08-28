@@ -79,7 +79,7 @@ test('client history is append-only and mutation activity is trigger-generated',
 });
 
 test('the inquiry outbox upsert names its unique constraint and avoids PL/pgSQL ambiguity', async () => {
-  const migration = await readProjectFile('supabase/migrations/20260828202000_fix_inquiry_outbox_conflict.sql');
+  const migration = await readProjectFile('supabase/migrations/20260828210000_fix_marketing_attribution_acceptance.sql');
 
   assert.match(
     migration,

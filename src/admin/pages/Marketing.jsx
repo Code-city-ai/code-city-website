@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Activity, ArrowUpRight, CheckCircle2, CircleDashed, ShieldCheck } from 'lucide-react';
 import { EmptyState, ErrorState, LoadingState, MetricCard, Panel, StatusTag, formatMoney } from '@/admin/components';
 import { loadMarketing } from '@/admin/lib/portal';
+import { trackedSessionConversionRate } from '@/admin/lib/marketingMetrics';
 
 export default function Marketing() {
   const [state, setState] = useState({ loading: true, data: null, error: null });
@@ -26,7 +27,7 @@ export default function Marketing() {
   if (state.loading) return <LoadingState label="Assembling attribution intelligence" />;
   if (state.error) return <ErrorState error={state.error} retry={load} />;
   const { metrics, funnel, integrations, workItems } = state.data;
-  const conversionRate = metrics.sessions ? ((metrics.formSubmits / metrics.sessions) * 100).toFixed(1) : '0.0';
+  const conversionRate = trackedSessionConversionRate(metrics.convertedSessions, metrics.sessions);
 
   return (
     <div className="portal-page-stack">
@@ -37,17 +38,17 @@ export default function Marketing() {
 
       <section className="portal-metrics-grid">
         <MetricCard eyebrow="30-day visitors" value={metrics.visitors} detail="Anonymous first-party identities" accent />
-        <MetricCard eyebrow="Sessions" value={metrics.sessions} detail="30-minute activity windows" />
+        <MetricCard eyebrow="Tracked sessions" value={metrics.sessions} detail="30-minute first-party activity windows" />
         <MetricCard eyebrow="Page views" value={metrics.pageviews} detail={`${metrics.events} total tracked events`} />
-        <MetricCard eyebrow="Form conversions" value={metrics.formSubmits} detail={`${conversionRate}% of sessions`} />
+        <MetricCard eyebrow="Converted sessions" value={metrics.convertedSessions} detail={`${conversionRate}% of tracked sessions`} />
         <MetricCard eyebrow="Attributed inquiries" value={metrics.attributableInquiries} detail="Campaign or click identity recorded" />
       </section>
 
       <Panel eyebrow="First-party funnel · 30 days" title="Campaign touch to qualified demand.">
         {funnel.length ? (
-          <div className="portal-table-wrap"><table className="portal-table marketing-table marketing-funnel-table"><thead><tr><th>Source / campaign</th><th>Visitors</th><th>Sessions</th><th>Engaged</th><th>Form starts</th><th>Inquiries</th><th>Qualified</th><th>Won</th><th>Session → inquiry</th></tr></thead><tbody>
+          <div className="portal-table-wrap"><table className="portal-table marketing-table marketing-funnel-table"><thead><tr><th>Source / campaign</th><th>Visitors</th><th>Sessions</th><th>Engaged</th><th>Form starts</th><th>Inquiries</th><th>Qualified</th><th>Won</th><th>Tracked session → inquiry</th></tr></thead><tbody>
             {funnel.map((row) => {
-              const rate = Number(row.sessions) ? (Number(row.inquiries) / Number(row.sessions) * 100).toFixed(1) : '0.0';
+              const rate = trackedSessionConversionRate(row.converted_sessions, row.sessions);
               return <tr key={`${row.source}:${row.medium}:${row.campaign}`}>
                 <td><strong>{row.campaign === 'unassigned' ? row.source : row.campaign}</strong><span>{row.source} · {row.medium}</span></td>
                 <td>{row.visitors}</td>
@@ -93,7 +94,7 @@ export default function Marketing() {
 
         <Panel eyebrow="Delivery sequence" title="Build order">
           <div className="marketing-work-sequence">
-            {workItems.filter((item) => ['Analytics', 'Advertising', 'Attribution'].includes(item.area)).map((item, index) => <article key={item.id}>
+            {workItems.filter((item) => ['Analytics', 'Advertising', 'Attribution', 'Privacy'].includes(item.area)).map((item, index) => <article key={item.id}>
               <span>{String(index + 1).padStart(2, '0')}</span><div><strong>{item.title}</strong><p>{item.description}</p></div><StatusTag value={item.status} />
             </article>)}
           </div>

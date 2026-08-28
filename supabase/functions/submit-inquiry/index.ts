@@ -43,6 +43,7 @@ type InquiryPayload = {
   submissionId?: unknown;
   visitorId?: unknown;
   sessionId?: unknown;
+  sessionStartedAt?: unknown;
   utmSource?: unknown;
   utmMedium?: unknown;
   utmCampaign?: unknown;
@@ -250,6 +251,9 @@ const handleAuthorizedInquiry = withSupabase(
       const submissionKey = cleanOptionalUuid(payload.submissionId) || crypto.randomUUID();
       const visitorKey = cleanTelemetryUuid(payload.visitorId);
       const sessionKey = cleanTelemetryUuid(payload.sessionId);
+      const sessionStartedAt = visitorKey && sessionKey
+        ? cleanOptionalTimestamp(payload.sessionStartedAt)
+        : null;
       const rawUtmSource = cleanTelemetryString(payload.utmSource, 120);
       const utmMedium = cleanTelemetryString(payload.utmMedium, 120);
       const utmCampaign = cleanTelemetryString(payload.utmCampaign, 190);
@@ -271,6 +275,13 @@ const handleAuthorizedInquiry = withSupabase(
       const attributionCapturedAt = attributionPresent
         ? cleanOptionalTimestamp(payload.attributionCapturedAt) || new Date().toISOString()
         : null;
+      if (
+        sessionStartedAt
+        && attributionCapturedAt
+        && new Date(attributionCapturedAt).getTime() < new Date(sessionStartedAt).getTime() - 5 * 60 * 1000
+      ) {
+        throw new Error('INVALID_INPUT');
+      }
       const utmSource = rawUtmSource || (gclid ? 'google' : msclkid ? 'microsoft_ads' : ttclid ? 'tiktok' : null);
       const referrer = cleanReferrer(payload.referrer);
 
@@ -320,6 +331,7 @@ const handleAuthorizedInquiry = withSupabase(
           p_adset_external_id: adsetExternalId,
           p_ad_external_id: adExternalId,
           p_referrer: referrer,
+          p_session_started_at: sessionStartedAt,
         },
       );
 

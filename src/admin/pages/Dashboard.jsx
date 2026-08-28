@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { ArrowUpRight, CheckCircle2, CircleDashed } from 'lucide-react';
-import { ErrorState, LoadingState, MetricCard, Panel, StatusTag, formatDate, formatMoney } from '@/admin/components';
+import { ErrorState, LoadingState, MetricCard, Panel, StatusTag, formatCurrencyTotals, formatDate } from '@/admin/components';
 import { loadDashboard } from '@/admin/lib/portal';
 
 export default function Dashboard() {
@@ -17,6 +17,7 @@ export default function Dashboard() {
   if (state.error) return <ErrorState error={state.error} retry={load} />;
 
   const { metrics, recent, integrations, workItems } = state.data;
+  const pipelineTotal = formatCurrencyTotals(metrics.pipelineTotals);
   return (
     <div className="portal-page-stack">
       <section className="portal-intro">
@@ -28,7 +29,11 @@ export default function Dashboard() {
         <MetricCard eyebrow="New inquiries" value={metrics.newInquiries} detail="Awaiting first review" accent />
         <MetricCard eyebrow="Qualified pipeline" value={metrics.qualified} detail="Qualified through won" />
         <MetricCard eyebrow="Active clients" value={metrics.activeClients} detail="Current relationships" />
-        <MetricCard eyebrow="Visible pipeline" value={formatMoney(metrics.pipelineValue)} detail="Recorded project value" />
+        <MetricCard
+          eyebrow="Visible pipeline"
+          value={metrics.pipelineTotals.length > 1 ? `${metrics.pipelineTotals.length} currencies` : pipelineTotal}
+          detail={metrics.pipelineTotals.length > 1 ? pipelineTotal : 'Recorded project value'}
+        />
         <MetricCard eyebrow="30-day visitors" value={metrics.visitors30d} detail="First-party tracking" />
       </section>
 

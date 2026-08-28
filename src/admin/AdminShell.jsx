@@ -66,7 +66,7 @@ export default function AdminShell({ title, eyebrow, children }) {
         <header className="portal-topbar">
           <button className="portal-icon-button portal-menu-button" type="button" onClick={() => setMobileOpen(true)} aria-label="Open portal navigation"><Menu /></button>
           <div><span>{eyebrow}</span><h1>{title}</h1></div>
-          <div className="portal-environment"><i />Live workspace</div>
+          <div className="portal-environment"><i />Secure workspace</div>
         </header>
         <main className="portal-main">{children}</main>
       </div>

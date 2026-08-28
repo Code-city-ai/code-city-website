@@ -11,11 +11,23 @@ export const formatDate = (value, includeTime = false) => {
   }).format(new Date(value));
 };
 
-export const formatMoney = (value, currency = 'USD') => new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency,
-  maximumFractionDigits: 0,
-}).format(Number(value || 0));
+export const formatMoney = (value, currency = 'USD') => {
+  const amount = Number(value || 0);
+  const code = String(currency || 'USD').trim().toUpperCase();
+  try {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: code,
+      maximumFractionDigits: 0,
+    }).format(amount);
+  } catch {
+    return `${new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(amount)} ${code || 'USD'}`;
+  }
+};
+
+export const formatCurrencyTotals = (totals) => totals.length
+  ? totals.map(({ currency, value }) => `${formatMoney(value, currency)} ${currency}`).join(' · ')
+  : formatMoney(0);
 
 export function StatusTag({ value = 'unknown' }) {
   return <span className={`portal-status portal-status-${String(value).replaceAll('_', '-')}`}>{String(value).replaceAll('_', ' ')}</span>;

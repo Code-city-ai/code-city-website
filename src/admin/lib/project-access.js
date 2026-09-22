@@ -16,5 +16,5 @@ export async function projectAccess(action, fields = {}, project = 'trade-city')
   return data;
 }
 
-export const isProjectAccessRoute = (pathname) => pathname === '/sign-in' || pathname === '/admin/login'
+export const isProjectAccessRoute = (pathname) => pathname === '/admin' || pathname === '/admin/' || pathname === '/sign-in' || pathname === '/admin/login'
   || pathname === '/admin/projects' || pathname === '/admin/projects/';

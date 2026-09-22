@@ -1,13 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ArrowUpRight, Check, Eye, EyeOff, LoaderCircle, LockKeyhole, LogOut } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Check, Eye, EyeOff, LoaderCircle, LockKeyhole, LogOut } from 'lucide-react';
 import Brand from '@/components/Brand';
 import { useAdminAuth } from '@/admin/AuthProvider';
 import { projectAccess } from '@/admin/lib/project-access';
 
 export default function ProjectAccess({ project = null, children = null }) {
   const [selectedProject, setSelectedProject] = useState(project);
-  const projectName = selectedProject === 'code-city' ? 'Code City' : 'Trade City';
-  const projectPath = selectedProject === 'code-city' ? '/admin' : '/trade-city/';
+  const projectName = { orc: 'ORC', 'trade-city': 'Trade City', 'code-city': 'Code City' }[selectedProject] || 'workspace';
+  const projectPath = { orc: '/orc/', 'trade-city': '/trade-city/', 'code-city': '/admin/overview' }[selectedProject];
   const requestAccess = (action, fields = {}) => projectAccess(action, fields, selectedProject);
   const { session, profile, signOut } = useAdminAuth();
   const [access, setAccess] = useState(null);
@@ -20,6 +20,8 @@ export default function ProjectAccess({ project = null, children = null }) {
   const [confirmation, setConfirmation] = useState('');
   const [visible, setVisible] = useState(false);
   const inputRef = useRef(null);
+  const launcherRefs = useRef({ orc: null, 'trade-city': null });
+  const lastProject = useRef(null);
   const isAdmin = profile?.is_active && (selectedProject === 'code-city' ? ['owner', 'admin', 'agent', 'viewer'] : ['owner', 'admin']).includes(profile.role);
   const configuring = access?.owner && (!access.configured || editing);
 
@@ -56,6 +58,8 @@ export default function ProjectAccess({ project = null, children = null }) {
 
   useEffect(() => { if (!busy && access && !access.unlocked) inputRef.current?.focus(); }, [access, busy]);
 
+  useEffect(() => { if (!selectedProject && lastProject.current) launcherRefs.current[lastProject.current]?.focus(); }, [selectedProject]);
+
   const clearFields = () => { setCode(''); setCurrentCode(''); setConfirmation(''); setVisible(false); };
   const submit = async (event) => {
     event.preventDefault();
@@ -88,7 +92,35 @@ export default function ProjectAccess({ project = null, children = null }) {
 
   if (children && selectedProject === project && access?.unlocked) return children;
 
-  const chooseProject = (nextProject) => { setSelectedProject(nextProject); setAccess(null); setBusy(Boolean(nextProject)); setEditing(false); clearFields(); setMessage(''); setError(''); };
+  const chooseProject = (nextProject) => { if (selectedProject) lastProject.current = selectedProject; setSelectedProject(nextProject); setAccess(null); setBusy(Boolean(nextProject)); setEditing(false); clearFields(); setMessage(''); setError(''); };
+
+  if (!selectedProject) return (
+    <main className="portal-project-access workspace-launcher">
+      <header className="workspace-header">
+        <Brand />
+        <div className="workspace-account"><span>{session?.user.email}</span><button type="button" onClick={exit} disabled={busy}><LogOut aria-hidden="true" /><span>Sign out</span></button></div>
+      </header>
+      <section className="workspace-content" aria-labelledby="workspace-heading">
+        <div className="workspace-intro">
+          <h1 id="workspace-heading">A place for<br />your next move.</h1>
+          <p>Your agents. Your markets.<br />{' '}Choose a workspace to get started.</p>
+        </div>
+        <div className="workspace-projects">
+          <button className="workspace-project workspace-project-orc" ref={(node) => { launcherRefs.current.orc = node; }} type="button" onClick={() => chooseProject('orc')} aria-label="Open ORC">
+            <span className="workspace-project-top"><img className="workspace-app-icon" src="/brands/orc-app.png" alt="" width="104" height="104" /><span className="workspace-protection"><LockKeyhole aria-hidden="true" /> Passcode protected</span></span>
+            <span className="workspace-project-body"><strong>ORC<span className="workspace-project-subtitle">Your agent orchestra.</span></strong><span className="workspace-project-description">Bring your agents, projects, and conversations together.</span></span>
+            <span className="workspace-project-bottom"><span>Enter ORC</span><span className="workspace-enter"><ArrowRight aria-hidden="true" /></span></span>
+          </button>
+          <button className="workspace-project workspace-project-trade" ref={(node) => { launcherRefs.current['trade-city'] = node; }} type="button" onClick={() => chooseProject('trade-city')} aria-label="Open Trade City">
+            <span className="workspace-project-top"><img className="workspace-app-icon" src="/brands/trade-city-app.png" alt="" width="104" height="104" /><span className="workspace-protection"><LockKeyhole aria-hidden="true" /> Passcode protected</span></span>
+            <span className="workspace-project-body"><strong>Trade City<span className="workspace-project-subtitle">Your trading workspace.</span></strong><span className="workspace-project-description">Follow the markets. See your positions. Plan your next move.</span></span>
+            <span className="workspace-project-bottom"><span>Enter Trade City</span><span className="workspace-enter"><ArrowRight aria-hidden="true" /></span></span>
+          </button>
+        </div>
+      </section>
+      <footer className="workspace-footer"><a href="/">Back to codecity.ai <ArrowUpRight aria-hidden="true" /></a><span><LockKeyhole aria-hidden="true" /> One account. Separate access codes.</span></footer>
+    </main>
+  );
 
   return (
     <main className="portal-login portal-project-access">
@@ -96,16 +128,16 @@ export default function ProjectAccess({ project = null, children = null }) {
         <Brand />
         <div>
           <h1>Your projects.<br />One secure entrance.</h1>
-          <p>Choose Trade City or Code City, then enter that project’s private access code. Your account stays the same.</p>
+          <p>Choose ORC or Trade City, then enter that project’s private access code. Your account stays the same.</p>
         </div>
         <small>Private workspace · Authorized team members only</small>
       </section>
       <section className="portal-login-panel">
         <div className="portal-login-card">
           <div className="portal-login-icon">{access?.unlocked ? <Check aria-hidden="true" /> : <LockKeyhole aria-hidden="true" />}</div>
-          <h2>{!selectedProject ? 'Choose your project.' : !isAdmin ? 'Administrator access required.' : configuring ? (access?.configured ? 'Change your access code.' : `Set the ${projectName} code.`) : access?.unlocked ? 'Open your workspace.' : `Enter the ${projectName} code.`}</h2>
+          <h2>{!isAdmin ? 'Administrator access required.' : configuring ? (access?.configured ? 'Change your access code.' : `Set the ${projectName} code.`) : access?.unlocked ? 'Open your workspace.' : `Enter the ${projectName} code.`}</h2>
           <p className="project-access-identity">Signed in as <strong>{session?.user.email}</strong></p>
-          {!selectedProject ? <div className="project-access-choices"><button type="button" onClick={() => chooseProject('trade-city')}><span><strong>Trade City</strong><small>Trading workspace</small></span><ArrowUpRight aria-hidden="true" /></button><button type="button" onClick={() => chooseProject('code-city')}><span><strong>Code City</strong><small>Client operations</small></span><ArrowUpRight aria-hidden="true" /></button></div> : !isAdmin ? <p>Trade City requires an active administrator or owner account. Choose Code City to open your existing client workspace.</p>
+          {!isAdmin ? <p>{projectName} requires an active administrator or owner account. Contact your workspace owner to request access.</p>
             : busy && !access ? <p className="project-access-checking" role="status"><LoaderCircle className="spin" aria-hidden="true" /> Checking project access</p>
               : access ? <>
                 {configuring ? <p>Choose a fixed code with 10–128 characters. You can change it here; changing it locks every browser session for this project.</p>

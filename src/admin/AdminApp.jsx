@@ -15,7 +15,7 @@ import '@/admin/admin.css';
 import '@/admin/project-access.css';
 
 const routes = {
-  '/admin': { title: 'Overview', eyebrow: 'Code City / Client operations', Component: Dashboard },
+  '/admin/overview': { title: 'Overview', eyebrow: 'Code City / Client operations', Component: Dashboard },
   '/admin/inquiries': { title: 'Inquiry desk', eyebrow: 'Demand / Qualification', Component: Inquiries },
   '/admin/clients': { title: 'Client directory', eyebrow: 'Relationships / Delivery', Component: Clients },
   '/admin/marketing': { title: 'Marketing intelligence', eyebrow: 'Attribution / Return', Component: Marketing },
@@ -42,7 +42,7 @@ function PortalRouter({ pathname }) {
 
   if (isProjectAccessRoute(pathname)) return <ProjectAccess />;
 
-  const route = routes[pathname] || routes['/admin'];
+  const route = routes[pathname] || routes['/admin/overview'];
   const { Component } = route;
   return <ProjectAccess project="code-city"><AdminShell title={route.title} eyebrow={route.eyebrow}><Component /></AdminShell></ProjectAccess>;
 }

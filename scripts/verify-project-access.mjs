@@ -7,7 +7,7 @@ const webPort = 4181;
 const user = { id: '11111111-1111-4111-8111-111111111111', aud: 'authenticated', role: 'authenticated', email: 'owner@example.test', app_metadata: { provider: 'email' }, user_metadata: {}, created_at: '2026-01-01T00:00:00Z' };
 const payload = { sub: user.id, role: 'authenticated', email: user.email, session_id: '22222222-2222-4222-8222-222222222222', exp: Math.floor(Date.now()/1000)+86400 };
 const token = `${Buffer.from('{"alg":"HS256","typ":"JWT"}').toString('base64url')}.${Buffer.from(JSON.stringify(payload)).toString('base64url')}.local-fixture-only`;
-const projects = { 'trade-city': { unlocked:false,code:'fixture-code-only',configured:process.env.FIXTURE_UNCONFIGURED !== '1' }, 'code-city': { unlocked:false,code:'fixture-code-city',configured:process.env.FIXTURE_UNCONFIGURED !== '1' } };
+const projects = { orc: { unlocked:false,code:'fixture-code-orc',configured:process.env.FIXTURE_UNCONFIGURED !== '1' }, 'trade-city': { unlocked:false,code:'fixture-code-only',configured:process.env.FIXTURE_UNCONFIGURED !== '1' }, 'code-city': { unlocked:false,code:'fixture-code-city',configured:process.env.FIXTURE_UNCONFIGURED !== '1' } };
 const api = createHTTPServer(async (req,res) => {
   res.setHeader('Access-Control-Allow-Origin',`http://127.0.0.1:${webPort}`);
   res.setHeader('Access-Control-Allow-Headers',req.headers['access-control-request-headers'] || 'authorization, apikey, content-type, x-client-info, x-supabase-api-version');
@@ -41,5 +41,5 @@ process.env.VITE_SUPABASE_URL=`http://127.0.0.1:${apiPort}`;
 process.env.VITE_SUPABASE_ANON_KEY='public-local-fixture-key';
 const vite=await createViteServer({server:{host:'127.0.0.1',port:webPort,strictPort:true},plugins:[{name:'local-fixture-label',transformIndexHtml(){return [{tag:'div',attrs:{style:'position:relative;text-align:center;background:#493415;color:#fff1d9;font:11px system-ui;padding:8px;pointer-events:none'},children:'LOCAL ACCESS-SCREEN TEST · NO REAL ACCOUNT OR EMAIL',injectTo:'body-prepend'}];}}]});
 await vite.listen();
-console.log(`Local fixture: http://127.0.0.1:${webPort}/sign-in — email owner@example.test, any test password, Trade City code fixture-code-only, Code City code fixture-code-city. No live services are contacted.`);
+console.log(`Local fixture: http://127.0.0.1:${webPort}/sign-in — email owner@example.test, any test password, Trade City code fixture-code-only, ORC code fixture-code-orc. No live services are contacted.`);
 for(const signal of ['SIGTERM','SIGINT']) process.on(signal,async()=>{await vite.close();api.close();process.exit(0);});

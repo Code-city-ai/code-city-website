@@ -15,7 +15,7 @@ import Brand from '@/components/Brand';
 import { useAdminAuth } from '@/admin/AuthProvider';
 
 const navigation = [
-  { label: 'Overview', href: '/admin', icon: BriefcaseBusiness, exact: true },
+  { label: 'Overview', href: '/admin/overview', icon: BriefcaseBusiness, exact: true },
   { label: 'Inquiries', href: '/admin/inquiries', icon: Inbox },
   { label: 'Clients', href: '/admin/clients', icon: Building2 },
   { label: 'Marketing', href: '/admin/marketing', icon: BarChart3 },

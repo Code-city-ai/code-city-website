@@ -36,7 +36,7 @@ export default function Login() {
         <Brand />
         <div>
           <h1>Your projects.<br />One secure entrance.</h1>
-          <p>Sign in to your Code City account to open Trade City and your client workspace.</p>
+          <p>Sign in to your Code City account to open ORC and Trade City.</p>
         </div>
         <small>Private workspace · Authorized team members only</small>
       </section>

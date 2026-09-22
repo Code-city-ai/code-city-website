@@ -40,11 +40,75 @@
   .portal-project-access *, .portal-project-access *::before, .portal-project-access *::after { animation: none !important; transition: none !important; }
 }
 
-.project-access-choices { display: grid; margin-top: 28px; border-top: 1px solid var(--portal-line); }
-.project-access-choices button { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 22px 0; border: 0; border-bottom: 1px solid var(--portal-line); background: transparent; color: var(--portal-text); text-align: left; cursor: pointer; }
-.project-access-choices button:hover { color: #ffad93; }
-.project-access-choices button span { display: grid; gap: 7px; }
-.project-access-choices strong { font-size: 1.25rem; }
-.project-access-choices small { color: var(--access-muted); font-size: 0.8rem; }
-.project-access-choices svg { width: 22px; }
 .project-access-setup-help { font-size: 0.75rem; line-height: 1.6; }
+
+/* The two project entrances share the established Code City portal palette. */
+.workspace-launcher { min-height: 100svh; padding: 0 64px; display: flex; flex-direction: column; background: var(--portal-bg); color: var(--portal-text); font-family: Inter, ui-sans-serif, system-ui, sans-serif; }
+.workspace-header, .workspace-content, .workspace-footer { width: min(100%, 1184px); margin-inline: auto; }
+.workspace-header { min-height: 108px; display: flex; align-items: center; justify-content: space-between; gap: 24px; border-bottom: 1px solid var(--portal-line-soft); }
+.workspace-header .brand { color: var(--portal-text); }
+.workspace-header .brand-mark i:nth-child(3) { background: var(--portal-text); }
+.workspace-account { display: flex; gap: 26px; align-items: center; color: var(--access-muted); font-size: 0.8125rem; }
+.workspace-account > span { overflow-wrap: anywhere; }
+.workspace-account button { display: inline-flex; gap: 8px; align-items: center; min-height: 44px; padding: 8px 0; color: var(--portal-text); background: none; border: 0; font: inherit; cursor: pointer; white-space: nowrap; }
+.workspace-account button svg { width: 16px; height: 16px; }
+.workspace-account button:hover { color: #ffb49a; }
+.workspace-account button:disabled { opacity: .55; cursor: not-allowed; }
+.workspace-content { padding-block: 64px 56px; flex: 1; }
+.workspace-intro { display: flex; align-items: flex-end; justify-content: space-between; gap: 40px; margin-bottom: 40px; }
+.workspace-intro h1 { margin: 0; font-size: 3.5rem; font-weight: 580; line-height: 1.06; letter-spacing: -.04em; text-wrap: balance; }
+.workspace-intro p { margin: 0 0 4px; color: var(--access-muted); font-size: .9375rem; line-height: 1.75; }
+.workspace-projects { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.workspace-project { --project-accent: #e4b858; display: flex; flex-direction: column; min-width: 0; padding: 32px; border: 1px solid #3a3730; border-radius: 16px; background: #151517; color: var(--portal-text); text-align: left; font: inherit; cursor: pointer; transition: border-color 200ms ease, background-color 200ms ease; }
+.workspace-project-trade { --project-accent: #9ebfce; background: #10181e; border-color: #2b3a43; }
+.workspace-project:hover { background: #1e1d1b; border-color: #9b814d; }
+.workspace-project-trade:hover { background: #152129; border-color: #678999; }
+.workspace-project:active { background: #25231f; }
+.workspace-project-trade:active { background: #1a2a34; }
+.workspace-project-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.workspace-app-icon { display: block; flex-shrink: 0; width: 104px; height: 104px; object-fit: contain; }
+.workspace-app-icon svg { display: block; width: 100%; height: 100%; }
+.workspace-protection { display: inline-flex; align-items: center; gap: 6px; margin-top: 3px; color: var(--access-muted); font-size: .6875rem; line-height: 1.5; }
+.workspace-protection svg { width: 13px; height: 13px; flex-shrink: 0; }
+.workspace-project-body { display: grid; gap: 15px; padding-block: 35px 30px; }
+.workspace-project-body strong { font-size: 2.25rem; font-weight: 610; letter-spacing: -.03em; line-height: 1.15; }
+.workspace-project-subtitle { display: block; margin-top: 10px; font-size: .9375rem; font-weight: 450; letter-spacing: 0; color: var(--project-accent); }
+.workspace-project-description { max-width: 33ch; min-height: 3.2em; color: #aab3bd; font-size: .875rem; line-height: 1.6; }
+.workspace-project-bottom { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-top: 20px; margin-top: auto; border-top: 1px solid #36332f; font-size: .875rem; font-weight: 550; }
+.workspace-project-trade .workspace-project-bottom { border-color: #2a3740; }
+.workspace-enter { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; background: #e9dfc9; color: #201c14; transition: background-color 200ms ease; }
+.workspace-project-trade .workspace-enter { background: #c9d9df; color: #14242c; }
+.workspace-enter svg { width: 19px; height: 19px; }
+.workspace-project:hover .workspace-enter { background: #f8ead0; }
+.workspace-project-trade:hover .workspace-enter { background: #e0eff4; }
+.workspace-footer { display: flex; align-items: center; justify-content: space-between; gap: 20px; min-height: 80px; padding-block: 20px; border-top: 1px solid var(--portal-line-soft); color: var(--access-muted); font-size: .75rem; }
+.workspace-footer :is(a, span) { display: inline-flex; align-items: center; gap: 7px; }
+.workspace-footer a { min-height: 44px; color: inherit; text-decoration: none; text-underline-offset: 5px; }
+.workspace-footer a:hover { color: var(--portal-text); text-decoration: underline; }
+.workspace-footer svg { width: 14px; height: 14px; }
+@media (max-width: 1050px) {
+  .workspace-launcher { padding-inline: 36px; }
+  .workspace-project { padding: 26px; }
+  .workspace-protection { max-width: 92px; }
+}
+@media (max-width: 700px) {
+  .workspace-launcher { padding-inline: 24px; }
+  .workspace-header { min-height: 88px; }
+  .workspace-account { gap: 12px; }
+  .workspace-account > span { display: none; }
+  .workspace-content { padding-block: 36px; }
+  .workspace-intro { display: block; margin-bottom: 30px; }
+  .workspace-intro h1 { font-size: 2.75rem; }
+  .workspace-intro p { margin-top: 18px; font-size: .875rem; }
+  .workspace-intro p br { display: none; }
+  .workspace-projects { grid-template-columns: 1fr; gap: 18px; }
+  .workspace-project { padding: 24px; }
+  .workspace-app-icon { width: 80px; height: 80px; }
+  .workspace-protection { max-width: none; }
+  .workspace-project-body { padding-block: 24px; }
+  .workspace-project-body strong { font-size: 2rem; }
+  .workspace-project-description { min-height: 0; }
+  .workspace-project-bottom { padding-top: 16px; }
+  .workspace-footer { flex-direction: column-reverse; align-items: flex-start; gap: 6px; padding-block: 22px; }
+}
+@media (prefers-reduced-motion: reduce) { .workspace-launcher * { transition: none !important; } }

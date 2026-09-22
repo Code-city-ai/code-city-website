@@ -71,7 +71,7 @@ Recheck them at activation; this snapshot is not a claim that the hook is live.
    chosen password, and returns to `/sign-in`. For a previously unconfirmed Auth
    account, verify its email confirmation state after this real recovery flow;
    do not assume a sent email confirmed the account.
-5. Sign in with that password, verify the Trade City and Code City project choices,
+5. Sign in with that password, verify the ORC and Trade City project choices,
    and set each fixed project passcode through the owner UI. Verify each project
    rejects the other project's passcode and that existing CRM role permissions
    remain intact. No default passcode or emailed plaintext passcode is provided.

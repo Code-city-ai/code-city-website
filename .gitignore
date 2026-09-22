@@ -33,3 +33,6 @@ __pycache__/
 supabase/.temp/
 .vercel
 .env*
+
+# Local rendered review evidence
+.impeccable/review/

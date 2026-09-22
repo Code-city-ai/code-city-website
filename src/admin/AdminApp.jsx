@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { LoaderCircle, LogOut, ShieldX } from 'lucide-react';
 import { AdminAuthProvider, useAdminAuth } from '@/admin/AuthProvider';
 import AdminShell from '@/admin/AdminShell';
@@ -10,6 +10,10 @@ import Settings from '@/admin/pages/Settings';
 import Login from '@/admin/pages/Login';
 import PasswordSetup from '@/admin/pages/PasswordSetup';
 import '@/admin/admin.css';
+import '@/admin/projects/projects.css';
+import Projects from '@/admin/projects/Projects';
+import ProjectWorkspace from '@/admin/projects/ProjectWorkspace';
+import TradeCity from '@/admin/projects/TradeCity';
 
 const routes = {
   '/admin': { title: 'Overview', eyebrow: 'Code City / Client operations', Component: Dashboard },
@@ -37,11 +41,21 @@ function PortalRouter({ pathname }) {
     );
   }
 
+  if (pathname === '/sign-in' || pathname === '/admin/login' || pathname.startsWith('/admin/projects')) {
+    const tradeCity = pathname === '/admin/projects/trade-city';
+    return <AdminShell title={tradeCity ? 'Trade City' : 'Your projects'} eyebrow="Code City / Workspace"><ProjectWorkspace settings={pathname === '/admin/projects/access'}>{tradeCity ? <TradeCity /> : <Projects />}</ProjectWorkspace></AdminShell>;
+  }
+
   const route = routes[pathname] || routes['/admin'];
   const { Component } = route;
   return <AdminShell title={route.title} eyebrow={route.eyebrow}><Component /></AdminShell>;
 }
 
 export default function AdminApp({ pathname }) {
+  useEffect(() => {
+    const previousTitle = document.title;
+    document.title = `${pathname === '/admin/projects/trade-city' ? 'Trade City' : pathname.startsWith('/admin/projects') ? 'Projects' : pathname === '/sign-in' || pathname === '/admin/login' ? 'Sign in' : 'Workspace'} · Code City`;
+    return () => { document.title = previousTitle; };
+  }, [pathname]);
   return <AdminAuthProvider><PortalRouter pathname={pathname} /></AdminAuthProvider>;
 }

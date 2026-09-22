@@ -14,13 +14,13 @@ export default function Login() {
     event.preventDefault();
     setStatus({ loading: true, error: '', message: '' });
     const { error } = await signIn(email.trim(), password);
-    if (error) setStatus({ loading: false, error: 'The email or password was not accepted.', message: '' });
+    setStatus({ loading: false, error: error ? 'The email or password was not accepted.' : '', message: '' });
   };
 
   const handlePasswordReset = async () => {
     const normalizedEmail = email.trim();
     if (!normalizedEmail) {
-      setStatus({ loading: false, error: 'Enter your administrator email first.', message: '' });
+      setStatus({ loading: false, error: 'Enter your email address first.', message: '' });
       return;
     }
     setStatus({ loading: true, error: '', message: '' });
@@ -31,13 +31,12 @@ export default function Login() {
   };
 
   return (
-    <main className="portal-login">
+    <main className="portal-login portal-project-access">
       <section className="portal-login-story">
         <Brand />
         <div>
-          <span>Code City / Client operations</span>
-          <h1>Operate the relationship from first signal to signed engagement.</h1>
-          <p>One secure workspace for inquiries, client context, project movement, and the marketing evidence behind every lead.</p>
+          <h1>Your projects.<br />One secure entrance.</h1>
+          <p>Sign in to your Code City account to open ORC and Trade City.</p>
         </div>
         <small>Private workspace · Authorized team members only</small>
       </section>
@@ -45,17 +44,16 @@ export default function Login() {
       <section className="portal-login-panel">
         <div className="portal-login-card">
           <div className="portal-login-icon"><LockKeyhole aria-hidden="true" /></div>
-          <span>Team access</span>
           <h2>Sign in to Code City.</h2>
-          <p>Use the administrator account provisioned through Code City&apos;s secure Supabase workspace.</p>
+          <p>Sign in with your email and password, then choose a project. Each project has its own private access code.</p>
 
           <form onSubmit={handleSubmit}>
             <div className="portal-login-field">
               <label htmlFor="code-city-admin-email"><span>Email address</span></label>
-              <input id="code-city-admin-email" type="email" value={email} onChange={(event) => setEmail(event.target.value)} autoComplete="username" required placeholder="you@codecity.ai" />
+              <input id="code-city-admin-email" type="email" value={email} onChange={(event) => setEmail(event.target.value)} autoComplete="username" required placeholder="dev@codecity.ai" />
             </div>
             <div className="portal-login-field">
-              <div className="portal-password-label"><label htmlFor="code-city-admin-password">Password</label><button type="button" onClick={handlePasswordReset} disabled={status.loading}>Forgot password?</button></div>
+              <div className="portal-password-label"><label htmlFor="code-city-admin-password">Password</label><button type="button" onClick={handlePasswordReset} disabled={status.loading}>Set or reset password</button></div>
               <div className="portal-password-field">
                 <input id="code-city-admin-password" type={showPassword ? 'text' : 'password'} value={password} onChange={(event) => setPassword(event.target.value)} autoComplete="current-password" required placeholder="Enter your password" />
                 <button type="button" onClick={() => setShowPassword((value) => !value)} aria-label={showPassword ? 'Hide password' : 'Show password'}>{showPassword ? <EyeOff /> : <Eye />}</button>
@@ -68,6 +66,7 @@ export default function Login() {
               {status.loading ? 'Authenticating' : 'Enter the workspace'}
             </button>
           </form>
+          <p className="project-access-setup-help">First time here? Enter your email address and choose “Set or reset password” to receive your secure setup link.</p>
           <a href="/">Return to codecity.ai</a>
         </div>
       </section>

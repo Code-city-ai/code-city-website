@@ -6,6 +6,8 @@
     }
   },
   "rewrites": [
+    { "source": "/trade-city", "destination": "https://tradecity-backend-hoh5niianq-uc.a.run.app/trade-city/" },
+    { "source": "/trade-city/:path*", "destination": "https://tradecity-backend-hoh5niianq-uc.a.run.app/trade-city/:path*" },
     { "source": "/contact", "destination": "/index.html" },
     { "source": "/contact/", "destination": "/index.html" },
     { "source": "/support", "destination": "/index.html" },

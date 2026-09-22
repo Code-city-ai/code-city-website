@@ -9,10 +9,13 @@ import Marketing from '@/admin/pages/Marketing';
 import Settings from '@/admin/pages/Settings';
 import Login from '@/admin/pages/Login';
 import PasswordSetup from '@/admin/pages/PasswordSetup';
+import ProjectAccess from '@/admin/pages/ProjectAccess';
+import { isProjectAccessRoute } from '@/admin/lib/project-access';
 import '@/admin/admin.css';
+import '@/admin/project-access.css';
 
 const routes = {
-  '/admin': { title: 'Overview', eyebrow: 'Code City / Client operations', Component: Dashboard },
+  '/admin/overview': { title: 'Overview', eyebrow: 'Code City / Client operations', Component: Dashboard },
   '/admin/inquiries': { title: 'Inquiry desk', eyebrow: 'Demand / Qualification', Component: Inquiries },
   '/admin/clients': { title: 'Client directory', eyebrow: 'Relationships / Delivery', Component: Clients },
   '/admin/marketing': { title: 'Marketing intelligence', eyebrow: 'Attribution / Return', Component: Marketing },
@@ -37,9 +40,11 @@ function PortalRouter({ pathname }) {
     );
   }
 
-  const route = routes[pathname] || routes['/admin'];
+  if (isProjectAccessRoute(pathname)) return <ProjectAccess />;
+
+  const route = routes[pathname] || routes['/admin/overview'];
   const { Component } = route;
-  return <AdminShell title={route.title} eyebrow={route.eyebrow}><Component /></AdminShell>;
+  return <ProjectAccess project="code-city"><AdminShell title={route.title} eyebrow={route.eyebrow}><Component /></AdminShell></ProjectAccess>;
 }
 
 export default function AdminApp({ pathname }) {

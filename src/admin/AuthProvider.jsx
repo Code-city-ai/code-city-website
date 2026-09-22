@@ -17,9 +17,18 @@ export function AdminAuthProvider({ children }) {
     }
 
     let active = true;
+    let profileUserId = null;
+    let profileRequest = 0;
 
     const loadProfile = async (currentSession) => {
       if (!active) return;
+      const request = ++profileRequest;
+      const nextUserId = currentSession?.user?.id || null;
+      if (profileUserId !== nextUserId) {
+        profileUserId = nextUserId;
+        setProfile(null);
+        setLoading(Boolean(nextUserId));
+      }
       setSession(currentSession);
       if (!currentSession?.user) {
         setProfile(null);
@@ -34,7 +43,7 @@ export function AdminAuthProvider({ children }) {
         .eq('user_id', currentSession.user.id)
         .maybeSingle();
 
-      if (!active) return;
+      if (!active || request !== profileRequest) return;
       if (error || !data?.is_active) {
         setProfile(null);
         setAuthError('This account is authenticated but is not authorized for the Code City portal.');
@@ -47,8 +56,9 @@ export function AdminAuthProvider({ children }) {
 
     supabase.auth.getSession().then(({ data }) => loadProfile(data.session));
     const { data: listener } = supabase.auth.onAuthStateChange((_event, nextSession) => {
-      setLoading(true);
-      loadProfile(nextSession);
+      // Supabase emits SIGNED_IN again on tab focus. Preserve the selected project
+      // while refreshing the same identity, and query outside the Auth callback lock.
+      queueMicrotask(() => loadProfile(nextSession));
     });
 
     return () => {
@@ -79,7 +89,7 @@ export function AdminAuthProvider({ children }) {
     },
     signOut: async () => {
       if (supabase) await supabase.auth.signOut();
-      window.location.assign('/admin/login');
+      window.location.assign('/sign-in');
     },
   }), [authError, loading, profile, session]);
 

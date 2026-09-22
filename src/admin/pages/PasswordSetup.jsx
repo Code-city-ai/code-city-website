@@ -27,7 +27,7 @@ export default function PasswordSetup() {
       setStatus({ loading: false, error: 'The secure link may have expired. Request a new password link from sign in.' });
       return;
     }
-    window.location.assign('/admin');
+    window.location.assign('/sign-in');
   };
 
   return (
@@ -37,7 +37,7 @@ export default function PasswordSetup() {
         <div>
           <span>Code City / Identity setup</span>
           <h1>Protect the workspace before you enter it.</h1>
-          <p>Create the administrator password used to manage inquiries, clients, delivery context, and marketing evidence.</p>
+          <p>Create the password for your Code City account, then choose the project you want to open.</p>
         </div>
         <small>Private workspace · One-time secure setup</small>
       </section>
@@ -64,7 +64,7 @@ export default function PasswordSetup() {
               {status.loading ? 'Securing access' : 'Set password and continue'}
             </button>
           </form>
-          <a href="/admin/login">Request a new secure link</a>
+          <a href="/sign-in">Request a new secure link</a>
         </div>
       </section>
     </main>

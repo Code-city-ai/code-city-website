@@ -136,6 +136,7 @@ export default function ProjectAccess({ project = null, children = null }) {
             <button type="button" onClick={exit} disabled={busy}><LogOut aria-hidden="true" /> Sign out</button>
           </div>
           <a href="/">Return to codecity.ai</a>
+          {selectedProject === 'trade-city' && <p>Trade City. All rights reserved.</p>}
         </div>
       </section>
     </main>

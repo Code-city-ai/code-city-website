@@ -17,6 +17,11 @@ const api = createHTTPServer(async (req,res) => {
   if(req.method==='OPTIONS') {res.statusCode=204;res.end();return;}
   let text='';for await(const chunk of req) text+=chunk;
   const body=text?JSON.parse(text):{};
+  if(req.url === '/orc/session') {
+    const locked = process.env.FIXTURE_ORC_EXCHANGE_STATUS === '403';
+    if(locked) projects.orc.unlocked=false;
+    reply({error:locked?'ORC grant revoked in local fixture':'Cloud runtime unavailable in local fixture'},locked?403:503);return;
+  }
   if(req.url.startsWith('/auth/v1/token')) { reply({access_token:token,refresh_token:'fixture-refresh',token_type:'bearer',expires_in:86400,expires_at:payload.exp,user});return; }
   if(req.url.startsWith('/auth/v1/user')) {reply(user);return;}
   if(req.url.startsWith('/auth/v1/logout')) {for(const project of Object.values(projects))project.unlocked=false;reply({});return;}
@@ -39,7 +44,7 @@ const api = createHTTPServer(async (req,res) => {
 await new Promise((resolve,reject)=>{api.once('error',reject);api.listen(apiPort,'127.0.0.1',resolve);});
 process.env.VITE_SUPABASE_URL=`http://127.0.0.1:${apiPort}`;
 process.env.VITE_SUPABASE_ANON_KEY='public-local-fixture-key';
-const vite=await createViteServer({server:{host:'127.0.0.1',port:webPort,strictPort:true},plugins:[{name:'local-fixture-label',transformIndexHtml(){return [{tag:'div',attrs:{style:'position:relative;text-align:center;background:#493415;color:#fff1d9;font:11px system-ui;padding:8px;pointer-events:none'},children:'LOCAL ACCESS-SCREEN TEST · NO REAL ACCOUNT OR EMAIL',injectTo:'body-prepend'}];}}]});
+const vite=await createViteServer({server:{host:'127.0.0.1',port:webPort,strictPort:true,proxy:{'/orc/session':`http://127.0.0.1:${apiPort}`}},plugins:[{name:'local-fixture-label',transformIndexHtml(){return [{tag:'div',attrs:{style:'position:relative;text-align:center;background:#493415;color:#fff1d9;font:11px system-ui;padding:8px;pointer-events:none'},children:'LOCAL ACCESS-SCREEN TEST · NO REAL ACCOUNT OR EMAIL',injectTo:'body-prepend'}];}}]});
 await vite.listen();
 console.log(`Local fixture: http://127.0.0.1:${webPort}/sign-in — email owner@example.test, any test password, Trade City code fixture-code-only, ORC code fixture-code-orc. No live services are contacted.`);
 for(const signal of ['SIGTERM','SIGINT']) process.on(signal,async()=>{await vite.close();api.close();process.exit(0);});

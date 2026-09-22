@@ -3,6 +3,7 @@ import { ArrowRight, ArrowUpRight, Check, Eye, EyeOff, LoaderCircle, LockKeyhole
 import Brand from '@/components/Brand';
 import { useAdminAuth } from '@/admin/AuthProvider';
 import { projectAccess } from '@/admin/lib/project-access';
+import { createOrcBrowserSession } from '@/admin/lib/orc-session';
 
 export default function ProjectAccess({ project = null, children = null }) {
   const [selectedProject, setSelectedProject] = useState(project);
@@ -75,6 +76,16 @@ export default function ProjectAccess({ project = null, children = null }) {
     } catch (failure) { setError(failure.message); }
     finally { setBusy(false); }
   };
+  const openOrc = async () => {
+    setBusy(true); setError('');
+    try {
+      await createOrcBrowserSession(session?.access_token);
+      window.location.assign('/orc/');
+    } catch (failure) {
+      if (failure.code === 'workspace_locked') setAccess((previous) => ({ ...previous, unlocked: false, expires_at: null }));
+      setError(failure.message); setBusy(false);
+    }
+  };
   const lock = async () => {
     setBusy(true); setError(''); setMessage('');
     try {
@@ -141,10 +152,10 @@ export default function ProjectAccess({ project = null, children = null }) {
             : busy && !access ? <p className="project-access-checking" role="status"><LoaderCircle className="spin" aria-hidden="true" /> Checking project access</p>
               : access ? <>
                 {configuring ? <p>Choose a fixed code with 10–128 characters. You can change it here; changing it locks every browser session for this project.</p>
-                  : access.unlocked ? <p>{projectName} is available for this sign-in. Lock it when you finish.</p>
+                  : access.unlocked ? <p>Access to {projectName} is unlocked for this sign-in. Lock it when you finish.</p>
                     : <p>{access.configured ? 'Use the fixed code set by your workspace owner. An access notification is sent to dev@codecity.ai.' : 'Your workspace owner needs to set this project code before you can continue.'}</p>}
                 {access.unlocked && !editing ? <div className="project-access-launch">
-                  <a className="project-access-primary" href={projectPath}>Open {projectName} <ArrowUpRight aria-hidden="true" /></a>
+                  {selectedProject === 'orc' ? <button className="project-access-primary" type="button" onClick={openOrc} disabled={busy}>{busy ? 'Opening ORC' : 'Open ORC'}<ArrowUpRight aria-hidden="true" /></button> : <a className="project-access-primary" href={projectPath}>Open {projectName} <ArrowUpRight aria-hidden="true" /></a>}
                   <button className="project-access-text-button" type="button" onClick={lock} disabled={busy}>Lock {projectName}</button>
                 </div> : (access.configured || configuring) && <form onSubmit={submit}>
                   {configuring && access.configured && <div className="portal-login-field"><label htmlFor="project-current-code"><span>Current code</span></label><input id="project-current-code" type="password" value={currentCode} onChange={(event) => setCurrentCode(event.target.value)} autoComplete="current-password" required maxLength={128} disabled={busy} /></div>}

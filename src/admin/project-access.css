@@ -14,7 +14,8 @@
 .project-access-checking { display: flex; gap: 10px; align-items: center; }
 .project-access-checking svg { width: 18px; flex-shrink: 0; }
 .project-access-launch { display: grid; margin-top: 28px; }
-.project-access-primary { min-height: 56px; padding: 14px 18px; display: flex; justify-content: space-between; gap: 20px; align-items: center; border-radius: 9px; background: var(--portal-text); color: var(--portal-bg); font-weight: 750; text-decoration: none; transition: background-color 160ms ease-out; }
+.project-access-primary { min-height: 56px; padding: 14px 18px; border: 0; cursor: pointer; font: inherit; display: flex; justify-content: space-between; gap: 20px; align-items: center; border-radius: 9px; background: var(--portal-text); color: var(--portal-bg); font-weight: 750; text-decoration: none; transition: background-color 160ms ease-out; }
+.project-access-primary:disabled { opacity: .55; cursor: not-allowed; }
 .project-access-primary:hover { background: #fffaf1; }
 .project-access-primary svg { width: 20px; }
 .project-access-text-button { display: block; width: fit-content; min-height: 44px; margin-top: 12px; padding: 8px 0; background: transparent; border: 0; color: #dbc8bc; text-decoration: underline; text-underline-offset: 4px; cursor: pointer; font-size: 0.8rem !important; }

@@ -1,0 +1,50 @@
+/* Access screen only: inherit the existing portal identity without changing CRM. */
+.portal-project-access { --access-muted: #a6afbc; }
+.portal-project-access .portal-login-story h1 { font-size: clamp(3rem, 5.6vw, 6rem); line-height: 1.02; letter-spacing: -0.04em; text-wrap: balance; }
+.portal-project-access .portal-login-story p { max-width: 48ch; color: var(--access-muted); }
+.portal-project-access .portal-login-story::after { display: none; }
+.portal-project-access .portal-login-card h2 { letter-spacing: -0.03em; text-wrap: balance; }
+.portal-project-access .portal-login-card > p { color: var(--access-muted); }
+.portal-project-access .portal-login-card input { caret-color: var(--portal-orange); }
+.portal-project-access ::selection { background: #87432f; color: #fff6ee; }
+.portal-project-access :is(a, button, input):focus-visible { outline: 2px solid #ff9b7a; outline-offset: 4px; }
+.portal-project-access .portal-login-card label > span { color: var(--access-muted); }
+.project-access-identity { overflow-wrap: anywhere; }
+.project-access-identity strong { font-weight: 550; color: var(--portal-text); }
+.project-access-checking { display: flex; gap: 10px; align-items: center; }
+.project-access-checking svg { width: 18px; flex-shrink: 0; }
+.project-access-launch { display: grid; margin-top: 28px; }
+.project-access-primary { min-height: 56px; padding: 14px 18px; display: flex; justify-content: space-between; gap: 20px; align-items: center; border-radius: 9px; background: var(--portal-text); color: var(--portal-bg); font-weight: 750; text-decoration: none; transition: background-color 160ms ease-out; }
+.project-access-primary:hover { background: #fffaf1; }
+.project-access-primary svg { width: 20px; }
+.project-access-text-button { display: block; width: fit-content; min-height: 44px; margin-top: 12px; padding: 8px 0; background: transparent; border: 0; color: #dbc8bc; text-decoration: underline; text-underline-offset: 4px; cursor: pointer; font-size: 0.8rem !important; }
+.project-access-text-button:hover { color: var(--portal-text); }
+.project-access-text-button:disabled, .project-access-footer button:disabled { opacity: 0.5; cursor: not-allowed; }
+.project-access-feedback { margin-top: 18px; }
+.project-access-footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--portal-line); }
+.project-access-footer :is(a, button) { display: inline-flex; gap: 7px; align-items: center; min-height: 44px; color: var(--access-muted); background: transparent; border: 0; padding: 4px 0; text-decoration: none; cursor: pointer; font-size: 0.78rem; }
+.project-access-footer :is(a, button):hover { color: var(--portal-text); }
+.project-access-footer svg { width: 15px; }
+@media (max-width: 900px) {
+  .portal-project-access .portal-login-story { min-height: auto; padding: 28px 32px 38px; gap: 40px; }
+  .portal-project-access .portal-login-story h1 { font-size: clamp(2.4rem, 7vw, 4rem); }
+  .portal-project-access .portal-login-story p { margin-top: 20px; }
+  .portal-project-access .portal-login-story > small { display: none; }
+  .portal-project-access .portal-login-panel { min-height: auto; padding-block: 42px; }
+}
+@media (max-width: 520px) {
+  .portal-project-access .portal-login-story { padding-inline: 24px; gap: 32px; }
+  .portal-project-access .portal-login-panel { padding-inline: 24px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .portal-project-access *, .portal-project-access *::before, .portal-project-access *::after { animation: none !important; transition: none !important; }
+}
+
+.project-access-choices { display: grid; margin-top: 28px; border-top: 1px solid var(--portal-line); }
+.project-access-choices button { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 22px 0; border: 0; border-bottom: 1px solid var(--portal-line); background: transparent; color: var(--portal-text); text-align: left; cursor: pointer; }
+.project-access-choices button:hover { color: #ffad93; }
+.project-access-choices button span { display: grid; gap: 7px; }
+.project-access-choices strong { font-size: 1.25rem; }
+.project-access-choices small { color: var(--access-muted); font-size: 0.8rem; }
+.project-access-choices svg { width: 22px; }
+.project-access-setup-help { font-size: 0.75rem; line-height: 1.6; }

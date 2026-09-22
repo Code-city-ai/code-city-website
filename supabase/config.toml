@@ -15,3 +15,7 @@ verify_jwt = false
 # This handler verifies the exact user JWT with Auth and checks its active session.
 [functions.project-workspace]
 verify_jwt = false
+
+# Supabase Auth signs the raw request; auth-email verifies Standard Webhooks.
+[functions.auth-email]
+verify_jwt = false

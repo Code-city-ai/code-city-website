@@ -56,12 +56,17 @@ export async function notifyWorkspaceAccess(email: string, action: 'access reque
   form.set('to', 'dev@codecity.ai');
   form.set('subject', `Code City · ${projectName} ${action}`);
   form.set('text', `${projectName} ${action} by ${email} at ${new Date().toISOString()}.\n\nYour private access code is never included in email.\nReview your workspace at https://codecity.ai/sign-in`);
+  form.set('o:tracking', 'no');
+  form.set('o:tracking-clicks', 'no');
+  form.set('o:tracking-opens', 'no');
   let response: Response;
   try {
     response = await fetcher(`${config.apiBase}/v3/${encodeURIComponent(config.domain)}/messages`, {
       method: 'POST', headers: { Authorization: `Basic ${btoa(`api:${config.apiKey}`)}` },
-      body: form, signal: AbortSignal.timeout(8_000),
+      body: form, signal: AbortSignal.timeout(8_000), redirect: 'error',
     });
+    // Only acceptance matters; never retain or expose the provider response body.
+    await response.body?.cancel();
   } catch { throw new WorkspaceError('Mailgun is unavailable. Please try again shortly.', 503); }
   if (!response.ok) throw new WorkspaceError('Mailgun did not accept the access notification. Please try again shortly.', 503);
 }
@@ -119,7 +124,7 @@ export async function workspaceAction(admin: any, user: { id: string; email?: st
 }
 
 async function readWorkspaceBody(request: Request) {
-  if (!request.headers.get('content-type')?.toLowerCase().startsWith('application/json')) {
+  if (request.headers.get('content-type')?.split(';', 1)[0].trim().toLowerCase() !== 'application/json') {
     throw new WorkspaceError('Send a JSON request.', 415);
   }
   const maximumBytes = 2048;

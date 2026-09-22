@@ -74,6 +74,19 @@ test('Mailgun uses only the owner recipient and never sends the fixed code', asy
   assert.match(request.options.headers.Authorization, /^Basic /);
   await assert.rejects(() => notifyWorkspaceAccess(user.email, 'access requested', async () => new Response('{}',{ status:401 })), /did not accept/);
 });
+test('workspace notifications forbid redirects and tracking and discard provider bodies', async () => {
+  for (const status of [200, 302, 401]) {
+    let cancelled = false;
+    let request;
+    const response = new Response(new ReadableStream({ cancel() { cancelled = true; } }), { status });
+    const send = async (_url, options) => { request = options; return response; };
+    if (status === 200) await notifyWorkspaceAccess(user.email, 'access requested', send, 'orc');
+    else await assert.rejects(() => notifyWorkspaceAccess(user.email, 'access requested', send, 'orc'), /did not accept/);
+    assert.equal(request.redirect, 'error');
+    for (const field of ['o:tracking', 'o:tracking-clicks', 'o:tracking-opens']) assert.equal(request.body.get(field), 'no');
+    assert.equal(cancelled, true);
+  }
+});
 test('configure, unlock, cross-session denial, rotation, role removal and rate limit', async (t) => {
   t.mock.method(globalThis, 'fetch', async () => Response.json({ id:'test-message' }));
   const db = database();
@@ -174,6 +187,76 @@ test('HTTP authorize fails closed for storage and Auth outages without exposing 
   assert.equal(response.status,503);assert.ok(!(await response.text()).includes('private database'));
   db.auth.getUser=async()=>({data:{user:null},error:{status:503}});
   assert.equal((await workspaceHandler(()=>db,[])(request())).status,503);
+});
+
+test('HTTP content type must be JSON, not a prefix match; parameters remain supported', async () => {
+  const jwt = `a.${Buffer.from(JSON.stringify({session_id:sid})).toString('base64url')}.signed`;
+  const db = database();
+  let verifications = 0;
+  db.auth = { getUser: async () => { verifications++; return { data: { user }, error: null }; } };
+  const handler = workspaceHandler(() => db, []);
+  const request = (contentType) => new Request('https://example.test', {
+    method: 'POST', headers: { Authorization: `Bearer ${jwt}`, 'Content-Type': contentType },
+    body: JSON.stringify({ project: 'trade-city', action: 'status' }),
+  });
+  for (const type of ['application/jsonp', 'application/json-invalid', 'application/json-seq']) {
+    assert.equal((await handler(request(type))).status, 415);
+  }
+  assert.equal(verifications, 0);
+  for (const type of ['application/json', 'Application/JSON; charset=utf-8', 'application/json ; charset=UTF-8']) {
+    assert.equal((await handler(request(type))).status, 200);
+  }
+  assert.equal(verifications, 3);
+});
+
+test('HTTP authorization ignores caller identity and expiry claims; reads cannot refresh or replay an expired grant', async () => {
+  const otherUser = { id: '44444444-4444-4444-8444-444444444444', email: 'other@example.test' };
+  const jwt = `a.${Buffer.from(JSON.stringify({session_id:sid})).toString('base64url')}.signed`;
+  const db = database();
+  db.rows.admin_profiles.push({ user_id: otherUser.id, role: 'admin', is_active: true });
+  const expires_at = new Date(Date.now() + 60_000).toISOString();
+  db.rows.project_workspace_codes.push({ project: 'orc', revision: 'current' });
+  const grant = { user_id: user.id, session_id: sid, project: 'orc', revision: 'current', expires_at };
+  db.rows.project_workspace_grants.push(grant);
+  let principal = otherUser;
+  db.auth = { getUser: async () => ({ data: { user: principal }, error: null }) };
+  const handler = workspaceHandler(() => db, []);
+  const request = (action = 'authorize') => new Request('https://example.test', {
+    method: 'POST', headers: { Authorization: `Bearer ${jwt}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ project: 'orc', action, user_id: user.id, session_id: sid, revision: 'current', expires_at: '2099-01-01', authorized: true }),
+  });
+  assert.equal((await handler(request())).status, 403);
+  principal = user;
+  for (const action of ['status', 'authorize', 'authorize']) {
+    const response = await handler(request(action));
+    assert.equal(response.status, 200);
+    assert.equal((await response.json()).expires_at, expires_at);
+    assert.equal(grant.expires_at, expires_at);
+  }
+  grant.expires_at = '2001-01-01';
+  assert.equal((await handler(request())).status, 403);
+  assert.equal((await (await handler(request('status'))).json()).unlocked, false);
+  assert.equal(grant.expires_at, '2001-01-01');
+});
+
+test('Mailgun failure never grants access or exposes private input in HTTP responses and logs', async (t) => {
+  const jwt = `a.${Buffer.from(JSON.stringify({session_id:sid})).toString('base64url')}.signed`;
+  const logs = [];
+  for (const method of ['log', 'warn', 'error']) t.mock.method(console, method, (...args) => logs.push(args));
+  t.mock.method(globalThis, 'fetch', async () => { throw new Error([code, jwt, env.MAILGUN_API_KEY].join(' ')); });
+  const db = database();
+  const salt = newSalt();
+  db.rows.project_workspace_codes.push({ project: 'orc', salt, code_hash: await hashCode(code, salt), revision: 'current' });
+  db.auth = { getUser: async () => ({ data: { user }, error: null }) };
+  const response = await workspaceHandler(() => db, [])(new Request('https://example.test', {
+    method: 'POST', headers: { Authorization: `Bearer ${jwt}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ project: 'orc', action: 'unlock', code }),
+  }));
+  assert.equal(response.status, 503);
+  const output = await response.text();
+  for (const secret of [code, jwt, env.MAILGUN_API_KEY]) assert.ok(!output.includes(secret));
+  assert.deepEqual(logs, []);
+  assert.equal(grantValid(db.rows.project_workspace_grants[0], 'current'), false);
 });
 
 test('modern Supabase context validates the publishable key before exact user verification; preflight needs no credentials', async () => {

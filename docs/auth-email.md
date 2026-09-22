@@ -10,10 +10,14 @@ flows. No Auth identity, password, or project passcode is created by this hook.
 1. Deploy `supabase/functions/auth-email` to the Code City project. Its gateway
    `verify_jwt` setting is **false**: the handler verifies the exact raw request
    using pinned `standardwebhooks@1.0.0` and timestamp validation instead.
-2. In **Authentication → Hooks → Send Email**, choose the HTTPS hook URL
-   `https://yfpcjxkyjftkekwkekrz.supabase.co/functions/v1/auth-email` and generate
-   a fresh hook signing secret. Store that same value, in its dashboard format
+2. The owner configures **Authentication → Hooks → Send Email → Signing secret**
+   for the HTTPS hook URL
+   `https://yfpcjxkyjftkekwkekrz.supabase.co/functions/v1/auth-email`.
+   The owner stores the matching value, in its dashboard format
    `v1,whsec_<base64>`, as the Edge Function secret `SEND_EMAIL_HOOK_SECRET`.
+   Reuse a valid existing configuration; deployment is not permission to generate,
+   rotate, reveal, or transfer a private key. If either field is missing, the
+   owner must complete that private configuration before activation.
    Keep it exclusively in Supabase secret configuration. This is a distinct key;
    **never reuse `MAILGUN_WEBHOOK_SIGNING_KEY`** or put keys in browser variables,
    source, screenshots, logs, or deployment notes.
@@ -22,7 +26,8 @@ flows. No Auth identity, password, or project passcode is created by this hook.
    config also permits `https://api.eu.mailgun.net`). The sender must belong to
    the verified sending domain. The platform supplies `SUPABASE_URL`; the handler
    rejects any project other than the Code City project above.
-4. Enable the Send Email hook and keep the Email provider enabled. The hook
+4. Only after the owner completes the matching secret configuration, activate the
+   Send Email hook and keep the Email provider enabled. The hook
    replaces built-in SMTP delivery; it does not require enabling a second SMTP
    path. Keep Site URL `https://codecity.ai` and the exact redirect allowlist entry
    `https://codecity.ai/admin/set-password`. Add another exact first-party redirect
@@ -58,25 +63,32 @@ Recheck them at activation; this snapshot is not a claim that the hook is live.
 
 ## Verification before declaring live
 
-1. Run `node --test tests/js/auth-email.test.js` and Deno-check the deployed entry.
+1. Run `node --test tests/js/auth-email.test.js tests/js/project-workspace.test.js`
+   and Deno-check the deployed entries.
    These tests use synthetic signing keys and mock Mailgun; they send no email.
-2. Verify an unsigned call to the deployed endpoint returns 401 and cannot send.
-3. From `https://codecity.ai/sign-in`, request **Set or reset password** for the
-   existing authorized account `dev@codecity.ai`. The UI deliberately does not
-   reveal whether an account exists. Confirm the signed hook invocation succeeded
-   and Mailgun shows an accepted event followed by a delivered event for that
-   recipient. Record event timestamps/message IDs only; never copy link tokens.
-4. Confirm the inbox received the Code City email. Open its link privately and
-   verify it lands on `https://codecity.ai/admin/set-password`, saves the owner's
-   chosen password, and returns to `/sign-in`. For a previously unconfirmed Auth
-   account, verify its email confirmation state after this real recovery flow;
-   do not assume a sent email confirmed the account.
-5. Sign in with that password, verify the ORC and Trade City project choices,
-   and set each fixed project passcode through the owner UI. Verify each project
-   rejects the other project's passcode and that existing CRM role permissions
-   remain intact. No default passcode or emailed plaintext passcode is provided.
-6. Confirm logout and invalid/expired recovery links remain denied. Verify the
-   public Code City site and existing inquiry-notification path remain unchanged.
+2. Read back the deployed source/version. An unsigned call must not send mail:
+   expect 401 with configured signing, or 503 while signing is absent. A
+   fail-closed 503 proves denial, not successful activation or email delivery.
+3. Preserve the existing signed-in account at `https://codecity.ai/sign-in`.
+   If no application session exists, the owner signs in normally. Do not request
+   a password reset, create an account, change a password, or extract a session
+   token as a deployment check. Existing recovery/invite behavior remains
+   supported and covered by synthetic tests; this task does not activate it.
+4. Through the existing project chooser, the owner privately sets a missing
+   ORC/Trade City code or enters its existing code. Never supply a default code
+   or copy it into tools, logs, storage, or notes. Successful unlock requires
+   Mailgun acceptance and a server-side user/session/project-scoped grant.
+   Verify expiry, lock, wrong-code and cross-project/user/session denials in
+   isolated tests; do not rotate a live code or exhaust a user's retry budget.
+5. A real email proof requires a separately owner-approved existing Auth event.
+   Record accepted/delivered event timestamps and redacted message IDs only,
+   never verification links, raw payloads, credentials, or private inbox text.
+   No synthetic test, deployed source, or unsigned denial proves delivery.
+6. If activation remains incomplete, name only the exact missing field:
+   **Authentication → Hooks → Send Email → Signing secret** and matching
+   **Edge Functions → Secrets → SEND_EMAIL_HOOK_SECRET**, or the existing
+   Mailgun sender/domain activation. Leave the hook fail-closed and preserve
+   existing Auth, public-site and inquiry-notification behavior.
 
 Source references: [Supabase Send Email Hook](https://supabase.com/docs/guides/auth/auth-hooks/send-email-hook),
 [Supabase Auth email example](https://supabase.com/docs/guides/functions/examples/auth-send-email-hook-react-email-resend),

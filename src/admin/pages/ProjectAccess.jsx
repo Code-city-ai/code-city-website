@@ -41,7 +41,9 @@ export default function ProjectAccess({ project = null, children = null }) {
       .catch((failure) => { if (active) setError(failure.message); })
       .finally(() => { if (active) setBusy(false); });
     return () => { active = false; };
-  }, [isAdmin, session?.access_token, selectedProject, profile?.role]);
+  // Refreshing the same Auth session must not unmount an unlocked CRM form.
+  // The grant timer and server checks still enforce expiry and revocation.
+  }, [isAdmin, session?.user?.id, selectedProject, profile?.role]);
 
   useEffect(() => {
     if (!access?.unlocked || !access.expires_at) return undefined;

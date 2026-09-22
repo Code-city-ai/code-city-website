@@ -238,3 +238,69 @@ test('project codes and grants remain separate; Code City preserves existing vie
   await assert.rejects(()=>workspaceAction(db,user,sid,{project:'trade-city',action:'status'}), /active administrator/);
   await assert.rejects(()=>workspaceAction(db,user,sid,{project:'code-city',action:'configure',code:'attempted-overwrite'}), /Only the workspace owner/);
 });
+
+test('ORC reuses owner setup and Mailgun while codes, grants and rotation stay project scoped', async (t) => {
+  const notices=[];
+  t.mock.method(globalThis,'fetch',async(_url,options)=>{notices.push(options.body);return Response.json({id:'fixture-message'});});
+  const db=database();
+  const orcCode='owner-orc-code-2026';
+  await workspaceAction(db,user,sid,{project:'orc',action:'configure',code:orcCode});
+  assert.equal(notices[0].get('subject'),'Code City · ORC code changed');
+  assert.equal(notices[0].get('to'),'dev@codecity.ai');
+  assert.ok(!notices[0].get('text').includes(orcCode));
+  for(const project of ['trade-city','code-city']){
+    const salt=newSalt();
+    db.rows.project_workspace_codes.push({project,salt,code_hash:await hashCode(code,salt),revision:crypto.randomUUID()});
+  }
+  await assert.rejects(()=>workspaceAction(db,user,sid,{project:'orc',action:'unlock',code}),/not accepted/);
+  await workspaceAction(db,user,sid,{project:'orc',action:'unlock',code:orcCode});
+  assert.equal(notices[1].get('subject'),'Code City · ORC access requested');
+  assert.equal((await workspaceAction(db,user,sid,{project:'orc',action:'authorize'})).authorized,true);
+  for(const project of ['trade-city','code-city']){
+    await assert.rejects(()=>workspaceAction(db,user,sid,{project,action:'authorize'}),/Enter your access code/);
+    const record=db.rows.project_workspace_codes.find((item)=>item.project===project);
+    db.rows.project_workspace_grants.push({user_id:user.id,session_id:sid,project,revision:record.revision,expires_at:new Date(Date.now()+3600000).toISOString()});
+  }
+  await workspaceAction(db,user,sid,{project:'orc',action:'configure',current_code:orcCode,code:'replacement-orc-code'});
+  await assert.rejects(()=>workspaceAction(db,user,sid,{project:'orc',action:'authorize'}),/Enter your access code/);
+  for(const project of ['trade-city','code-city']) assert.equal((await workspaceAction(db,user,sid,{project,action:'authorize'})).authorized,true);
+});
+
+test('ORC requires an active owner/admin; admins cannot configure and CRM staff permissions remain separate', async () => {
+  for(const role of ['owner','admin','agent','viewer']){
+    assert.equal(canAccessProject({role,is_active:true},'orc'),['owner','admin'].includes(role));
+    assert.equal(canAccessProject({role,is_active:false},'orc'),false);
+    assert.equal(canAccessProject({role,is_active:true},'code-city'),true);
+  }
+  assert.equal(canAccessProject({role:'owner',is_active:true},'unknown'),false);
+  assert.equal(canAccessProject({role:'owner',is_active:true},'__proto__'),false);
+  const admin=database('admin');
+  await assert.rejects(()=>workspaceAction(admin,user,sid,{project:'orc',action:'configure',code}),/Only the workspace owner/);
+  for(const role of ['agent','viewer']){
+    const db=database(role);
+    for(const action of ['status','authorize','configure','unlock','lock']){
+      await assert.rejects(()=>workspaceAction(db,user,sid,{project:'orc',action,code}),(error)=>error.status===403 && error.code==='workspace_role_denied');
+    }
+  }
+});
+
+test('ORC authorization cannot reuse another project, session, stale revision or revoked identity', async () => {
+  const db=database();
+  const expires_at=new Date(Date.now()+3600000).toISOString();
+  db.rows.project_workspace_codes.push({project:'orc',revision:'orc-current'},{project:'trade-city',revision:'trade-current'});
+  db.rows.project_workspace_grants.push({user_id:user.id,session_id:sid,project:'trade-city',revision:'trade-current',expires_at});
+  const body={project:'orc',action:'authorize'};
+  await assert.rejects(()=>workspaceAction(db,user,sid,body),(error)=>error.code==='workspace_locked');
+  const grant={user_id:user.id,session_id:sid,project:'orc',revision:'orc-current',expires_at};
+  db.rows.project_workspace_grants.push(grant);
+  assert.deepEqual(await workspaceAction(db,user,sid,body),{authorized:true,user_id:user.id,session_id:sid,expires_at});
+  await assert.rejects(()=>workspaceAction(db,user,'33333333-3333-4333-8333-333333333333',body),(error)=>error.code==='workspace_locked');
+  grant.revision='old';await assert.rejects(()=>workspaceAction(db,user,sid,body),(error)=>error.code==='workspace_locked');
+  grant.revision='orc-current';grant.expires_at='2001-01-01';
+  await assert.rejects(()=>workspaceAction(db,user,sid,body),(error)=>error.code==='workspace_locked');
+  grant.expires_at=expires_at;db.rows.admin_profiles[0].is_active=false;
+  await assert.rejects(()=>workspaceAction(db,user,sid,body),(error)=>error.code==='workspace_role_denied');
+  db.rows.admin_profiles[0].is_active=true;
+  const rpc=db.rpc;db.rpc=(name,args)=>name==='project_workspace_session_active'?Promise.resolve({data:false,error:null}):rpc(name,args);
+  await assert.rejects(()=>workspaceAction(db,user,sid,body),(error)=>error.code==='workspace_session_invalid');
+});

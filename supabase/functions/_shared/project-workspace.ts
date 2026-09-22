@@ -8,6 +8,7 @@ export class WorkspaceError extends Error {
   }
 }
 const encoder = new TextEncoder();
+const PROJECT_NAMES = new Map([['trade-city', 'Trade City'], ['code-city', 'Code City'], ['orc', 'ORC']]);
 const hex = (bytes: ArrayBuffer | Uint8Array) => Array.from(new Uint8Array(bytes)).map((v) => v.toString(16).padStart(2, '0')).join('');
 export const newSalt = () => hex(crypto.getRandomValues(new Uint8Array(32)));
 export async function hashCode(code: string, salt: string) {
@@ -37,17 +38,19 @@ export function canAdmin(profile: { role?: string; is_active?: boolean } | null)
   return Boolean(profile?.is_active && ['owner', 'admin'].includes(profile.role || ''));
 }
 export function canAccessProject(profile: { role?: string; is_active?: boolean } | null, project: string) {
-  return project === 'trade-city' ? canAdmin(profile)
-    : project === 'code-city' && Boolean(profile?.is_active && ['owner', 'admin', 'agent', 'viewer'].includes(profile.role || ''));
+  return project === 'code-city'
+    ? Boolean(profile?.is_active && ['owner', 'admin', 'agent', 'viewer'].includes(profile.role || ''))
+    : PROJECT_NAMES.has(project) && canAdmin(profile);
 }
 export function grantValid(grant: { revision: string; expires_at: string } | null, revision: string | undefined, now = Date.now()) {
   return Boolean(revision && grant?.revision === revision && Date.parse(grant.expires_at) > now);
 }
 
 export async function notifyWorkspaceAccess(email: string, action: 'access requested' | 'code changed', fetcher = fetch, project = 'trade-city') {
+  const projectName = PROJECT_NAMES.get(project);
+  if (!projectName) throw new WorkspaceError('Unknown project.');
   const config = getMailgunConfig();
   if (!config) throw new WorkspaceError('Access notifications are not configured. Ask the owner to connect Mailgun.', 503);
-  const projectName = project === 'code-city' ? 'Code City' : 'Trade City';
   const form = new FormData();
   form.set('from', config.from);
   form.set('to', 'dev@codecity.ai');
@@ -67,7 +70,7 @@ export async function notifyWorkspaceAccess(email: string, action: 'access reque
 export async function workspaceAction(admin: any, user: { id: string; email?: string }, sid: string, body: any) {
   const checked = (result: any) => { if (result.error) throw new WorkspaceError('Project access is unavailable. Please retry or contact the owner.', 503); return result.data; };
   const project = body?.project;
-  if (!['trade-city', 'code-city'].includes(project)) throw new WorkspaceError('Unknown project.');
+  if (!PROJECT_NAMES.has(project)) throw new WorkspaceError('Unknown project.');
   const activeSession = checked(await admin.rpc('project_workspace_session_active', { p_user_id: user.id, p_session_id: sid }));
   if (activeSession !== true) throw new WorkspaceError('Your session has expired. Sign in again.', 401, 'workspace_session_invalid');
   const profile = checked(await admin.from('admin_profiles').select('role,is_active').eq('user_id', user.id).maybeSingle());

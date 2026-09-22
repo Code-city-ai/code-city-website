@@ -15,7 +15,6 @@ export default function Login() {
     setStatus({ loading: true, error: '', message: '' });
     const { error } = await signIn(email.trim(), password);
     if (error) setStatus({ loading: false, error: 'The email or password was not accepted.', message: '' });
-    else setStatus({ loading: false, error: '', message: '' });
   };
 
   const handlePasswordReset = async () => {
@@ -32,14 +31,13 @@ export default function Login() {
   };
 
   return (
-    <main className="portal-login portal-project-login">
+    <main className="portal-login">
       <section className="portal-login-story">
         <Brand />
         <div>
-
-          <h1>A place for your next big move.</h1>
-          <p>Your projects. Your perspective. Step into a private workspace built around what matters to you.</p>
-          <div className="login-project-link"><img src="/brands/trade-city.png" alt="" /><div><strong>Trade City, now in your workspace.</strong><span>Portfolio, performance, and Nova in one view.</span></div></div>
+          <span>Code City / Client operations</span>
+          <h1>Operate the relationship from first signal to signed engagement.</h1>
+          <p>One secure workspace for inquiries, client context, project movement, and the marketing evidence behind every lead.</p>
         </div>
         <small>Private workspace · Authorized team members only</small>
       </section>
@@ -47,9 +45,9 @@ export default function Login() {
       <section className="portal-login-panel">
         <div className="portal-login-card">
           <div className="portal-login-icon"><LockKeyhole aria-hidden="true" /></div>
-
-          <h2>Welcome back.</h2>
-          <p>Sign in with your administrator account. Your project access code comes next.</p>
+          <span>Team access</span>
+          <h2>Sign in to Code City.</h2>
+          <p>Use the administrator account provisioned through Code City&apos;s secure Supabase workspace.</p>
 
           <form onSubmit={handleSubmit}>
             <div className="portal-login-field">

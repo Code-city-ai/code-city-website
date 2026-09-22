@@ -11,8 +11,3 @@ verify_jwt = false
 
 [functions.mailgun-webhook]
 verify_jwt = false
-
-# The handler verifies the user JWT with auth.getUser before any privileged operation.
-# This supports the project's newer publishable keys and asymmetric signing keys.
-[functions.project-workspace]
-verify_jwt = false

@@ -7,7 +7,6 @@ import {
   ChevronRight,
   Inbox,
   LogOut,
-  LayoutGrid,
   Menu,
   Settings,
   X,
@@ -16,7 +15,6 @@ import Brand from '@/components/Brand';
 import { useAdminAuth } from '@/admin/AuthProvider';
 
 const navigation = [
-  { label: 'Projects', href: '/admin/projects', icon: LayoutGrid },
   { label: 'Overview', href: '/admin', icon: BriefcaseBusiness, exact: true },
   { label: 'Inquiries', href: '/admin/inquiries', icon: Inbox },
   { label: 'Clients', href: '/admin/clients', icon: Building2 },
@@ -34,7 +32,7 @@ export default function AdminShell({ title, eyebrow, children }) {
   const closeButtonRef = useRef(null);
   const path = window.location.pathname.replace(/\/+$/, '') || '/admin';
 
-  const active = (item) => item.href === '/admin/projects' ? (path === '/sign-in' || path.startsWith('/admin/projects')) : item.exact ? path === item.href : path.startsWith(item.href);
+  const active = (item) => item.exact ? path === item.href : path.startsWith(item.href);
 
   useEffect(() => {
     const media = window.matchMedia('(max-width: 980px)');
@@ -109,11 +107,11 @@ export default function AdminShell({ title, eyebrow, children }) {
         role={mobileLayout ? 'dialog' : undefined}
       >
         <div className="portal-sidebar-top">
-          <Brand href="/admin/projects" className="portal-brand" />
+          <Brand href="/admin" className="portal-brand" />
           <button ref={closeButtonRef} className="portal-icon-button portal-mobile-close" type="button" onClick={() => setMobileOpen(false)} aria-label="Close portal navigation"><X /></button>
         </div>
 
-        <nav className="portal-navigation" aria-label="Code City workspace">
+        <nav className="portal-navigation" aria-label="Client platform">
           {navigation.map((item) => {
             const Icon = item.icon;
             return (

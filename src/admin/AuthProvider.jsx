@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { isSupabaseConfigured, supabase } from '@/lib/supabase';
-import { workspaceRequest } from '@/admin/projects/client';
 
 const AdminAuthContext = createContext(null);
 
@@ -79,11 +78,8 @@ export function AdminAuthProvider({ children }) {
       return supabase.auth.updateUser({ password });
     },
     signOut: async () => {
-      // Best-effort revoke the project grant before invalidating the Auth session.
-      // The one-hour grant is bound to this session, never to a later login.
-      await workspaceRequest('lock').catch(() => undefined);
       if (supabase) await supabase.auth.signOut();
-      window.location.assign('/sign-in');
+      window.location.assign('/admin/login');
     },
   }), [authError, loading, profile, session]);
 

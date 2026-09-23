@@ -31,7 +31,7 @@ The implemented access states cover loading, denied profile/role, unconfigured p
 
 ## Review evidence and limits
 
-**Disposition: ORC asset corrected in source; browser render review remains.** Earlier captures at `.impeccable/review/desktop.png` and `.impeccable/review/mobile.png` show the former blue gate and do not represent the new icon. The icon image itself was inspected; the sign-in signature and project chooser share its path. The previous implementation review covered `ProjectAccess.jsx`, `project-access.css`, `admin.css`, `Login.jsx`, `AdminApp.jsx`, `AdminShell.jsx`, and `src/admin/lib/project-access.js`.
+**Disposition: ORC asset corrected and local desktop chooser rendered; production verification remains.** The signed-in `scripts/verify-project-access.mjs` fixture showed the new ORC Orchestra icon beside the unchanged Trade City build-324 icon. Earlier captures at `.impeccable/review/desktop.png` and `.impeccable/review/mobile.png` show the former blue gate and do not represent the new icon. The sign-in signature and project chooser share its asset path. The previous implementation review covered `ProjectAccess.jsx`, `project-access.css`, `admin.css`, `Login.jsx`, `AdminApp.jsx`, `AdminShell.jsx`, and `src/admin/lib/project-access.js`.
 
 The task's local CUA verification covered routing, focus return, and isolated project-code UI behavior using `scripts/verify-project-access.mjs`. The implementation handoff reports 75 JavaScript tests, 19 Python tests, and SQL checks passing; this documentation pass did not rerun those suites. Fixture interactions send no real email and do not open a live trading session.
 

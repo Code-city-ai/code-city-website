@@ -25,7 +25,7 @@ The implemented access states cover loading, denied profile/role, unconfigured p
 
 ## Asset provenance
 
-- Trade City uses `public/brands/trade-city-app.png`, copied unchanged from `TRADE-CITY/apps/macos/Resources/Assets.xcassets/AppIcon.appiconset/icon_256x256.png`. Both files have SHA-256 `9166e07691b414fadc43c43b97001a5150f3e94cdc2410d33e2c42e3baae1792`.
+- Trade City uses `public/brands/trade-city-app.png`, copied byte-for-byte from `TRADE-CITY/apps/macos/Resources/Assets.xcassets/AppIcon.appiconset/icon_256x256.png` at accepted build-324 commit `44ea513cb3ae73281447847c97fd25423cb211c7`. Both files have SHA-256 `9166e07691b414fadc43c43b97001a5150f3e94cdc2410d33e2c42e3baae1792`. At the 2026-09-23 check, Trade City `origin/main` was build 325 at `aaeade50f8a66185a1940b626faf00d2a94274b4`; its hippogriff AppIcon has a different SHA-256, `d9d242605aaf1cfd26d78937f76da98a22c004fed62fea418acac7e0c180334a`. The chooser image is pinned to the accepted build-324 asset, not the changing main-branch icon.
 - ORC uses `public/brands/orc-app.png`, generated from the checked-in `CODE-CITY-AGENT-ORC/orc_desktop_icon.py:draw_icon` for the dedicated `ORC Orchestra.app`. The generator was verified unchanged against ORC `origin/main` at `25d20953eedb5e3caa294e46891d2ba72a3f79fb`; its last source change was `44214078a08ed488df23c265f1510efa249fe97d`. The 1024px source output was scaled to 256px with `sips -Z 256`; the shipped PNG has SHA-256 `0588b5d6d4c930a37e25c43df940d305f5ec4b2d761a56a560876ee8c479913d`. The former blue gate came from `bin/appicon.icns` for the separate Code City desktop launcher and was not the dedicated ORC Orchestra mark.
 - No AI-generated raster imagery was introduced.
 

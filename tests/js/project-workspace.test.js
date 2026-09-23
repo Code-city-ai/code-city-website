@@ -4,7 +4,7 @@ import { canAdmin, canAccessProject, grantValid, hashCode, matchesCode, newSalt,
 
 const env = { MAILGUN_API_KEY: 'test-private-mailgun', MAILGUN_DOMAIN: 'mg.example.test', MAILGUN_FROM: 'Code City <notify@example.test>' };
 globalThis.Deno = { env: { get: (key) => env[key] } };
-const user = { id: '11111111-1111-4111-8111-111111111111', email: 'owner@example.test' };
+const user = { id: '11111111-1111-4111-8111-111111111111', email: 'dev@codecity.ai' };
 const sid = '22222222-2222-4222-8222-222222222222';
 const code = 'my-owner-code-2026';
 function database(role = 'owner') {
@@ -59,6 +59,39 @@ test('roles, expiry, and code revisions fail closed', () => {
   assert.equal(grantValid({ revision: 'a', expires_at: '2001-01-01' }, 'a'), false);
   assert.equal(grantValid({ revision: 'a', expires_at: '2099-01-01' }, 'b'), false);
   assert.equal(grantValid({ revision: 'a', expires_at: '2099-01-01' }, 'a'), true);
+});
+test('only the three approved Auth emails may use an existing profile or grant', async () => {
+  for (const email of ['dev@codecity.ai', 'Hugosan8210@gmail.com', 'tradecity.MC@proton.me']) {
+    const db = database(email === 'dev@codecity.ai' ? 'owner' : 'admin');
+    const status = await workspaceAction(db, { ...user, email }, sid, { project: 'trade-city', action: 'status' });
+    assert.equal(status.configured, false);
+    assert.equal(status.owner, email === 'dev@codecity.ai');
+    if (email !== 'dev@codecity.ai') {
+      await assert.rejects(
+        () => workspaceAction(db, { ...user, email }, sid, { project: 'trade-city', action: 'configure', code }),
+        /Only the workspace owner/,
+      );
+      assert.equal(db.rows.project_workspace_codes.length, 0);
+    }
+  }
+  for (const email of ['Hugosan8210@gmail.com', 'tradecity.MC@proton.me']) {
+    const db = database('owner');
+    db.rows.project_workspace_codes.push({ project: 'trade-city', revision: 'existing' });
+    db.rows.project_workspace_grants.push({ user_id: user.id, session_id: sid, project: 'trade-city', revision: 'existing', expires_at: '2099-01-01' });
+    await assert.rejects(
+      () => workspaceAction(db, { ...user, email }, sid, { project: 'trade-city', action: 'authorize' }),
+      (error) => error.status === 403 && error.code === 'workspace_role_denied',
+    );
+  }
+  const db = database();
+  for (const email of ['outsider@example.test', 'dev+other@codecity.ai', ' dev@codecity.ai', undefined]) {
+    for (const project of ['code-city', 'orc', 'trade-city']) {
+      await assert.rejects(
+        () => workspaceAction(db, { ...user, email }, sid, { project, action: 'status' }),
+        (error) => error.status === 403 && error.code === 'workspace_role_denied',
+      );
+    }
+  }
 });
 test('sessionless tokens are rejected', () => {
   assert.throws(() => sessionId('bad'), /Sign in/);

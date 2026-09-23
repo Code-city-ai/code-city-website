@@ -72,10 +72,13 @@ const messagesFor = (payload: unknown, supabaseUrl: string): EmailMessage[] => {
     link.searchParams.set('redirect_to', redirect);
     return link.href;
   };
+  const passwordManagerReminder = action === 'invite' || action === 'recovery'
+    ? '\n\nAfter opening the link, save your new password in Dashlane, Proton Pass, or another password manager so you can find it later. Code City will never email your password.'
+    : '';
   const compose = (recipient: unknown, hash: unknown, subject: string, instruction: string) => ({
     to: emailAddress(recipient),
     subject: `Code City — ${subject}`,
-    text: `${instruction}\n\n${linkFor(hash)}\n\nThis link is private and can only be used once. If you did not request this, ignore this email.\n\nCode City\n${CODE_CITY_ORIGIN}`,
+    text: `${instruction}\n\n${linkFor(hash)}${passwordManagerReminder}\n\nThis link is private and can only be used once. If you did not request this, ignore this email.\n\nCode City\n${CODE_CITY_ORIGIN}`,
   });
   if (action === 'email_change') {
     // Supabase deliberately reverses the hash field names for this action.

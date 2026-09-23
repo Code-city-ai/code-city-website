@@ -71,6 +71,8 @@ test('signed recovery and invite use fixed password setup link and existing Mail
     assert.equal(delivery.fields['o:tracking'], 'no');
     assert.equal(delivery.fields['o:tracking-clicks'], 'no');
     assert.equal(delivery.fields['o:tracking-opens'], 'no');
+    assert.match(delivery.fields.text, /save your new password in Dashlane, Proton Pass, or another password manager/);
+    assert.match(delivery.fields.text, /Code City will never email your password/);
     assert.equal(delivery.request.redirect, 'error');
     assert.ok(delivery.request.signal instanceof AbortSignal);
     assert.equal(delivery.request.headers.Authorization, `Basic ${btoa('api:test-mailgun-api-key')}`);

@@ -47,7 +47,7 @@ export default function PasswordSetup() {
           <div className="portal-login-icon"><KeyRound aria-hidden="true" /></div>
           <span>Secure credential</span>
           <h2>Set your password.</h2>
-          <p>Use a unique password with at least 12 characters. Code City never displays or stores it in the portal.</p>
+          <p>Use a unique password with at least 12 characters. Save it in Dashlane, Proton Pass, or another password manager when your browser offers, so you can find it later. Code City never displays it in the portal.</p>
 
           <form onSubmit={handleSubmit}>
             <label>

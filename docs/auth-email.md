@@ -35,16 +35,18 @@ flows. No Auth identity, password, or project passcode is created by this hook.
 
 Recovery and invite emails always return to `/admin/set-password`, where the
 existing password setup screen accepts the Supabase session. The other supported
-actions are signup, magiclink, and email_change. Their redirects must use the
+actions are signup and magiclink. Their redirects must use the
 exact HTTPS `codecity.ai` origin and one of `/`, `/sign-in`, `/admin`,
 `/admin/set-password`, or `/trade-city/`, without credentials, query, or fragment.
 An omitted redirect defaults to `/sign-in`. Payload `site_url` is never trusted.
 
-Secure email change sends both confirmations with Supabase's documented hash
-mapping: `token_hash_new` to the current email, `token_hash` to the new email.
-With secure email change disabled, only the new email receives `token_hash`.
-Every message uses a one-time verification link; raw OTPs, passwords, and fixed
-project passcodes are never rendered. Mailgun open/click tracking is disabled.
+The three administrator email addresses are fixed identities. Signed
+`email_change` requests fail with 422 and send no message, including changes
+between two approved addresses. An email change requires a separately reviewed
+account migration so profiles and project grants cannot transfer to another
+person. Every supported message uses a one-time verification link; raw OTPs,
+passwords, and fixed project passcodes are never rendered. Mailgun open/click
+tracking is disabled.
 
 Other action types (including reauthentication and optional security-notification
 emails) fail explicitly with 422. Do not enable those email flows until they have
@@ -58,7 +60,9 @@ email delivery.
 
 The read-only production preflight on 2026-09-22 found Email enabled, secure
 email change enabled, secure password change disabled, and all seven optional
-security email notifications disabled. None of those settings were changed.
+security email notifications disabled. None of those settings were changed;
+the handler rejects email changes once the hook is activated, even if the
+dashboard still offers them.
 Recheck them at activation; this snapshot is not a claim that the hook is live.
 
 ## Verification before declaring live

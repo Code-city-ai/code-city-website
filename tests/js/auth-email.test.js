@@ -10,7 +10,7 @@ const authOrigin = 'https://yfpcjxkyjftkekwkekrz.supabase.co';
 const hash = 'a'.repeat(56);
 const secondHash = 'b'.repeat(56);
 const fixture = (action = 'recovery', overrides = {}) => ({
-  user: { email: 'owner@example.test', new_email: 'new@example.test' },
+  user: { email: 'dev@codecity.ai', new_email: 'tradecity.MC@proton.me' },
   email_data: {
     email_action_type: action, token_hash: hash, token: '123456',
     redirect_to: 'https://codecity.ai/sign-in', site_url: 'https://attacker.example',
@@ -67,7 +67,7 @@ test('signed recovery and invite use fixed password setup link and existing Mail
     assert.equal(link.searchParams.get('token'), hash);
     assert.equal(link.searchParams.get('type'), action);
     assert.equal(delivery.url, 'https://api.mailgun.net/v3/mg.example.test/messages');
-    assert.equal(delivery.fields.to, 'owner@example.test');
+    assert.equal(delivery.fields.to, 'dev@codecity.ai');
     assert.equal(delivery.fields['o:tracking'], 'no');
     assert.equal(delivery.fields['o:tracking-clicks'], 'no');
     assert.equal(delivery.fields['o:tracking-opens'], 'no');
@@ -79,6 +79,30 @@ test('signed recovery and invite use fixed password setup link and existing Mail
     assert.ok(!delivery.fields.text.includes('123456'));
     assert.ok(!delivery.fields.text.includes('attacker.example'));
   }
+});
+
+test('all three approved administrators can receive setup mail, and nobody else can', async () => {
+  for (const email of ['dev@codecity.ai', 'Hugosan8210@gmail.com', 'tradecity.MC@proton.me']) {
+    const payload = fixture('invite');
+    payload.user.email = email;
+    const ctx = context();
+    assert.equal((await ctx.handle(signedRequest(payload))).status, 200);
+    assert.equal(ctx.deliveries.length, 1);
+    assert.equal(ctx.deliveries[0].fields.to, email);
+    assert.match(ctx.deliveries[0].fields.text, /Dashlane, Proton Pass/);
+  }
+  for (const action of ['signup', 'recovery', 'invite', 'magiclink', 'email_change']) {
+    const payload = fixture(action);
+    payload.user.email = 'outsider@example.test';
+    const ctx = context();
+    assert.equal((await ctx.handle(signedRequest(payload))).status, 422);
+    assert.equal(ctx.deliveries.length, 0);
+  }
+  const payload = fixture('email_change', { token_hash_new: secondHash });
+  payload.user.new_email = 'outsider@example.test';
+  const ctx = context();
+  assert.equal((await ctx.handle(signedRequest(payload))).status, 422);
+  assert.equal(ctx.deliveries.length, 0);
 });
 
 test('signup and magiclink retain correct verification types and safe Code City destinations', async () => {
@@ -94,30 +118,17 @@ test('signup and magiclink retain correct verification types and safe Code City 
   }
 });
 
-test('secure email change delivers each reversed Supabase hash to its correct recipient', async () => {
-  const ctx = context();
-  const response = await ctx.handle(signedRequest(fixture('email_change', { token_hash_new: secondHash, token_new: '654321' })));
-  assert.equal(response.status, 200);
-  assert.equal(ctx.deliveries.length, 2);
-  for (const delivery of ctx.deliveries) {
-    assert.equal(linkIn(delivery).searchParams.get('type'), 'email_change');
-    assert.equal(linkIn(delivery).searchParams.get('token'), delivery.fields.to === 'owner@example.test' ? secondHash : hash);
-    assert.doesNotMatch(delivery.fields.text, /123456|654321/);
+test('signed email changes cannot transfer an approved identity to another inbox', async () => {
+  for (const payload of [
+    fixture('email_change'),
+    fixture('email_change', { token_hash_new: secondHash, token_new: '654321' }),
+    { ...fixture('email_change'), user: { email: 'dev@codecity.ai', new_email: 'outsider@example.test' } },
+  ]) {
+    const ctx = context();
+    const response = await ctx.handle(signedRequest(payload));
+    assert.equal(response.status, 422);
+    assert.equal(ctx.deliveries.length, 0);
   }
-  assert.deepEqual(ctx.deliveries.map((d) => d.fields.to).sort(), ['new@example.test', 'owner@example.test']);
-});
-
-test('single email change sends only the new recipient and validates both messages before any send', async () => {
-  const ctx = context();
-  assert.equal((await ctx.handle(signedRequest(fixture('email_change')))).status, 200);
-  assert.equal(ctx.deliveries.length, 1);
-  assert.equal(ctx.deliveries[0].fields.to, 'new@example.test');
-  assert.equal(linkIn(ctx.deliveries[0]).searchParams.get('token'), hash);
-  const malformed = fixture('email_change', { token_hash_new: secondHash });
-  malformed.user.email = 'victim@example.test\r\nBcc: attacker@example.test';
-  const rejected = context();
-  assert.equal((await rejected.handle(signedRequest(malformed))).status, 422);
-  assert.equal(rejected.deliveries.length, 0);
 });
 
 test('real StandardWebhooks rejects body alteration, bad keys, expired and future signatures', async () => {
@@ -164,7 +175,7 @@ test('malformed signed payloads, recipients, hashes and unsupported actions fail
   const variants = [null, [], {}, { user: {} }, fixture('reauthentication'), fixture('password_changed'),
     fixture('signup', { token_hash: '' }), fixture('signup', { token_hash: 'https://attacker.example' }),
     { ...fixture('signup'), user: { email: 'a@example.test,b@example.test' } },
-    { ...fixture('email_change'), user: { email: 'owner@example.test' } },
+    { ...fixture('email_change'), user: { email: 'dev@codecity.ai' } },
   ];
   for (const payload of variants) {
     const ctx = context();

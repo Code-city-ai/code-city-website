@@ -1,4 +1,5 @@
 import { getMailgunConfig } from './inquiry-notifications.ts';
+import { isApprovedAdminEmail, isOwnerAdminEmail } from './admin-emails.ts';
 
 export class WorkspaceError extends Error {
   status: number;
@@ -76,9 +77,16 @@ export async function workspaceAction(admin: any, user: { id: string; email?: st
   const checked = (result: any) => { if (result.error) throw new WorkspaceError('Project access is unavailable. Please retry or contact the owner.', 503); return result.data; };
   const project = body?.project;
   if (!PROJECT_NAMES.has(project)) throw new WorkspaceError('Unknown project.');
+  if (!isApprovedAdminEmail(user.email)) throw new WorkspaceError('An active administrator account is required.', 403, 'workspace_role_denied');
   const activeSession = checked(await admin.rpc('project_workspace_session_active', { p_user_id: user.id, p_session_id: sid }));
   if (activeSession !== true) throw new WorkspaceError('Your session has expired. Sign in again.', 401, 'workspace_session_invalid');
-  const profile = checked(await admin.from('admin_profiles').select('role,is_active').eq('user_id', user.id).maybeSingle());
+  const profile = checked(await admin.from('admin_profiles').select('role,is_active,identity_email').eq('user_id', user.id).maybeSingle());
+  // A service-role read bypasses profile RLS. The Auth user's current email must
+  // still be the email that originally received this profile and its grants.
+  if (profile?.identity_email !== user.email?.toLowerCase()) throw new WorkspaceError('An active administrator account is required.', 403, 'workspace_role_denied');
+  // Service-role reads bypass SQL RLS, so recheck a stale owner role even when
+  // Auth changed its email outside the signed Send Email hook.
+  if (profile?.role === 'owner' && !isOwnerAdminEmail(user.email)) throw new WorkspaceError('An active administrator account is required.', 403, 'workspace_role_denied');
   if (!canAccessProject(profile, project)) throw new WorkspaceError('An active administrator account is required.', 403, 'workspace_role_denied');
   const action = body?.action;
   if (!['status', 'unlock', 'configure', 'lock', 'authorize'].includes(action)) throw new WorkspaceError('Unknown workspace action.');
@@ -87,7 +95,7 @@ export async function workspaceAction(admin: any, user: { id: string; email?: st
   const record = checked(await admin.from('project_workspace_codes').select('*').eq('project', project).maybeSingle());
   const grant = checked(await admin.from('project_workspace_grants').select('revision,expires_at').eq('user_id', user.id).eq('session_id', sid).eq('project', project).maybeSingle());
   const unlocked = grantValid(grant, record?.revision);
-  const owner = profile.role === 'owner';
+  const owner = profile.role === 'owner' && isOwnerAdminEmail(user.email);
   if (action === 'status') return { configured: Boolean(record), unlocked, owner, expires_at: unlocked ? grant.expires_at : null };
   if (action === 'lock') {
     checked(await admin.rpc('lock_project_workspace', { p_user_id: user.id, p_session_id: sid, p_project: project }));

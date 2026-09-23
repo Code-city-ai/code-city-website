@@ -1,6 +1,7 @@
 -- Run only in an isolated PostgreSQL fixture after the three project-workspace
--- migrations. Requires fixture auth.users/auth.sessions/admin_profiles and auth
--- claim helpers. All data is synthetic and rolled back; no external calls occur.
+-- migrations and the exact-admin-email migration. Requires fixture
+-- auth.users/auth.sessions/admin_profiles and auth claim helpers. All data is
+-- synthetic and rolled back; no external calls occur.
 begin;
 do $$
 declare
@@ -11,7 +12,7 @@ declare
   project_key text;
   role_name text;
 begin
-  insert into auth.users(id) values(u);
+  insert into auth.users(id,email) values(u,'dev@codecity.ai');
   insert into auth.sessions(id,user_id,not_after) values(s,u,null);
   insert into public.admin_profiles(user_id,full_name,role,is_active) values(u,'SQL fixture owner','owner',true);
   perform set_config('request.jwt.claims',jsonb_build_object('sub',u,'session_id',s)::text,true);

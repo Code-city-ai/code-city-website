@@ -1,10 +1,13 @@
 import { getMailgunConfig, type MailgunConfig } from './inquiry-notifications.ts';
+import { isApprovedAdminEmail } from './admin-emails.ts';
 
 const CODE_CITY_ORIGIN = 'https://codecity.ai';
 const CODE_CITY_AUTH_ORIGIN = 'https://yfpcjxkyjftkekwkekrz.supabase.co';
 const PASSWORD_REDIRECT = `${CODE_CITY_ORIGIN}/admin/set-password`;
 const BODY_LIMIT = 64 * 1024;
-const ACTIONS = new Set(['signup', 'recovery', 'invite', 'magiclink', 'email_change']);
+// Email addresses are fixed named identities. A change request must not move an
+// existing owner's or administrator's profile and project grants to another inbox.
+const ACTIONS = new Set(['signup', 'recovery', 'invite', 'magiclink']);
 
 type EmailMessage = { to: string; subject: string; text: string };
 export type AuthEmailOptions = {
@@ -31,6 +34,12 @@ const emailAddress = (value: unknown): string => {
     throw new Error('Invalid recipient');
   }
   return value;
+};
+
+const approvedAddress = (value: unknown): string => {
+  const address = emailAddress(value);
+  if (!isApprovedAdminEmail(address)) throw new Error('Unapproved recipient');
+  return address;
 };
 
 const tokenHash = (value: unknown): string => {
@@ -61,6 +70,7 @@ const messagesFor = (payload: unknown, supabaseUrl: string): EmailMessage[] => {
   if (supabaseUrl.replace(/\/$/, '') !== CODE_CITY_AUTH_ORIGIN) throw new Error('Wrong Auth project');
   const input = record(payload);
   const user = record(input.user);
+  if (!isApprovedAdminEmail(user.email)) throw new Error('Unapproved identity');
   const data = record(input.email_data);
   const action = data.email_action_type;
   if (typeof action !== 'string' || !ACTIONS.has(action)) throw new Error('Unsupported email action');
@@ -76,20 +86,10 @@ const messagesFor = (payload: unknown, supabaseUrl: string): EmailMessage[] => {
     ? '\n\nAfter opening the link, save your new password in Dashlane, Proton Pass, or another password manager so you can find it later. Code City will never email your password.'
     : '';
   const compose = (recipient: unknown, hash: unknown, subject: string, instruction: string) => ({
-    to: emailAddress(recipient),
+    to: approvedAddress(recipient),
     subject: `Code City — ${subject}`,
     text: `${instruction}\n\n${linkFor(hash)}${passwordManagerReminder}\n\nThis link is private and can only be used once. If you did not request this, ignore this email.\n\nCode City\n${CODE_CITY_ORIGIN}`,
   });
-  if (action === 'email_change') {
-    // Supabase deliberately reverses the hash field names for this action.
-    const messages = [compose(user.new_email, data.token_hash, 'Confirm your new email',
-      'Confirm this email address for your Code City account:')];
-    if (data.token_hash_new !== undefined && data.token_hash_new !== null && data.token_hash_new !== '') {
-      messages.unshift(compose(user.email, data.token_hash_new, 'Confirm your email change',
-        'Approve the requested email address change for your Code City account:'));
-    }
-    return messages;
-  }
   const copy: Record<string, [string, string]> = {
     signup: ['Confirm your email', 'Confirm your email address to continue to Code City:'],
     recovery: ['Set your password', 'Set or reset your Code City password using this secure link:'],
@@ -167,7 +167,7 @@ export const authEmailHandler = async (request: Request, options: AuthEmailOptio
   if (!config) return failure(503, 'Auth email delivery is not configured.');
   const send = options.fetch ?? fetch;
   try {
-    // Both secure-email-change messages share one deadline, below the Auth hook's timeout.
+    // Keep Mailgun within the Auth hook's response deadline.
     const signal = AbortSignal.timeout(4000);
     await Promise.all(messages.map(async (message) => {
       const form = new FormData();

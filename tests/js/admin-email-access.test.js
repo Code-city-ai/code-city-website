@@ -35,8 +35,15 @@ test('SQL identity gate has exactly the same three addresses as the Edge gate', 
   assert.deepEqual([...sqlList.matchAll(/'([^']+)'/g)].map((match) => match[1]), APPROVED_ADMIN_EMAILS);
   const profileGate = sqlFunction('code_city_profile_identity_allowed');
   assert.match(profileGate, /code_city_admin_email_allowed\(p_user_id\)/);
-  assert.match(profileGate, /p_role <> 'owner' or exists/);
-  assert.match(profileGate, /lower\(u\.email\) = 'dev@codecity\.ai'/);
+  assert.match(profileGate, /p_identity_email = lower\(p_identity_email\)/);
+  assert.match(profileGate, /p_role <> 'owner' or p_identity_email = 'dev@codecity\.ai'/);
+  assert.match(profileGate, /lower\(u\.email\) = p_identity_email/);
+  assert.match(migration, /alter table public\.admin_profiles add column if not exists identity_email text/);
+  assert.match(migration, /set identity_email = lower\(u\.email\)/);
+  assert.match(migration, /alter table public\.admin_profiles alter column identity_email set not null/);
+  const profileTrigger = sqlFunction('enforce_code_city_admin_profile_email');
+  assert.match(profileTrigger, /new\.identity_email := v_auth_email/);
+  assert.match(profileTrigger, /new\.user_id is distinct from old\.user_id or new\.identity_email is distinct from old\.identity_email/);
   assert.match(migration, /create or replace trigger admin_profiles_approved_email/);
   assert.match(migration, /alter policy admin_profiles_identity_self_select/);
   assert.match(migration, /alter policy admin_profiles_managers_insert/);
@@ -49,7 +56,10 @@ test('SQL identity gate has exactly the same three addresses as the Edge gate', 
   }
   for (const name of ['project_workspace_has_access', 'complete_project_workspace_unlock',
     'is_code_city_staff', 'can_manage_code_city', 'can_operate_code_city']) {
-    assert.match(sqlFunction(name), /code_city_profile_identity_allowed\(a\.user_id, a\.role\)/);
+    assert.match(sqlFunction(name), /code_city_profile_identity_allowed\(a\.user_id, a\.role, a\.identity_email\)/);
   }
-  assert.match(migration, /alter policy admin_profiles_identity_self_select[\s\S]*?code_city_profile_identity_allowed\(user_id, role\)/);
+  assert.match(migration, /alter policy admin_profiles_identity_self_select[\s\S]*?code_city_profile_identity_allowed\(user_id, role, identity_email\)/);
+  const edge = readFileSync(new URL('../../supabase/functions/_shared/project-workspace.ts', import.meta.url), 'utf8');
+  assert.match(edge, /select\('role,is_active,identity_email'\)/);
+  assert.match(edge, /profile\?\.identity_email !== user\.email\?\.toLowerCase\(\)/);
 });

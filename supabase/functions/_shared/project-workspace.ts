@@ -80,7 +80,10 @@ export async function workspaceAction(admin: any, user: { id: string; email?: st
   if (!isApprovedAdminEmail(user.email)) throw new WorkspaceError('An active administrator account is required.', 403, 'workspace_role_denied');
   const activeSession = checked(await admin.rpc('project_workspace_session_active', { p_user_id: user.id, p_session_id: sid }));
   if (activeSession !== true) throw new WorkspaceError('Your session has expired. Sign in again.', 401, 'workspace_session_invalid');
-  const profile = checked(await admin.from('admin_profiles').select('role,is_active').eq('user_id', user.id).maybeSingle());
+  const profile = checked(await admin.from('admin_profiles').select('role,is_active,identity_email').eq('user_id', user.id).maybeSingle());
+  // A service-role read bypasses profile RLS. The Auth user's current email must
+  // still be the email that originally received this profile and its grants.
+  if (profile?.identity_email !== user.email?.toLowerCase()) throw new WorkspaceError('An active administrator account is required.', 403, 'workspace_role_denied');
   // Service-role reads bypass SQL RLS, so recheck a stale owner role even when
   // Auth changed its email outside the signed Send Email hook.
   if (profile?.role === 'owner' && !isOwnerAdminEmail(user.email)) throw new WorkspaceError('An active administrator account is required.', 403, 'workspace_role_denied');

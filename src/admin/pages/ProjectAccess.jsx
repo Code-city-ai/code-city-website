@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ArrowRight, ArrowUpRight, Check, Eye, EyeOff, LoaderCircle, LockKeyhole, LogOut } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Check, Download, Eye, EyeOff, LoaderCircle, LockKeyhole, LogOut } from 'lucide-react';
 import Brand from '@/components/Brand';
 import { useAdminAuth } from '@/admin/AuthProvider';
 import { projectAccess } from '@/admin/lib/project-access';
@@ -156,6 +156,11 @@ export default function ProjectAccess({ project = null, children = null }) {
                     : <p>{access.configured ? 'Use the fixed code set by your workspace owner. An access notification is sent to dev@codecity.ai.' : 'Your workspace owner needs to set this project code before you can continue.'}</p>}
                 {access.unlocked && !editing ? <div className="project-access-launch">
                   {selectedProject === 'orc' ? <button className="project-access-primary" type="button" onClick={openOrc} disabled={busy}>{busy ? 'Opening ORC' : 'Open ORC'}<ArrowUpRight aria-hidden="true" /></button> : <a className="project-access-primary" href={projectPath}>Open {projectName} <ArrowUpRight aria-hidden="true" /></a>}
+                  {selectedProject === 'trade-city' && access.owner && <a className="project-access-download" href="/trade-city/#download">
+                    <span className="project-access-download-icon"><Download aria-hidden="true" /></span>
+                    <span className="project-access-download-copy"><strong>Download Trade City for Mac</strong><small>Private installer for your own Macs</small></span>
+                    <ArrowUpRight className="project-access-download-arrow" aria-hidden="true" />
+                  </a>}
                   <button className="project-access-text-button" type="button" onClick={lock} disabled={busy}>Lock {projectName}</button>
                 </div> : (access.configured || configuring) && <form onSubmit={submit}>
                   {configuring && access.configured && <div className="portal-login-field"><label htmlFor="project-current-code"><span>Current code</span></label><input id="project-current-code" type="password" value={currentCode} onChange={(event) => setCurrentCode(event.target.value)} autoComplete="current-password" required maxLength={128} disabled={busy} /></div>}

@@ -128,7 +128,7 @@ export async function workspaceAction(admin: any, user: { id: string; email?: st
     return { configured: true, unlocked: true, owner, expires_at, notification: 'accepted' };
   }
   if (!unlocked) throw new WorkspaceError('Enter your access code to open this project.', 403, 'workspace_locked');
-  return { authorized: true, user_id: user.id, session_id: sid, expires_at: grant.expires_at };
+  return { authorized: true, owner, user_id: user.id, session_id: sid, expires_at: grant.expires_at };
 }
 
 async function readWorkspaceBody(request: Request) {

@@ -183,7 +183,7 @@ test('authorize exposes only the verified principal and rejects missing, stale, 
   db.rows.project_workspace_codes.push({ project:'trade-city', revision:'current' });
   db.rows.project_workspace_grants.push({ user_id:user.id, session_id:sid, project:'trade-city', revision:'current', expires_at });
   const body = { project:'trade-city', action:'authorize' };
-  assert.deepEqual(await workspaceAction(db,user,sid,body), { authorized:true,user_id:user.id,session_id:sid,expires_at });
+  assert.deepEqual(await workspaceAction(db,user,sid,body), { authorized:true,owner:true,user_id:user.id,session_id:sid,expires_at });
   await assert.rejects(() => workspaceAction(db,user,'other-session',body), (error) => error.status === 403 && error.code === 'workspace_locked');
   await assert.rejects(() => workspaceAction(db,user,sid,{...body,project:'another-project'}), /Unknown project/);
   await assert.rejects(() => workspaceAction(db,user,sid,{action:'authorize'}), /Unknown project/);
@@ -195,6 +195,19 @@ test('authorize exposes only the verified principal and rejects missing, stale, 
   db.rows.project_workspace_grants[0].expires_at = expires_at;
   db.rows.admin_profiles[0].role = 'agent';
   await assert.rejects(() => workspaceAction(db,user,sid,body), (error) => error.code === 'workspace_role_denied');
+});
+
+test('authorize derives owner from the verified profile, never from caller claims', async () => {
+  const db = database();
+  const expires_at = new Date(Date.now() + 3600000).toISOString();
+  db.rows.project_workspace_codes.push({ project:'trade-city', revision:'current' });
+  db.rows.project_workspace_grants.push({ user_id:user.id, session_id:sid, project:'trade-city', revision:'current', expires_at });
+  const body = { project:'trade-city', action:'authorize', owner:true };
+  assert.equal((await workspaceAction(db,user,sid,body)).owner, true);
+  db.rows.admin_profiles[0].role = 'admin';
+  assert.deepEqual(await workspaceAction(db,user,sid,body), {
+    authorized:true, owner:false, user_id:user.id, session_id:sid, expires_at,
+  });
 });
 
 test('locking remains available after the shared read rate limit is exhausted', async () => {
@@ -427,7 +440,7 @@ test('ORC authorization cannot reuse another project, session, stale revision or
   await assert.rejects(()=>workspaceAction(db,user,sid,body),(error)=>error.code==='workspace_locked');
   const grant={user_id:user.id,session_id:sid,project:'orc',revision:'orc-current',expires_at};
   db.rows.project_workspace_grants.push(grant);
-  assert.deepEqual(await workspaceAction(db,user,sid,body),{authorized:true,user_id:user.id,session_id:sid,expires_at});
+  assert.deepEqual(await workspaceAction(db,user,sid,body),{authorized:true,owner:true,user_id:user.id,session_id:sid,expires_at});
   await assert.rejects(()=>workspaceAction(db,user,'33333333-3333-4333-8333-333333333333',body),(error)=>error.code==='workspace_locked');
   grant.revision='old';await assert.rejects(()=>workspaceAction(db,user,sid,body),(error)=>error.code==='workspace_locked');
   grant.revision='orc-current';grant.expires_at='2001-01-01';

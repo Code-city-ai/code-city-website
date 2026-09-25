@@ -157,9 +157,13 @@ export default function ProjectAccess({ project = null, children = null }) {
                 {access.unlocked && !editing ? <div className="project-access-launch">
                   {selectedProject === 'orc' ? <button className="project-access-primary" type="button" onClick={openOrc} disabled={busy}>{busy ? 'Opening ORC' : 'Open ORC'}<ArrowUpRight aria-hidden="true" /></button> : <a className="project-access-primary" href={projectPath}>Open {projectName} <ArrowUpRight aria-hidden="true" /></a>}
                   {selectedProject === 'trade-city' && access.owner && <a className="project-access-download" href="/trade-city/#download">
-                    <span className="project-access-download-icon"><Download aria-hidden="true" /></span>
-                    <span className="project-access-download-copy"><strong>Download Trade City for Mac</strong><small>Private installer for your own Macs</small></span>
-                    <ArrowUpRight className="project-access-download-arrow" aria-hidden="true" />
+                    <span className="project-access-download-icon"><img src="/brands/trade-city-app.png" alt="" width="56" height="56" /></span>
+                    <span className="project-access-download-copy">
+                      <span className="project-access-download-eyebrow"><LockKeyhole aria-hidden="true" /> Private Mac release</span>
+                      <strong>Trade City on your Mac</strong>
+                      <small>Install on your own Macs, then use your Code City sign-in and Trade City code to connect to the cloud.</small>
+                      <span className="project-access-download-action"><Download aria-hidden="true" /> View download and install steps <ArrowUpRight aria-hidden="true" /></span>
+                    </span>
                   </a>}
                   <button className="project-access-text-button" type="button" onClick={lock} disabled={busy}>Lock {projectName}</button>
                 </div> : (access.configured || configuring) && <form onSubmit={submit}>

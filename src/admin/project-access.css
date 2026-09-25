@@ -18,14 +18,18 @@
 .project-access-primary:disabled { opacity: .55; cursor: not-allowed; }
 .project-access-primary:hover { background: #fffaf1; }
 .project-access-primary svg { width: 20px; }
-.project-access-download { min-height: 78px; display: flex; align-items: center; gap: 14px; padding: 14px 16px; border: 1px solid #3b5361; border-radius: 9px; background: #102029; color: var(--portal-text); text-decoration: none; transition: background-color 160ms ease-out, border-color 160ms ease-out; }
-.project-access-download:hover { background: #17303c; border-color: #85b1c5; }
-.project-access-download-icon { flex: 0 0 40px; height: 40px; display: grid; place-items: center; border-radius: 8px; background: #284554; color: #dcecf2; }
-.project-access-download-icon svg { width: 19px; height: 19px; }
-.project-access-download-copy { flex: 1; min-width: 0; display: grid; gap: 3px; }
-.project-access-download-copy strong { font-size: 0.94rem; font-weight: 650; line-height: 1.3; }
-.project-access-download-copy small { color: #adbec8; font-size: 0.75rem; line-height: 1.4; }
-.project-access-download-arrow { flex-shrink: 0; width: 18px; height: 18px; color: #adbec8; }
+.project-access-download { display: grid; grid-template-columns: 56px minmax(0, 1fr); align-items: start; gap: 17px; padding: 21px; border: 1px solid #3b5361; border-radius: 14px; background: linear-gradient(145deg, #152c38, #101d27 72%); color: var(--portal-text); text-decoration: none; box-shadow: inset 0 1px 0 #ffffff12; transition: background-color 160ms ease-out, border-color 160ms ease-out, transform 160ms ease-out; }
+.project-access-download:hover { background: linear-gradient(145deg, #1b3947, #142732 72%); border-color: #8ab5c6; transform: translateY(-2px); }
+.project-access-download-icon { width: 56px; height: 56px; display: grid; place-items: center; border: 1px solid #527280; border-radius: 14px; background: #162f3a; }
+.project-access-download-icon img { display: block; width: 56px; height: 56px; object-fit: contain; }
+.project-access-download-copy { min-width: 0; display: grid; gap: 9px; }
+.project-access-download-eyebrow { display: inline-flex; align-items: center; gap: 6px; width: fit-content; color: #bcd3df; font-size: 0.67rem; font-weight: 750; letter-spacing: 0.07em; line-height: 1.4; text-transform: uppercase; }
+.project-access-download-eyebrow svg { width: 12px; height: 12px; }
+.project-access-download-copy strong { font-size: 1.12rem; font-weight: 700; letter-spacing: -0.025em; line-height: 1.2; }
+.project-access-download-copy small { color: #c2ced5; font-size: 0.79rem; line-height: 1.5; }
+.project-access-download-action { display: inline-flex; align-items: center; gap: 7px; width: fit-content; margin-top: 5px; color: #f2fafc; font-size: 0.79rem; font-weight: 700; line-height: 1.45; text-decoration: underline; text-decoration-color: #adcbd4; text-underline-offset: 4px; }
+.project-access-download-action svg { width: 15px; height: 15px; flex-shrink: 0; }
+.project-access-download:hover .project-access-download-action { text-decoration-color: currentColor; }
 .project-access-text-button { display: block; width: fit-content; min-height: 44px; margin-top: 12px; padding: 8px 0; background: transparent; border: 0; color: #dbc8bc; text-decoration: underline; text-underline-offset: 4px; cursor: pointer; font-size: 0.8rem !important; }
 .project-access-launch .project-access-text-button { margin-top: 0; }
 .project-access-text-button:hover { color: var(--portal-text); }
@@ -45,8 +49,8 @@
 @media (max-width: 520px) {
   .portal-project-access .portal-login-story { padding-inline: 24px; gap: 32px; }
   .portal-project-access .portal-login-panel { padding-inline: 24px; }
-  .project-access-download { padding: 12px; gap: 10px; }
-  .project-access-download-icon { flex-basis: 36px; height: 36px; }
+  .project-access-download { grid-template-columns: 44px minmax(0, 1fr); padding: 16px; gap: 13px; }
+  .project-access-download-icon, .project-access-download-icon img { width: 44px; height: 44px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .portal-project-access *, .portal-project-access *::before, .portal-project-access *::after { animation: none !important; transition: none !important; }

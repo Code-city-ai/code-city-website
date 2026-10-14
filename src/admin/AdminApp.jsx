@@ -14,6 +14,7 @@ import Proposals from '@/admin/pages/Proposals';
 import { isProjectAccessRoute } from '@/admin/lib/project-access';
 import '@/admin/admin.css';
 import '@/admin/project-access.css';
+import '@/admin/proposals.css';
 
 const routes = {
   '/admin/overview': { title: 'Overview', eyebrow: 'Code City / Client operations', Component: Dashboard },

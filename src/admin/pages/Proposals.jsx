@@ -4,7 +4,6 @@ import { useAdminAuth } from '@/admin/AuthProvider';
 import { EmptyState, ErrorState, LoadingState, Panel, formatDate } from '@/admin/components';
 import { PROPOSAL_LANGUAGES, canManageProposals, languageLabel, validateProposalDraft } from '@/admin/lib/proposal-files';
 import { createProposal, listProposals, signProposalFile } from '@/admin/lib/proposals';
-import '@/admin/proposals.css';
 
 const emptyDraft = { title: '', clientLabel: '', summary: '', files: {} };
 

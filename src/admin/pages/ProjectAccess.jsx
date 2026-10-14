@@ -21,7 +21,7 @@ export default function ProjectAccess({ project = null, children = null }) {
   const [confirmation, setConfirmation] = useState('');
   const [visible, setVisible] = useState(false);
   const inputRef = useRef(null);
-  const launcherRefs = useRef({ orc: null, 'trade-city': null });
+  const launcherRefs = useRef({ 'code-city': null, orc: null, 'trade-city': null });
   const lastProject = useRef(null);
   const isAdmin = profile?.is_active && (selectedProject === 'code-city' ? ['owner', 'admin', 'agent', 'viewer'] : ['owner', 'admin']).includes(profile.role);
   const configuring = access?.owner && (!access.configured || editing);
@@ -117,6 +117,11 @@ export default function ProjectAccess({ project = null, children = null }) {
           <p>Your agents. Your markets.<br />{' '}Choose a workspace to get started.</p>
         </div>
         <div className="workspace-projects">
+          <button className="workspace-project workspace-project-admin" ref={(node) => { launcherRefs.current['code-city'] = node; }} type="button" onClick={() => chooseProject('code-city')} aria-label="Open the Code City admin portal">
+            <span className="workspace-project-top"><span className="workspace-app-icon workspace-admin-icon" aria-hidden="true"><i /><i /><i /></span><span className="workspace-protection"><LockKeyhole aria-hidden="true" /> Passcode protected</span></span>
+            <span className="workspace-project-body"><strong>Admin portal<span className="workspace-project-subtitle">Code City operations.</span></strong><span className="workspace-project-description">Inquiries, clients, proposals, marketing and settings in one place.</span></span>
+            <span className="workspace-project-bottom"><span>Enter the admin portal</span><span className="workspace-enter"><ArrowRight aria-hidden="true" /></span></span>
+          </button>
           <button className="workspace-project workspace-project-orc" ref={(node) => { launcherRefs.current.orc = node; }} type="button" onClick={() => chooseProject('orc')} aria-label="Open ORC">
             <span className="workspace-project-top"><img className="workspace-app-icon" src="/brands/orc-app.png" alt="" width="104" height="104" /><span className="workspace-protection"><LockKeyhole aria-hidden="true" /> Passcode protected</span></span>
             <span className="workspace-project-body"><strong>ORC<span className="workspace-project-subtitle">Your agent orchestra.</span></strong><span className="workspace-project-description">Bring your agents, projects, and conversations together.</span></span>
@@ -139,7 +144,7 @@ export default function ProjectAccess({ project = null, children = null }) {
         <Brand />
         <div>
           <h1>Your projects.<br />One secure entrance.</h1>
-          <p>Choose ORC or Trade City, then enter that project’s private access code. Your account stays the same.</p>
+          <p>Choose the admin portal, ORC or Trade City, then enter that project’s private access code. Your account stays the same.</p>
         </div>
         <small>Private workspace · Authorized team members only</small>
       </section>

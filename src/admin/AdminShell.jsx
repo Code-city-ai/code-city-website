@@ -5,6 +5,7 @@ import {
   Building2,
   ChevronLeft,
   ChevronRight,
+  FileText,
   Inbox,
   LogOut,
   Menu,
@@ -13,12 +14,14 @@ import {
 } from 'lucide-react';
 import Brand from '@/components/Brand';
 import { useAdminAuth } from '@/admin/AuthProvider';
+import { canManageProposals } from '@/admin/lib/proposal-files';
 
 const navigation = [
   { label: 'Overview', href: '/admin/overview', icon: BriefcaseBusiness, exact: true },
   { label: 'Inquiries', href: '/admin/inquiries', icon: Inbox },
   { label: 'Clients', href: '/admin/clients', icon: Building2 },
   { label: 'Marketing', href: '/admin/marketing', icon: BarChart3 },
+  { label: 'Proposals', href: '/admin/proposals', icon: FileText, managersOnly: true },
   { label: 'System', href: '/admin/settings', icon: Settings },
 ];
 
@@ -112,7 +115,7 @@ export default function AdminShell({ title, eyebrow, children }) {
         </div>
 
         <nav className="portal-navigation" aria-label="Client platform">
-          {navigation.map((item) => {
+          {navigation.filter((item) => !item.managersOnly || canManageProposals(profile)).map((item) => {
             const Icon = item.icon;
             return (
               <a key={item.href} href={item.href} aria-current={active(item) ? 'page' : undefined} title={collapsed ? item.label : undefined}>

@@ -10,15 +10,18 @@ import Settings from '@/admin/pages/Settings';
 import Login from '@/admin/pages/Login';
 import PasswordSetup from '@/admin/pages/PasswordSetup';
 import ProjectAccess from '@/admin/pages/ProjectAccess';
+import Proposals from '@/admin/pages/Proposals';
 import { isProjectAccessRoute } from '@/admin/lib/project-access';
 import '@/admin/admin.css';
 import '@/admin/project-access.css';
+import '@/admin/proposals.css';
 
 const routes = {
   '/admin/overview': { title: 'Overview', eyebrow: 'Code City / Client operations', Component: Dashboard },
   '/admin/inquiries': { title: 'Inquiry desk', eyebrow: 'Demand / Qualification', Component: Inquiries },
   '/admin/clients': { title: 'Client directory', eyebrow: 'Relationships / Delivery', Component: Clients },
   '/admin/marketing': { title: 'Marketing intelligence', eyebrow: 'Attribution / Return', Component: Marketing },
+  '/admin/proposals': { title: 'Proposals', eyebrow: 'Sales / Private documents', Component: Proposals },
   '/admin/settings': { title: 'System state', eyebrow: 'Access / Integrations', Component: Settings },
 };
 
